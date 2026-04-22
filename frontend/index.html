@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iron Roads — Historical Railroad Atlas</title>
+    <link rel="stylesheet" href="/src/style.css">
+</head>
+<body>
+    <header>
+        <div class="brand">
+            <h1>Iron Roads</h1>
+            <span class="tagline">Historical railroad maps, drawn by original surveyors</span>
+        </div>
+        <nav>
+            <button id="btn-drop-pin" class="nav-btn" title="Drop a site pin">📍 Add Site</button>
+            <a href="#about">About</a>
+            <a href="#contribute">Contribute</a>
+        </nav>
+    </header>
+
+    <main>
+        <aside id="sidebar">
+            <section class="panel">
+                <h2>Line Status</h2>
+                <label><input type="checkbox" data-filter="line-status" value="active" checked>
+                    <span class="swatch swatch-active"></span> Active</label>
+                <label><input type="checkbox" data-filter="line-status" value="abandoned" checked>
+                    <span class="swatch swatch-abandoned"></span> Abandoned</label>
+                <label><input type="checkbox" data-filter="line-status" value="destroyed" checked>
+                    <span class="swatch swatch-destroyed"></span> Destroyed</label>
+                <label><input type="checkbox" data-filter="line-status" value="rail_trail" checked>
+                    <span class="swatch swatch-trail"></span> Rail trail</label>
+            </section>
+
+            <section class="panel">
+                <h2>Sites</h2>
+                <label><input type="checkbox" data-filter="site-type" value="depot" checked> Depots</label>
+                <label><input type="checkbox" data-filter="site-type" value="freight_house" checked> Freight houses</label>
+                <label><input type="checkbox" data-filter="site-type" value="bridge" checked> Bridges</label>
+                <label><input type="checkbox" data-filter="site-type" value="trestle" checked> Trestles</label>
+                <label><input type="checkbox" data-filter="site-type" value="tunnel" checked> Tunnels</label>
+                <label><input type="checkbox" data-filter="site-type" value="yard" checked> Yards</label>
+                <label><input type="checkbox" data-filter="site-type" value="roundhouse" checked> Roundhouses</label>
+            </section>
+
+            <section class="panel">
+                <h2>Site Status</h2>
+                <label><input type="checkbox" data-filter="site-status" value="active" checked> Active</label>
+                <label><input type="checkbox" data-filter="site-status" value="preserved" checked> Preserved</label>
+                <label><input type="checkbox" data-filter="site-status" value="abandoned" checked> Abandoned</label>
+                <label><input type="checkbox" data-filter="site-status" value="ruins" checked> Ruins</label>
+                <label><input type="checkbox" data-filter="site-status" value="destroyed" checked> Destroyed (site only)</label>
+            </section>
+
+            <section class="panel">
+                <h2>Historic Overlay</h2>
+                <label>Opacity
+                    <input type="range" id="overlay-opacity" min="0" max="100" value="0">
+                </label>
+                <p class="hint" id="overlay-hint">Scanned historical maps from OldMapsOnline. Rail lines were drawn by original surveyors, not modern data.</p>
+            </section>
+
+            <section class="panel" id="map-library-panel">
+                <h2>Map Library <button id="btn-add-map" class="inline-btn">+ Add</button></h2>
+                <div id="map-library-list"><p class="hint">No historic maps loaded yet.</p></div>
+            </section>
+        </aside>
+
+        <div id="map"></div>
+
+        <div id="timeline">
+            <div class="timeline-inner">
+                <label for="year">Year: <strong id="year-label">2026</strong></label>
+                <input type="range" id="year" min="1830" max="2026" value="2026" step="1">
+                <div class="timeline-ticks">
+                    <span>1830</span><span>1880</span><span>1930</span><span>1980</span><span>2026</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="detail-panel" class="hidden">
+            <button class="close-btn" id="close-detail">×</button>
+            <div id="detail-content"></div>
+        </div>
+
+        <!-- Submit site form -->
+        <div id="site-form" class="modal hidden">
+            <div class="modal-box">
+                <h3>Add Site</h3>
+                <label>Name <input type="text" id="sf-name" placeholder="e.g. Falmouth L&N Depot"></label>
+                <label>Type
+                    <select id="sf-type">
+                        <option value="depot">Depot</option>
+                        <option value="freight_house">Freight house</option>
+                        <option value="bridge">Bridge</option>
+                        <option value="trestle">Trestle</option>
+                        <option value="tunnel">Tunnel</option>
+                        <option value="yard">Yard</option>
+                        <option value="roundhouse">Roundhouse</option>
+                        <option value="other">Other</option>
+                    </select>
+                </label>
+                <label>Status
+                    <select id="sf-status">
+                        <option value="active">Active</option>
+                        <option value="preserved">Preserved</option>
+                        <option value="abandoned">Abandoned</option>
+                        <option value="ruins">Ruins</option>
+                        <option value="destroyed" selected>Destroyed</option>
+                    </select>
+                </label>
+                <label>City <input type="text" id="sf-city" placeholder="e.g. Falmouth"></label>
+                <label>State <input type="text" id="sf-state" placeholder="e.g. KY" maxlength="2"></label>
+                <label>Year built <input type="number" id="sf-built" placeholder="e.g. 1869"></label>
+                <label>Year closed <input type="number" id="sf-closed" placeholder="e.g. 1971"></label>
+                <label>Year demolished <input type="number" id="sf-demo" placeholder="e.g. 1978 (if gone)"></label>
+                <label>Description<textarea id="sf-desc" rows="3" placeholder="What do you know about this site?"></textarea></label>
+                <div class="form-btns">
+                    <button id="sf-cancel" class="btn-secondary">Cancel</button>
+                    <button id="sf-submit" class="btn-primary">Submit</button>
+                </div>
+                <p id="sf-status-msg" class="form-status"></p>
+            </div>
+        </div>
+
+        <!-- Add historic map form -->
+        <div id="map-form" class="modal hidden">
+            <div class="modal-box">
+                <h3>Add Historic Map</h3>
+                <p class="hint">Paste a tile URL for a scanned historical map from OldMapsOnline or Allmaps. Rail lines on these maps were drawn by original surveyors.</p>
+                <label>Title <input type="text" id="mf-title" placeholder="e.g. 1895 Kentucky Railroad Atlas"></label>
+                <label>Year <input type="number" id="mf-year" placeholder="e.g. 1895"></label>
+                <label>Tile URL <input type="text" id="mf-url" placeholder="https://allmaps.xyz/maps/{id}/{z}/{x}/{y}.png"></label>
+                <label>Publisher <input type="text" id="mf-publisher" placeholder="e.g. Library of Congress (optional)"></label>
+                <label>Source URL <input type="text" id="mf-source-url" placeholder="Link to original map page (optional)"></label>
+                <div class="form-btns">
+                    <button id="mf-cancel" class="btn-secondary">Cancel</button>
+                    <button id="mf-submit" class="btn-primary">Add Map</button>
+                </div>
+                <p id="mf-status-msg" class="form-status"></p>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="/src/main.js"></script>
+</body>
+</html>
