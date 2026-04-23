@@ -14,21 +14,39 @@ app.use(express.json());
 
 // =============================================================================
 // DB migration — runs once on startup, idempotent
+// See db/migrations/2026-04-23-add-auth-columns.sql for the canonical SQL.
 // =============================================================================
 async function migrate() {
+    // Fresh installs: create users table with UUID primary key
     await pool.query(`
         CREATE TABLE IF NOT EXISTS users (
-            id               SERIAL PRIMARY KEY,
-            email            VARCHAR(255) UNIQUE NOT NULL,
-            password_hash    VARCHAR(255) NOT NULL,
-            role             VARCHAR(20)  NOT NULL DEFAULT 'contributor',
-            verified         BOOLEAN      NOT NULL DEFAULT false,
-            verification_token VARCHAR(255),
-            created_at       TIMESTAMPTZ  NOT NULL DEFAULT NOW()
-        );
-        ALTER TABLE sites ADD COLUMN IF NOT EXISTS mod_status  VARCHAR(20) NOT NULL DEFAULT 'approved';
-        ALTER TABLE sites ADD COLUMN IF NOT EXISTS submitted_by UUID REFERENCES users(id);
-        ALTER TABLE sites ADD COLUMN IF NOT EXISTS mod_note    TEXT;
+            id                              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            email                           VARCHAR(255) UNIQUE NOT NULL,
+            password_hash                   TEXT,
+            role                            VARCHAR(20) NOT NULL DEFAULT 'contributor',
+            verified                        BOOLEAN NOT NULL DEFAULT false,
+            verification_token              TEXT,
+            verification_token_expires_at   TIMESTAMPTZ,
+            created_at                      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+        )
+    `);
+
+    // Existing installs: add any missing columns without touching existing data
+    await pool.query(`
+        ALTER TABLE users
+            ADD COLUMN IF NOT EXISTS password_hash                  TEXT,
+            ADD COLUMN IF NOT EXISTS role                           VARCHAR(20) NOT NULL DEFAULT 'contributor',
+            ADD COLUMN IF NOT EXISTS verified                       BOOLEAN     NOT NULL DEFAULT false,
+            ADD COLUMN IF NOT EXISTS verification_token             TEXT,
+            ADD COLUMN IF NOT EXISTS verification_token_expires_at  TIMESTAMPTZ,
+            ADD COLUMN IF NOT EXISTS created_at                     TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    `);
+
+    await pool.query(`
+        ALTER TABLE sites
+            ADD COLUMN IF NOT EXISTS mod_status   VARCHAR(20) NOT NULL DEFAULT 'approved',
+            ADD COLUMN IF NOT EXISTS submitted_by UUID REFERENCES users(id),
+            ADD COLUMN IF NOT EXISTS mod_note     TEXT
     `);
 }
 
@@ -237,7 +255,7 @@ app.get('/api/historic-maps', async (_req, res) => {
 });
 
 // =============================================================================
-// POST /api/historic-maps
+// POST /api/historic-maps — requires auth
 // =============================================================================
 app.post('/api/historic-maps', requireAuth, async (req, res) => {
     try {
@@ -277,21 +295,28 @@ app.post('/api/lines', requireAuth, async (req, res) => {
 });
 
 // =============================================================================
-// POST /api/sites — requires auth; lands in pending queue
+// POST /api/sites — requires verified auth
+// trusted/admin → live immediately; contributor → pending queue
 // =============================================================================
 app.post('/api/sites', requireAuth, async (req, res) => {
     try {
+        const user = (req as any).user;
+        if (!user.verified)
+            return res.status(403).json({ error: 'Verify your email before submitting sites' });
+
         const { name, site_type, status, lng, lat, built_year, closed_year, demolished_year, city, state_province, description } = req.body;
         if (!name || !site_type || !status || lng == null || lat == null)
             return res.status(400).json({ error: 'name, site_type, status, lng, lat are required' });
-        const userId = (req as any).user.id;
+
+        const mod_status = (user.role === 'admin' || user.role === 'trusted') ? 'approved' : 'pending';
         const { rows } = await pool.query(
             `INSERT INTO sites (name, site_type, status, geom, built_year, closed_year, demolished_year,
                                 city, state_province, description, mod_status, submitted_by)
-             VALUES ($1, $2, $3, ST_SetSRID(ST_MakePoint($4, $5), 4326), $6, $7, $8, $9, $10, $11, 'pending', $12)
+             VALUES ($1, $2, $3, ST_SetSRID(ST_MakePoint($4, $5), 4326), $6, $7, $8, $9, $10, $11, $12, $13)
              RETURNING id, name, site_type, status, mod_status`,
             [name, site_type, status, lng, lat, built_year || null, closed_year || null,
-             demolished_year || null, city || null, state_province || null, description || null, userId]
+             demolished_year || null, city || null, state_province || null, description || null,
+             mod_status, user.id]
         );
         res.status(201).json(rows[0]);
     } catch (err) {

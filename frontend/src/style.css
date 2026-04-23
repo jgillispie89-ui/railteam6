@@ -177,15 +177,25 @@ main { flex: 1; display: grid; grid-template-columns: 260px 1fr; position: relat
 #nav-auth { display: flex; align-items: center; gap: 6px; margin-left: 6px; }
 .nav-user { font-size: 13px; color: rgba(255,255,255,0.8); max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-/* Auth modal tabs */
-.auth-tabs { display: flex; gap: 0; margin-bottom: 18px; border-bottom: 2px solid var(--border); }
-.auth-tab {
-    background: none; border: none; padding: 8px 18px;
-    font-size: 14px; font-weight: 500; cursor: pointer;
-    color: #888; border-bottom: 2px solid transparent; margin-bottom: -2px;
+/* Auth modal */
+.field-hint {
+    font-size: 11px; color: #888; margin-top: 2px;
 }
-.auth-tab.active { color: var(--ink); border-bottom-color: var(--rail-rust); }
-.auth-tab:hover { color: var(--ink); }
+.field-hint.hidden { display: none; }
+.auth-toggle-row {
+    text-align: center; font-size: 13px; color: #777; margin: 14px 0 0 0;
+}
+.auth-toggle-row a { color: var(--rail-rust); text-decoration: none; }
+.auth-toggle-row a:hover { text-decoration: underline; }
+
+/* Unverified badge in nav */
+.unverified-btn {
+    background: rgba(163,45,45,0.25); border: 1px solid rgba(163,45,45,0.5);
+    color: #ffbdbd; padding: 5px 12px; border-radius: 4px;
+    font-size: 12px; cursor: pointer; margin-left: 6px;
+    transition: background 0.15s;
+}
+.unverified-btn:hover { background: rgba(163,45,45,0.4); }
 
 /* Admin queue */
 .queue-item {

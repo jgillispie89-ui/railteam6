@@ -59,12 +59,17 @@ function renderNav() {
     const nav = document.getElementById('nav-auth');
     if (!nav) return;
     if (auth.user) {
+        const unverifiedBtn = !auth.user.verified
+            ? `<button class="nav-btn unverified-btn" id="btn-resend-nav" title="Verify your email to contribute — click to resend">⚠ Unverified</button>`
+            : '';
         nav.innerHTML = `
+            ${unverifiedBtn}
             <span class="nav-user">${esc(auth.user.email)}</span>
             ${auth.user.role === 'admin' ? '<button class="nav-btn" id="btn-admin">Admin</button>' : ''}
             <button class="nav-btn" id="btn-logout">Logout</button>
         `;
-        document.getElementById('btn-logout')?.addEventListener('click', () => { clearAuth(); });
+        document.getElementById('btn-resend-nav')?.addEventListener('click', resendVerification);
+        document.getElementById('btn-logout')?.addEventListener('click', clearAuth);
         document.getElementById('btn-admin')?.addEventListener('click', openAdminPanel);
     } else {
         nav.innerHTML = `<button class="nav-btn" id="btn-login">Login / Register</button>`;
@@ -73,86 +78,102 @@ function renderNav() {
 }
 
 // =============================================================================
-// Auth modal
+// Auth modal — single form, login/register modes
 // =============================================================================
-function openAuthModal(tab = 'login') {
+let authMode = 'login';
+
+function openAuthModal(mode = 'login') {
     document.getElementById('auth-modal').classList.remove('hidden');
-    switchAuthTab(tab);
+    setAuthMode(mode);
+    setTimeout(() => document.getElementById('auth-email')?.focus(), 50);
 }
+
 function closeAuthModal() {
     document.getElementById('auth-modal').classList.add('hidden');
     document.getElementById('auth-msg').textContent = '';
+    document.getElementById('auth-email').value    = '';
+    document.getElementById('auth-password').value = '';
 }
 
-function switchAuthTab(tab) {
-    document.getElementById('auth-tab-login').classList.toggle('active', tab === 'login');
-    document.getElementById('auth-tab-register').classList.toggle('active', tab === 'register');
-    document.getElementById('auth-login-form').classList.toggle('hidden', tab !== 'login');
-    document.getElementById('auth-register-form').classList.toggle('hidden', tab !== 'register');
-    document.getElementById('auth-msg').textContent = '';
+function setAuthMode(mode) {
+    authMode = mode;
+    const isLogin = mode === 'login';
+    document.getElementById('auth-title').textContent          = isLogin ? 'Log in' : 'Create account';
+    document.getElementById('auth-submit-btn').textContent     = isLogin ? 'Log in' : 'Create account';
+    document.getElementById('auth-pw-hint').classList.toggle('hidden', isLogin);
+    document.getElementById('auth-toggle-prompt').textContent  = isLogin ? "Don't have an account?" : 'Already have an account?';
+    document.getElementById('auth-toggle-link').textContent    = isLogin ? ' Sign up' : ' Log in';
+    document.getElementById('auth-msg').textContent            = '';
 }
 
-document.getElementById('auth-tab-login').addEventListener('click', () => switchAuthTab('login'));
-document.getElementById('auth-tab-register').addEventListener('click', () => switchAuthTab('register'));
 document.getElementById('auth-close').addEventListener('click', closeAuthModal);
 
-document.getElementById('auth-login-btn').addEventListener('click', async () => {
-    const msg = document.getElementById('auth-msg');
-    const email    = document.getElementById('login-email').value.trim();
-    const password = document.getElementById('login-password').value;
-    msg.className = 'form-status';
-    try {
-        const res = await fetch(`${API_BASE}/api/auth/login`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password }),
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error);
-        saveAuth(data.token, data.user);
-        closeAuthModal();
-    } catch (err) {
-        msg.textContent = '✕ ' + err.message;
-        msg.className = 'form-status err';
+document.getElementById('auth-toggle-link').addEventListener('click', e => {
+    e.preventDefault();
+    setAuthMode(authMode === 'login' ? 'register' : 'login');
+});
+
+document.getElementById('auth-submit-btn').addEventListener('click', async () => {
+    const msg      = document.getElementById('auth-msg');
+    const email    = document.getElementById('auth-email').value.trim();
+    const password = document.getElementById('auth-password').value;
+    msg.className  = 'form-status';
+
+    if (authMode === 'login') {
+        try {
+            const res  = await fetch(`${API_BASE}/api/auth/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error);
+            saveAuth(data.token, data.user);
+            closeAuthModal();
+        } catch (err) {
+            msg.textContent = '✕ ' + err.message;
+            msg.className   = 'form-status err';
+        }
+    } else {
+        try {
+            const res  = await fetch(`${API_BASE}/api/auth/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error);
+            saveAuth(data.token, data.user);
+            msg.textContent = '✓ Account created! Check your email to verify your address.';
+            msg.className   = 'form-status ok';
+            setTimeout(closeAuthModal, 3000);
+        } catch (err) {
+            msg.textContent = '✕ ' + err.message;
+            msg.className   = 'form-status err';
+        }
     }
 });
 
-document.getElementById('auth-register-btn').addEventListener('click', async () => {
-    const msg = document.getElementById('auth-msg');
-    const email    = document.getElementById('reg-email').value.trim();
-    const password = document.getElementById('reg-password').value;
-    msg.className = 'form-status';
-    try {
-        const res = await fetch(`${API_BASE}/api/auth/register`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password }),
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error);
-        saveAuth(data.token, data.user);
-        msg.textContent = '✓ Account created! Check your email to verify your address.';
-        msg.className = 'form-status ok';
-        setTimeout(closeAuthModal, 2000);
-    } catch (err) {
-        msg.textContent = '✕ ' + err.message;
-        msg.className = 'form-status err';
-    }
+// Enter key submits the form
+document.getElementById('auth-password').addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('auth-submit-btn').click();
 });
 
 // =============================================================================
-// Email verification (handles /verify-email?token=xxx in URL)
+// Email verification (/verify?token=XXX in URL)
 // =============================================================================
 async function handleVerifyEmail() {
     const params = new URLSearchParams(window.location.search);
     const token  = params.get('token');
     if (!token) return;
     try {
-        const res  = await fetch(`${API_BASE}/api/auth/verify?token=${token}`);
+        const res  = await fetch(`${API_BASE}/api/auth/verify?token=${encodeURIComponent(token)}`);
         const data = await res.json();
         if (res.ok) {
-            if (auth.user) { auth.user.verified = true; localStorage.setItem('ir_user', JSON.stringify(auth.user)); }
-            showBanner('✓ Email verified! You can now submit sites.', 'ok');
+            if (data.token && auth.user) {
+                saveAuth(data.token, { ...auth.user, verified: true });
+            }
+            showBanner('✓ Email verified — you can now contribute!', 'ok');
         } else {
             showBanner('✕ ' + data.error, 'err');
         }
@@ -162,12 +183,26 @@ async function handleVerifyEmail() {
     window.history.replaceState({}, '', '/');
 }
 
+async function resendVerification() {
+    try {
+        const res  = await authedFetch(`${API_BASE}/api/auth/resend-verification`, { method: 'POST', body: '{}' });
+        const data = await res.json();
+        if (res.ok) {
+            showBanner('✓ Verification email sent — check your inbox.', 'ok');
+        } else {
+            showBanner('✕ ' + data.error, 'err');
+        }
+    } catch {
+        showBanner('✕ Could not send email. Try again later.', 'err');
+    }
+}
+
 function showBanner(msg, type) {
     const b = document.getElementById('site-banner');
     b.textContent = msg;
-    b.className = 'site-banner ' + type;
+    b.className   = 'site-banner ' + type;
     b.classList.remove('hidden');
-    setTimeout(() => b.classList.add('hidden'), 5000);
+    setTimeout(() => b.classList.add('hidden'), 6000);
 }
 
 // =============================================================================
@@ -313,6 +348,10 @@ function onPinDrop(e) {
 document.getElementById('btn-drop-pin').addEventListener('click', () => {
     if (state.pinMode) { exitPinMode(); return; }
     if (!auth.token) { openAuthModal('login'); return; }
+    if (!auth.user?.verified) {
+        showBanner('Verify your email to contribute — check your inbox, or click ⚠ Unverified to resend.', 'err');
+        return;
+    }
     enterPinMode();
 });
 
@@ -331,16 +370,16 @@ document.getElementById('sf-submit').addEventListener('click', async () => {
     const msg = document.getElementById('sf-status-msg');
     const [lng, lat] = state.pendingPinLngLat || [null, null];
     const body = {
-        name:          document.getElementById('sf-name').value.trim(),
-        site_type:     document.getElementById('sf-type').value,
-        status:        document.getElementById('sf-status').value,
+        name:           document.getElementById('sf-name').value.trim(),
+        site_type:      document.getElementById('sf-type').value,
+        status:         document.getElementById('sf-status').value,
         lng, lat,
-        city:          document.getElementById('sf-city').value.trim() || null,
+        city:           document.getElementById('sf-city').value.trim() || null,
         state_province: document.getElementById('sf-state').value.trim().toUpperCase() || null,
-        built_year:    parseInt(document.getElementById('sf-built').value) || null,
-        closed_year:   parseInt(document.getElementById('sf-closed').value) || null,
+        built_year:     parseInt(document.getElementById('sf-built').value) || null,
+        closed_year:    parseInt(document.getElementById('sf-closed').value) || null,
         demolished_year: parseInt(document.getElementById('sf-demo').value) || null,
-        description:   document.getElementById('sf-desc').value.trim() || null,
+        description:    document.getElementById('sf-desc').value.trim() || null,
     };
     try {
         const res = await authedFetch(`${API_BASE}/api/sites`, {
@@ -348,11 +387,11 @@ document.getElementById('sf-submit').addEventListener('click', async () => {
         });
         if (!res.ok) throw new Error((await res.json()).error);
         msg.textContent = '✓ Submitted for review! It will appear on the map once approved.';
-        msg.className = 'form-status ok';
+        msg.className   = 'form-status ok';
         setTimeout(closeSiteForm, 2500);
     } catch (err) {
         msg.textContent = '✕ ' + err.message;
-        msg.className = 'form-status err';
+        msg.className   = 'form-status err';
     }
 });
 
@@ -369,15 +408,15 @@ document.getElementById('mf-cancel').addEventListener('click', () => {
 document.getElementById('mf-submit').addEventListener('click', async () => {
     const msg = document.getElementById('mf-status-msg');
     const body = {
-        title:        document.getElementById('mf-title').value.trim(),
+        title:          document.getElementById('mf-title').value.trim(),
         published_year: parseInt(document.getElementById('mf-year').value),
-        tile_url:     document.getElementById('mf-url').value.trim(),
-        publisher:    document.getElementById('mf-publisher').value.trim() || null,
-        source_url:   document.getElementById('mf-source-url').value.trim() || null,
+        tile_url:       document.getElementById('mf-url').value.trim(),
+        publisher:      document.getElementById('mf-publisher').value.trim() || null,
+        source_url:     document.getElementById('mf-source-url').value.trim() || null,
     };
     if (!body.title || !body.published_year || !body.tile_url) {
         msg.textContent = '✕ Title, year, and tile URL are required.';
-        msg.className = 'form-status err';
+        msg.className   = 'form-status err';
         return;
     }
     try {
@@ -386,12 +425,12 @@ document.getElementById('mf-submit').addEventListener('click', async () => {
         });
         if (!res.ok) throw new Error((await res.json()).error);
         msg.textContent = '✓ Map added!';
-        msg.className = 'form-status ok';
+        msg.className   = 'form-status ok';
         await loadHistoricMaps();
         setTimeout(() => { document.getElementById('map-form').classList.add('hidden'); }, 1000);
     } catch (err) {
         msg.textContent = '✕ ' + err.message;
-        msg.className = 'form-status err';
+        msg.className   = 'form-status err';
     }
 });
 
@@ -482,8 +521,8 @@ function applyFilters() {
         'all',
         ['in', ['get', 'site_type'], ['literal', siteTypeArr]],
         ['in', ['get', 'status'],    ['literal', siteStatusArr]],
-        ['any', ['==', ['get', 'built_year'],     null], ['<=', ['get', 'built_year'],     state.year]],
-        ['any', ['==', ['get', 'demolished_year'],null], ['>',  ['get', 'demolished_year'], state.year]],
+        ['any', ['==', ['get', 'built_year'],      null], ['<=', ['get', 'built_year'],      state.year]],
+        ['any', ['==', ['get', 'demolished_year'], null], ['>',  ['get', 'demolished_year'],  state.year]],
     ]);
 
     for (const [layerId, baseFilter] of Object.entries(LINE_LAYER_BASE_FILTERS)) {
@@ -505,8 +544,8 @@ function showDetail(props) {
     const content = document.getElementById('detail-content');
     const railroads = typeof props.railroads === 'string' ? JSON.parse(props.railroads) : (props.railroads || []);
     const dates = [];
-    if (props.built_year)    dates.push(`Built ${props.built_year}`);
-    if (props.closed_year)   dates.push(`Closed ${props.closed_year}`);
+    if (props.built_year)      dates.push(`Built ${props.built_year}`);
+    if (props.closed_year)     dates.push(`Closed ${props.closed_year}`);
     if (props.demolished_year) dates.push(`Demolished ${props.demolished_year}`);
     content.innerHTML = `
         <h3>${esc(props.name)}</h3>
