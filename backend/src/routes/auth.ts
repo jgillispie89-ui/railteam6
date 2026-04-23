@@ -18,16 +18,17 @@ router.post('/register', async (req, res) => {
         if (!email || !password) return res.status(400).json({ error: 'email and password required' });
         if (password.length < 8) return res.status(400).json({ error: 'Password must be at least 8 characters' });
 
-        const hash    = await bcrypt.hash(password, 12);
-        const vtoken  = crypto.randomBytes(32).toString('hex');
-        const vexpiry = new Date(Date.now() + 48 * 60 * 60 * 1000);
-        const role    = email.toLowerCase() === ADMIN_EMAIL ? 'admin' : 'contributor';
+        const hash        = await bcrypt.hash(password, 12);
+        const vtoken      = crypto.randomBytes(32).toString('hex');
+        const vexpiry     = new Date(Date.now() + 48 * 60 * 60 * 1000);
+        const role        = email.toLowerCase() === ADMIN_EMAIL ? 'admin' : 'contributor';
+        const displayName = email.split('@')[0];
 
         const { rows } = await pool.query(
-            `INSERT INTO users (email, password_hash, role, verification_token, verification_token_expires_at)
-             VALUES ($1, $2, $3, $4, $5)
+            `INSERT INTO users (email, display_name, password_hash, role, verification_token, verification_token_expires_at)
+             VALUES ($1, $2, $3, $4, $5, $6)
              RETURNING id, email, role`,
-            [email.toLowerCase(), hash, role, vtoken, vexpiry]
+            [email.toLowerCase(), displayName, hash, role, vtoken, vexpiry]
         );
         const u = rows[0];
 
