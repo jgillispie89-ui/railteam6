@@ -163,6 +163,50 @@ main { flex: 1; display: grid; grid-template-columns: 260px 1fr; position: relat
 .form-status.ok { color: #0F6E56; }
 .form-status.err { color: #A32D2D; }
 
+/* Site flash banner */
+.site-banner {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+    padding: 10px 20px; text-align: center; font-size: 14px; font-weight: 500;
+    transition: opacity 0.3s;
+}
+.site-banner.ok  { background: #d9f0e6; color: #0a5340; border-bottom: 2px solid #0F6E56; }
+.site-banner.err { background: #f8d9d9; color: #6b1818; border-bottom: 2px solid #A32D2D; }
+.site-banner.hidden { display: none; }
+
+/* Nav auth area */
+#nav-auth { display: flex; align-items: center; gap: 6px; margin-left: 6px; }
+.nav-user { font-size: 13px; color: rgba(255,255,255,0.8); max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Auth modal tabs */
+.auth-tabs { display: flex; gap: 0; margin-bottom: 18px; border-bottom: 2px solid var(--border); }
+.auth-tab {
+    background: none; border: none; padding: 8px 18px;
+    font-size: 14px; font-weight: 500; cursor: pointer;
+    color: #888; border-bottom: 2px solid transparent; margin-bottom: -2px;
+}
+.auth-tab.active { color: var(--ink); border-bottom-color: var(--rail-rust); }
+.auth-tab:hover { color: var(--ink); }
+
+/* Admin queue */
+.queue-item {
+    border: 1px solid var(--border); border-radius: 6px;
+    padding: 12px 14px; margin-bottom: 10px;
+}
+.queue-name { font-size: 15px; font-weight: 600; margin-bottom: 3px; }
+.queue-meta { font-size: 12px; color: #666; margin-bottom: 4px; }
+.queue-desc { font-size: 12px; color: #444; margin-bottom: 8px; }
+.queue-actions { display: flex; gap: 8px; }
+.btn-approve {
+    background: #0F6E56; color: white; border: none;
+    padding: 5px 14px; border-radius: 4px; cursor: pointer; font-size: 13px;
+}
+.btn-approve:hover { background: #0a5340; }
+.btn-reject {
+    background: #A32D2D; color: white; border: none;
+    padding: 5px 14px; border-radius: 4px; cursor: pointer; font-size: 13px;
+}
+.btn-reject:hover { background: #7a1e1e; }
+
 @media (max-width: 768px) {
     main { grid-template-columns: 1fr; }
     #sidebar { display: none; }

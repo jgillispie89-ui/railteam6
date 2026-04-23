@@ -16,8 +16,11 @@
             <button id="btn-drop-pin" class="nav-btn" title="Drop a site pin">📍 Add Site</button>
             <a href="#about">About</a>
             <a href="#contribute">Contribute</a>
+            <div id="nav-auth"></div>
         </nav>
     </header>
+
+    <div id="site-banner" class="site-banner hidden"></div>
 
     <main>
         <aside id="sidebar">
@@ -142,6 +145,44 @@
             </div>
         </div>
     </main>
+
+    <!-- Auth modal -->
+    <div id="auth-modal" class="modal hidden">
+        <div class="modal-box">
+            <button class="close-btn" id="auth-close">×</button>
+            <div class="auth-tabs">
+                <button class="auth-tab active" id="auth-tab-login">Log in</button>
+                <button class="auth-tab" id="auth-tab-register">Register</button>
+            </div>
+
+            <div id="auth-login-form">
+                <label>Email <input type="email" id="login-email" placeholder="you@example.com"></label>
+                <label>Password <input type="password" id="login-password" placeholder="••••••••"></label>
+                <div class="form-btns">
+                    <button id="auth-login-btn" class="btn-primary" style="width:100%">Log in</button>
+                </div>
+            </div>
+
+            <div id="auth-register-form" class="hidden">
+                <label>Email <input type="email" id="reg-email" placeholder="you@example.com"></label>
+                <label>Password <input type="password" id="reg-password" placeholder="8+ characters"></label>
+                <div class="form-btns">
+                    <button id="auth-register-btn" class="btn-primary" style="width:100%">Create account</button>
+                </div>
+            </div>
+
+            <p id="auth-msg" class="form-status"></p>
+        </div>
+    </div>
+
+    <!-- Admin moderation panel -->
+    <div id="admin-modal" class="modal hidden">
+        <div class="modal-box" style="width:600px">
+            <button class="close-btn" id="admin-close">×</button>
+            <h3>Moderation Queue</h3>
+            <div id="admin-queue"><p class="hint">Loading…</p></div>
+        </div>
+    </div>
 
     <script type="module" src="/src/main.js"></script>
 </body>
