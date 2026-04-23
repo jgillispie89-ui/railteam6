@@ -27,7 +27,7 @@ async function migrate() {
             created_at       TIMESTAMPTZ  NOT NULL DEFAULT NOW()
         );
         ALTER TABLE sites ADD COLUMN IF NOT EXISTS mod_status  VARCHAR(20) NOT NULL DEFAULT 'approved';
-        ALTER TABLE sites ADD COLUMN IF NOT EXISTS submitted_by INTEGER REFERENCES users(id);
+        ALTER TABLE sites ADD COLUMN IF NOT EXISTS submitted_by UUID REFERENCES users(id);
         ALTER TABLE sites ADD COLUMN IF NOT EXISTS mod_note    TEXT;
     `);
 }

@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 
 const SECRET = process.env.JWT_SECRET || 'dev-secret-change-in-prod';
 
-export interface TokenPayload { id: number; email: string; role: string; }
+export interface TokenPayload { id: string; email: string; role: string; }
 
 export const signToken = (p: TokenPayload) =>
     jwt.sign(p, SECRET, { expiresIn: '7d' });
