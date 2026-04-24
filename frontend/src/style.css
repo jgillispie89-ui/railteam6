@@ -11,6 +11,7 @@
     --border-2: rgba(0,0,0,0.25);
 }
 
+.hidden { display: none !important; }
 * { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; height: 100%; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; color: var(--ink); background: var(--paper); }
 body { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
