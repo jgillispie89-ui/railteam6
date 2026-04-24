@@ -554,6 +554,7 @@ function showDetail(props) {
     if (props.built_year)      dates.push(`Built ${props.built_year}`);
     if (props.closed_year)     dates.push(`Closed ${props.closed_year}`);
     if (props.demolished_year) dates.push(`Demolished ${props.demolished_year}`);
+    const canDelete = auth.user && (auth.user.role === 'admin' || auth.user.id === props.submitted_by);
     content.innerHTML = `
         ${props.photo_url ? `<img src="${esc(props.photo_url)}" class="site-photo" alt="${esc(props.name)}">` : ''}
         <h3>${esc(props.name)}</h3>
@@ -564,7 +565,21 @@ function showDetail(props) {
         </div>
         <p>${esc(props.description || 'No description yet.')}</p>
         ${dates.length ? `<div class="dates">${dates.join(' · ')}</div>` : ''}
+        ${canDelete ? `<button class="btn-delete-site" data-id="${esc(props.id)}">Delete site</button>` : ''}
     `;
+    if (canDelete) {
+        content.querySelector('.btn-delete-site')?.addEventListener('click', async e => {
+            if (!confirm(`Delete "${props.name}"? This cannot be undone.`)) return;
+            const res = await authedFetch(`${API_BASE}/api/sites/${props.id}`, { method: 'DELETE' });
+            if (res.ok) {
+                document.getElementById('detail-panel').classList.add('hidden');
+                loadData();
+            } else {
+                const d = await res.json();
+                alert('Delete failed: ' + d.error);
+            }
+        });
+    }
     panel.classList.remove('hidden');
 }
 

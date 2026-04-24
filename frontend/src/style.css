@@ -80,6 +80,8 @@ main { flex: 1; display: grid; grid-template-columns: 260px 1fr; position: relat
     cursor: pointer; color: #999; line-height: 1;
 }
 .site-photo { width: 100%; max-height: 200px; object-fit: cover; border-radius: 5px; margin-bottom: 10px; display: block; }
+.btn-delete-site { margin-top: 12px; background: none; border: 1px solid #A32D2D; color: #A32D2D; padding: 5px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+.btn-delete-site:hover { background: #f8d9d9; }
 #detail-content h3 { margin: 0 0 4px 0; font-size: 18px; }
 #detail-content .meta { font-size: 12px; color: #777; margin-bottom: 12px; }
 #detail-content .tag {

@@ -116,6 +116,7 @@ app.get('/api/sites', async (req, res) => {
             SELECT s.id, s.name, s.site_type, s.status,
                    s.built_year, s.closed_year, s.demolished_year,
                    s.city, s.state_province, s.country, s.description, s.photo_url,
+                   s.submitted_by,
                    ST_AsGeoJSON(s.geom)::json AS geometry,
                    COALESCE(array_agg(DISTINCT r.name) FILTER (WHERE r.name IS NOT NULL), '{}') AS railroads
             FROM sites s
@@ -136,7 +137,7 @@ app.get('/api/sites', async (req, res) => {
                     demolished_year: r.demolished_year, city: r.city,
                     state: r.state_province, country: r.country,
                     description: r.description, railroads: r.railroads,
-                    photo_url: r.photo_url,
+                    photo_url: r.photo_url, submitted_by: r.submitted_by,
                 },
             })),
         });
@@ -321,6 +322,23 @@ app.post('/api/sites', requireAuth, async (req, res) => {
              photo_url || null, mod_status, user.id]
         );
         res.status(201).json(rows[0]);
+    } catch (err) {
+        res.status(500).json({ error: (err as Error).message });
+    }
+});
+
+// =============================================================================
+// DELETE /api/sites/:id — admin or original submitter only
+// =============================================================================
+app.delete('/api/sites/:id', requireAuth, async (req, res) => {
+    try {
+        const user = (req as any).user;
+        const { rows } = await pool.query(
+            `DELETE FROM sites WHERE id = $1 AND (submitted_by = $2 OR $3 = true) RETURNING id`,
+            [req.params.id, user.id, user.role === 'admin']
+        );
+        if (!rows.length) return res.status(404).json({ error: 'Not found or not authorized' });
+        res.json({ ok: true });
     } catch (err) {
         res.status(500).json({ error: (err as Error).message });
     }
