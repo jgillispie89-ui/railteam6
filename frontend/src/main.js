@@ -364,6 +364,7 @@ function setPhotoIdle() {
     document.getElementById('sf-photo-preview').innerHTML =
         `<span>📷 Drop an image here, or click to browse</span>`;
     document.getElementById('sf-photo-drop').classList.remove('drag-over', 'has-photo');
+    setOverlayActive(true);
 }
 
 function resetPhotoState() {
@@ -411,6 +412,7 @@ async function handlePhotoFile(file) {
             <button type="button" class="link-btn photo-remove-btn" id="sf-photo-remove">✕ Remove</button>
         `;
         document.getElementById('sf-photo-drop').classList.add('has-photo');
+        setOverlayActive(false); // let Remove button be clickable
         document.getElementById('sf-photo-remove').addEventListener('click', e => {
             e.stopPropagation();
             resetPhotoState();
@@ -423,6 +425,7 @@ async function handlePhotoFile(file) {
             <span class="photo-err">✕ ${esc(err.message)}</span>
             <button type="button" class="link-btn" id="sf-photo-retry" style="margin-top:4px">Try again</button>
         `;
+        setOverlayActive(false); // let Try again button be clickable
         document.getElementById('sf-photo-retry')?.addEventListener('click', e => {
             e.stopPropagation();
             resetPhotoState();
@@ -431,13 +434,17 @@ async function handlePhotoFile(file) {
     }
 }
 
-// Drop zone — clicking anywhere opens the picker (unless photo already loaded)
+// Drop zone — the file input is a full-size transparent overlay so clicks hit it naturally.
+// We only need to handle drag-and-drop and the change event here.
 const sfDropZone = document.getElementById('sf-photo-drop');
-sfDropZone.addEventListener('click', e => {
-    if (e.target.id === 'sf-photo-remove' || e.target.id === 'sf-photo-retry') return;
-    if (sfPhotoUrl) return; // already uploaded; let user click Remove instead
-    document.getElementById('sf-photo-file').click();
-});
+const sfFileInput = document.getElementById('sf-photo-file');
+
+// When a photo is already uploaded, hide the overlay so Remove/Retry buttons are clickable.
+function setOverlayActive(active) {
+    sfFileInput.style.pointerEvents = active ? 'auto' : 'none';
+    sfFileInput.style.zIndex = active ? '1' : '-1';
+}
+
 sfDropZone.addEventListener('dragenter', e => {
     e.preventDefault();
     sfDropZone.classList.add('drag-over');
@@ -447,7 +454,6 @@ sfDropZone.addEventListener('dragover', e => {
     sfDropZone.classList.add('drag-over');
 });
 sfDropZone.addEventListener('dragleave', e => {
-    // only remove highlight when leaving the zone itself, not a child element
     if (!sfDropZone.contains(e.relatedTarget)) sfDropZone.classList.remove('drag-over');
 });
 sfDropZone.addEventListener('drop', e => {
@@ -455,7 +461,7 @@ sfDropZone.addEventListener('drop', e => {
     sfDropZone.classList.remove('drag-over');
     handlePhotoFile(e.dataTransfer.files[0]);
 });
-document.getElementById('sf-photo-file').addEventListener('change', e => {
+sfFileInput.addEventListener('change', e => {
     handlePhotoFile(e.target.files[0]);
 });
 document.getElementById('sf-photo-url-toggle').addEventListener('click', e => {

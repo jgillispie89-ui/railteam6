@@ -220,20 +220,22 @@ main { flex: 1; display: grid; grid-template-columns: 260px 1fr; position: relat
 }
 .btn-reject:hover { background: #7a1e1e; }
 
-/* Visually hidden — still focusable/clickable, not display:none */
-.sr-only {
-    position: absolute; width: 1px; height: 1px; padding: 0;
-    margin: -1px; overflow: hidden; clip: rect(0,0,0,0);
-    white-space: nowrap; border: 0;
-}
-
 /* Photo drop zone */
 .photo-drop {
+    position: relative; /* needed so the file input overlay is positioned inside it */
     border: 2px dashed var(--border-2); border-radius: 6px;
     padding: 16px; text-align: center; background: var(--paper-2);
     cursor: pointer; transition: border-color 0.15s, background 0.15s;
     min-height: 80px; display: flex; flex-direction: column;
     align-items: center; justify-content: center; gap: 8px;
+}
+/* Full-size transparent overlay — user clicks it directly, no programmatic .click() needed.
+   clip:rect(0,0,0,0) / display:none / visibility:hidden all block the file picker on desktop. */
+.photo-file-overlay {
+    position: absolute; inset: 0;
+    opacity: 0; cursor: pointer;
+    width: 100%; height: 100%;
+    font-size: 0; /* collapse any default file-input text */
 }
 .photo-drop:hover, .photo-drop.drag-over {
     border-color: var(--rail-rust); background: #fff8ee;
