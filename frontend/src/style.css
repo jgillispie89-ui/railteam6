@@ -220,6 +220,34 @@ main { flex: 1; display: grid; grid-template-columns: 260px 1fr; position: relat
 }
 .btn-reject:hover { background: #7a1e1e; }
 
+/* Photo drop zone */
+.photo-drop {
+    border: 2px dashed var(--border-2); border-radius: 6px;
+    padding: 16px; text-align: center; background: var(--paper-2);
+    cursor: pointer; transition: border-color 0.15s, background 0.15s;
+    min-height: 80px; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 8px;
+}
+.photo-drop:hover, .photo-drop.drag-over {
+    border-color: var(--rail-rust); background: #fff8ee;
+}
+.photo-preview-empty { font-size: 13px; color: #666; }
+.link-btn {
+    background: none; border: none; color: var(--rail-rust);
+    cursor: pointer; font-size: 13px; padding: 0; text-decoration: underline;
+}
+.photo-thumb-preview { max-height: 120px; max-width: 100%; border-radius: 4px; object-fit: cover; }
+.photo-uploading { font-size: 12px; color: #888; }
+.photo-err { font-size: 12px; color: var(--rail-dead); }
+.photo-progress {
+    width: 100%; height: 4px; background: var(--border);
+    border-radius: 2px; overflow: hidden; margin-top: 6px;
+}
+.photo-bar {
+    height: 100%; background: var(--rail-alive);
+    border-radius: 2px; width: 0; transition: width 0.25s ease;
+}
+
 @media (max-width: 768px) {
     main { grid-template-columns: 1fr; }
     #sidebar { display: none; }

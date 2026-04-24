@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import { pool } from './db.js';
 import authRouter from './routes/auth.js';
 import adminRouter from './routes/admin.js';
+import uploadRouter from './routes/upload.js';
 import { requireAuth } from './middleware/auth.js';
 
 dotenv.config();
@@ -54,8 +55,9 @@ async function migrate() {
 // =============================================================================
 // Routes
 // =============================================================================
-app.use('/api/auth',  authRouter);
-app.use('/api/admin', adminRouter);
+app.use('/api/auth',   authRouter);
+app.use('/api/admin',  adminRouter);
+app.use('/api/upload', uploadRouter);
 
 app.get('/api/health', async (_req, res) => {
     try {

@@ -356,13 +356,87 @@ document.getElementById('btn-drop-pin').addEventListener('click', () => {
 });
 
 // =============================================================================
-// Site submission form
+// Site submission form — photo upload
 // =============================================================================
+let sfPhotoUrl = null;
+
+function resetPhotoState() {
+    sfPhotoUrl = null;
+    document.getElementById('sf-photo-preview').innerHTML =
+        `<span>Drop an image or <button type="button" id="sf-photo-browse" class="link-btn">browse</button></span>`;
+    document.getElementById('sf-photo-progress').classList.add('hidden');
+    document.getElementById('sf-photo-bar').style.width = '0';
+    const urlRow = document.getElementById('sf-photo-url-row');
+    urlRow.classList.add('hidden');
+    const urlInput = document.getElementById('sf-photo-url');
+    if (urlInput) urlInput.value = '';
+    document.getElementById('sf-photo-file').value = '';
+}
+
+async function handlePhotoFile(file) {
+    if (!file || !file.type.startsWith('image/')) return;
+    const preview  = document.getElementById('sf-photo-preview');
+    const progress = document.getElementById('sf-photo-progress');
+    const bar      = document.getElementById('sf-photo-bar');
+    progress.classList.remove('hidden');
+    bar.style.width = '20%';
+    preview.innerHTML = `<span class="photo-uploading">Uploading…</span>`;
+    try {
+        const form = new FormData();
+        form.append('photo', file);
+        bar.style.width = '55%';
+        const res  = await fetch(`${API_BASE}/api/upload/photo`, {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${auth.token}` },
+            body: form,
+        });
+        bar.style.width = '90%';
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        sfPhotoUrl = data.url;
+        bar.style.width = '100%';
+        preview.innerHTML = `<img src="${esc(data.url)}" class="photo-thumb-preview" alt="uploaded photo">`;
+        setTimeout(() => progress.classList.add('hidden'), 600);
+    } catch (err) {
+        progress.classList.add('hidden');
+        preview.innerHTML = `<span class="photo-err">✕ ${esc(err.message)}</span>`;
+        sfPhotoUrl = null;
+    }
+}
+
+// Wire up drop zone (event delegation so we survive innerHTML resets)
+document.getElementById('sf-photo-drop').addEventListener('click', e => {
+    if (e.target.id === 'sf-photo-browse' || e.target.closest?.('#sf-photo-browse')) {
+        document.getElementById('sf-photo-file').click();
+    }
+});
+document.getElementById('sf-photo-drop').addEventListener('dragover', e => {
+    e.preventDefault();
+    document.getElementById('sf-photo-drop').classList.add('drag-over');
+});
+document.getElementById('sf-photo-drop').addEventListener('dragleave', () => {
+    document.getElementById('sf-photo-drop').classList.remove('drag-over');
+});
+document.getElementById('sf-photo-drop').addEventListener('drop', e => {
+    e.preventDefault();
+    document.getElementById('sf-photo-drop').classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file) handlePhotoFile(file);
+});
+document.getElementById('sf-photo-file').addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (file) handlePhotoFile(file);
+});
+document.getElementById('sf-photo-url-toggle').addEventListener('click', e => {
+    e.preventDefault();
+    document.getElementById('sf-photo-url-row').classList.toggle('hidden');
+});
+
 function openSiteForm() { document.getElementById('site-form').classList.remove('hidden'); }
 function closeSiteForm() {
     document.getElementById('site-form').classList.add('hidden');
     document.getElementById('sf-status-msg').textContent = '';
-    document.getElementById('sf-photo').value = '';
+    resetPhotoState();
     state.pendingPinLngLat = null;
 }
 
@@ -381,7 +455,7 @@ document.getElementById('sf-submit').addEventListener('click', async () => {
         closed_year:    parseInt(document.getElementById('sf-closed').value) || null,
         demolished_year: parseInt(document.getElementById('sf-demo').value) || null,
         description:    document.getElementById('sf-desc').value.trim() || null,
-        photo_url:      document.getElementById('sf-photo').value.trim() || null,
+        photo_url:      sfPhotoUrl || document.getElementById('sf-photo-url')?.value.trim() || null,
     };
     try {
         const res  = await authedFetch(`${API_BASE}/api/sites`, {
