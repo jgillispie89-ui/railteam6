@@ -121,14 +121,15 @@
                 <label>Description<textarea id="sf-desc" rows="3" placeholder="What do you know about this site?"></textarea></label>
                 <label>Photo</label>
                 <div id="sf-photo-drop" class="photo-drop">
-                    <input type="file" id="sf-photo-file" accept="image/*" class="photo-file-overlay">
+                    <input type="file" id="sf-photo-file" accept="image/*" class="photo-file-overlay" multiple>
                     <div id="sf-photo-preview" class="photo-preview-empty">
-                        <span>📷 Drop an image here, or click to browse</span>
+                        <span>📷 Drop images here, or click to browse</span>
                     </div>
                     <div id="sf-photo-progress" class="photo-progress hidden">
                         <div id="sf-photo-bar" class="photo-bar"></div>
                     </div>
                 </div>
+                <div id="sf-photo-grid" class="photo-grid"></div>
                 <p class="hint" style="margin:4px 0 8px 0">
                     <a href="#" id="sf-photo-url-toggle">Or paste a URL instead</a>
                 </p>

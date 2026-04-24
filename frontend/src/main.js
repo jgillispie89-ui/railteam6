@@ -358,18 +358,19 @@ document.getElementById('btn-drop-pin').addEventListener('click', () => {
 // =============================================================================
 // Site submission form — photo upload
 // =============================================================================
-let sfPhotoUrl = null;
+let sfPhotos = []; // [{url, thumb_url}]
 
-function setPhotoIdle() {
+function setDropZoneIdle() {
     document.getElementById('sf-photo-preview').innerHTML =
-        `<span>📷 Drop an image here, or click to browse</span>`;
+        `<span>📷 ${sfPhotos.length > 0 ? 'Add another image' : 'Drop images here, or click to browse'}</span>`;
     document.getElementById('sf-photo-drop').classList.remove('drag-over', 'has-photo');
     setOverlayActive(true);
 }
 
 function resetPhotoState() {
-    sfPhotoUrl = null;
-    setPhotoIdle();
+    sfPhotos = [];
+    renderPhotoGrid();
+    setDropZoneIdle();
     document.getElementById('sf-photo-progress').classList.add('hidden');
     document.getElementById('sf-photo-bar').style.width = '0';
     document.getElementById('sf-photo-url-row').classList.add('hidden');
@@ -378,17 +379,41 @@ function resetPhotoState() {
     document.getElementById('sf-photo-file').value = '';
 }
 
+function renderPhotoGrid() {
+    const grid = document.getElementById('sf-photo-grid');
+    if (!grid) return;
+    if (sfPhotos.length === 0) { grid.innerHTML = ''; return; }
+    grid.innerHTML = sfPhotos.map((p, i) => `
+        <div class="photo-grid-item">
+            <img src="${esc(p.thumb_url || p.url)}" alt="Photo ${i + 1}">
+            <button type="button" class="photo-grid-remove" data-idx="${i}" title="Remove">×</button>
+        </div>
+    `).join('');
+    grid.querySelectorAll('.photo-grid-remove').forEach(btn => {
+        btn.addEventListener('click', () => {
+            sfPhotos.splice(parseInt(btn.dataset.idx), 1);
+            renderPhotoGrid();
+            setDropZoneIdle();
+        });
+    });
+}
+
 async function handlePhotoFile(file) {
     if (!file) return;
     if (!file.type.startsWith('image/')) {
         document.getElementById('sf-photo-preview').innerHTML =
-            `<span class="photo-err">✕ Not an image — please pick a jpg, png, or webp file.</span>`;
+            `<span class="photo-err">✕ Not an image — please pick a jpg, png, or webp.</span>`;
+        return;
+    }
+    if (sfPhotos.length >= 10) {
+        document.getElementById('sf-photo-preview').innerHTML =
+            `<span class="photo-err">Maximum 10 photos per site.</span>`;
         return;
     }
     const preview  = document.getElementById('sf-photo-preview');
     const progress = document.getElementById('sf-photo-progress');
     const bar      = document.getElementById('sf-photo-bar');
-    sfPhotoUrl = null;
+    setOverlayActive(false);
     progress.classList.remove('hidden');
     bar.style.width = '15%';
     preview.innerHTML = `<span class="photo-uploading">⏳ Uploading…</span>`;
@@ -404,33 +429,20 @@ async function handlePhotoFile(file) {
         bar.style.width = '90%';
         const data = await res.json();
         if (!res.ok) throw new Error(data.error);
-        sfPhotoUrl = data.url;
         bar.style.width = '100%';
-        preview.innerHTML = `
-            <img src="${esc(data.url)}" class="photo-thumb-preview" alt="uploaded photo">
-            <span class="photo-ok">✓ Photo uploaded</span>
-            <button type="button" class="link-btn photo-remove-btn" id="sf-photo-remove">✕ Remove</button>
-        `;
-        document.getElementById('sf-photo-drop').classList.add('has-photo');
-        setOverlayActive(false); // let Remove button be clickable
-        document.getElementById('sf-photo-remove').addEventListener('click', e => {
-            e.stopPropagation();
-            resetPhotoState();
-        });
-        setTimeout(() => progress.classList.add('hidden'), 500);
+        sfPhotos.push({ url: data.url, thumb_url: data.thumb_url });
+        renderPhotoGrid();
+        setTimeout(() => {
+            progress.classList.add('hidden');
+            bar.style.width = '0';
+            document.getElementById('sf-photo-file').value = '';
+            setDropZoneIdle();
+        }, 400);
     } catch (err) {
         progress.classList.add('hidden');
         bar.style.width = '0';
-        preview.innerHTML = `
-            <span class="photo-err">✕ ${esc(err.message)}</span>
-            <button type="button" class="link-btn" id="sf-photo-retry" style="margin-top:4px">Try again</button>
-        `;
-        setOverlayActive(false); // let Try again button be clickable
-        document.getElementById('sf-photo-retry')?.addEventListener('click', e => {
-            e.stopPropagation();
-            resetPhotoState();
-        });
-        sfPhotoUrl = null;
+        preview.innerHTML = `<span class="photo-err">✕ ${esc(err.message)} — try again</span>`;
+        setOverlayActive(true);
     }
 }
 
@@ -456,13 +468,19 @@ sfDropZone.addEventListener('dragover', e => {
 sfDropZone.addEventListener('dragleave', e => {
     if (!sfDropZone.contains(e.relatedTarget)) sfDropZone.classList.remove('drag-over');
 });
-sfDropZone.addEventListener('drop', e => {
+sfDropZone.addEventListener('drop', async e => {
     e.preventDefault();
     sfDropZone.classList.remove('drag-over');
-    handlePhotoFile(e.dataTransfer.files[0]);
+    const files = Array.from(e.dataTransfer.files);
+    for (const file of files.slice(0, 10 - sfPhotos.length)) {
+        await handlePhotoFile(file);
+    }
 });
-sfFileInput.addEventListener('change', e => {
-    handlePhotoFile(e.target.files[0]);
+sfFileInput.addEventListener('change', async e => {
+    const files = Array.from(e.target.files);
+    for (const file of files.slice(0, 10 - sfPhotos.length)) {
+        await handlePhotoFile(file);
+    }
 });
 document.getElementById('sf-photo-url-toggle').addEventListener('click', e => {
     e.preventDefault();
@@ -492,7 +510,8 @@ document.getElementById('sf-submit').addEventListener('click', async () => {
         closed_year:    parseInt(document.getElementById('sf-closed').value) || null,
         demolished_year: parseInt(document.getElementById('sf-demo').value) || null,
         description:    document.getElementById('sf-desc').value.trim() || null,
-        photo_url:      sfPhotoUrl || document.getElementById('sf-photo-url')?.value.trim() || null,
+        photos:         sfPhotos.length > 0 ? sfPhotos : undefined,
+        photo_url:      sfPhotos.length === 0 ? (document.getElementById('sf-photo-url')?.value.trim() || null) : null,
     };
     try {
         const res  = await authedFetch(`${API_BASE}/api/sites`, {
@@ -657,9 +676,35 @@ function applyFilters() {
 // =============================================================================
 // Detail panel
 // =============================================================================
-function showDetail(props) {
+async function showDetail(props) {
     const panel   = document.getElementById('detail-panel');
     const content = document.getElementById('detail-content');
+    panel.classList.remove('hidden');
+    content.innerHTML = '<p class="hint" style="margin-top:0">Loading…</p>';
+
+    let sitePhotos = [];
+    try {
+        const res = await fetch(`${API_BASE}/api/sites/${props.id}`);
+        if (res.ok) {
+            const detail = await res.json();
+            sitePhotos = detail.site_photos || [];
+        }
+    } catch (_) {}
+
+    // Fallback: use photo_url from feature props if no site_photos rows yet
+    if (sitePhotos.length === 0 && props.photo_url) {
+        sitePhotos = [{ url: props.photo_url, thumb_url: null }];
+    }
+
+    let photosHtml = '';
+    if (sitePhotos.length === 1) {
+        photosHtml = `<img src="${esc(sitePhotos[0].url)}" class="site-photo" alt="${esc(props.name)}">`;
+    } else if (sitePhotos.length > 1) {
+        photosHtml = `<div class="photo-gallery">${sitePhotos.map((p, i) =>
+            `<img src="${esc(p.thumb_url || p.url)}" class="gallery-thumb" alt="${esc(props.name)} photo ${i + 1}">`
+        ).join('')}</div>`;
+    }
+
     const railroads = typeof props.railroads === 'string' ? JSON.parse(props.railroads) : (props.railroads || []);
     const dates = [];
     if (props.built_year)      dates.push(`Built ${props.built_year}`);
@@ -667,7 +712,7 @@ function showDetail(props) {
     if (props.demolished_year) dates.push(`Demolished ${props.demolished_year}`);
     const canDelete = auth.user && (auth.user.role === 'admin' || auth.user.id === props.submitted_by);
     content.innerHTML = `
-        ${props.photo_url ? `<img src="${esc(props.photo_url)}" class="site-photo" alt="${esc(props.name)}">` : ''}
+        ${photosHtml}
         <h3>${esc(props.name)}</h3>
         <div class="meta">${esc(prettyType(props.site_type))}${props.city ? ' · ' + esc(props.city) + ', ' + esc(props.state || '') : ''}</div>
         <div>
@@ -691,7 +736,6 @@ function showDetail(props) {
             }
         });
     }
-    panel.classList.remove('hidden');
 }
 
 document.getElementById('close-detail').addEventListener('click', () => {

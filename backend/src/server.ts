@@ -50,6 +50,16 @@ async function migrate() {
             ADD COLUMN IF NOT EXISTS mod_note     TEXT,
             ADD COLUMN IF NOT EXISTS photo_url    TEXT
     `);
+
+    await pool.query(`
+        CREATE TABLE IF NOT EXISTS site_photos (
+            id         SERIAL PRIMARY KEY,
+            site_id    UUID NOT NULL REFERENCES sites(id) ON DELETE CASCADE,
+            url        TEXT NOT NULL,
+            thumb_url  TEXT,
+            sort_order INT  NOT NULL DEFAULT 0
+        )
+    `);
 }
 
 // =============================================================================
@@ -167,10 +177,14 @@ app.get('/api/sites/:id', async (req, res) => {
         const { rows: photos } = await pool.query(
             `SELECT * FROM photos WHERE site_id = $1 ORDER BY taken_year NULLS LAST`, [req.params.id]
         );
+        const { rows: sitePhotos } = await pool.query(
+            `SELECT url, thumb_url, sort_order FROM site_photos WHERE site_id = $1 ORDER BY sort_order`,
+            [req.params.id]
+        );
         const { rows: sources } = await pool.query(
             `SELECT * FROM sources WHERE site_id = $1`, [req.params.id]
         );
-        res.json({ ...site, railroads, photos, sources });
+        res.json({ ...site, railroads, photos, site_photos: sitePhotos, sources });
     } catch (err) {
         res.status(500).json({ error: (err as Error).message });
     }
@@ -309,9 +323,16 @@ app.post('/api/sites', requireAuth, async (req, res) => {
         if (!user.verified)
             return res.status(403).json({ error: 'Verify your email before submitting sites' });
 
-        const { name, site_type, status, lng, lat, built_year, closed_year, demolished_year, city, state_province, description, photo_url } = req.body;
+        const { name, site_type, status, lng, lat, built_year, closed_year, demolished_year, city, state_province, description, photo_url, photos } = req.body;
         if (!name || !site_type || !status || lng == null || lat == null)
             return res.status(400).json({ error: 'name, site_type, status, lng, lat are required' });
+
+        // Normalise to a list of {url, thumb_url} — support both the new photos[] array and the legacy single photo_url
+        const photoList: { url: string; thumb_url?: string }[] =
+            Array.isArray(photos) && photos.length > 0
+                ? photos.filter((p: any) => typeof p?.url === 'string')
+                : photo_url ? [{ url: photo_url }] : [];
+        const primaryPhotoUrl = photoList[0]?.url || null;
 
         const mod_status = (user.role === 'admin' || user.role === 'trusted') ? 'approved' : 'pending';
         const { rows } = await pool.query(
@@ -321,8 +342,18 @@ app.post('/api/sites', requireAuth, async (req, res) => {
              RETURNING id, name, site_type, status, mod_status`,
             [name, site_type, status, lng, lat, built_year || null, closed_year || null,
              demolished_year || null, city || null, state_province || null, description || null,
-             photo_url || null, mod_status, user.id]
+             primaryPhotoUrl, mod_status, user.id]
         );
+
+        if (photoList.length > 0) {
+            await Promise.all(photoList.map((p, i) =>
+                pool.query(
+                    `INSERT INTO site_photos (site_id, url, thumb_url, sort_order) VALUES ($1, $2, $3, $4)`,
+                    [rows[0].id, p.url, p.thumb_url || null, i]
+                )
+            ));
+        }
+
         res.status(201).json(rows[0]);
     } catch (err) {
         res.status(500).json({ error: (err as Error).message });
