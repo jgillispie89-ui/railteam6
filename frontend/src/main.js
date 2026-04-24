@@ -360,31 +360,41 @@ document.getElementById('btn-drop-pin').addEventListener('click', () => {
 // =============================================================================
 let sfPhotoUrl = null;
 
+function setPhotoIdle() {
+    document.getElementById('sf-photo-preview').innerHTML =
+        `<span>📷 Drop an image here, or click to browse</span>`;
+    document.getElementById('sf-photo-drop').classList.remove('drag-over', 'has-photo');
+}
+
 function resetPhotoState() {
     sfPhotoUrl = null;
-    document.getElementById('sf-photo-preview').innerHTML =
-        `<span>Drop an image or <button type="button" id="sf-photo-browse" class="link-btn">browse</button></span>`;
+    setPhotoIdle();
     document.getElementById('sf-photo-progress').classList.add('hidden');
     document.getElementById('sf-photo-bar').style.width = '0';
-    const urlRow = document.getElementById('sf-photo-url-row');
-    urlRow.classList.add('hidden');
+    document.getElementById('sf-photo-url-row').classList.add('hidden');
     const urlInput = document.getElementById('sf-photo-url');
     if (urlInput) urlInput.value = '';
     document.getElementById('sf-photo-file').value = '';
 }
 
 async function handlePhotoFile(file) {
-    if (!file || !file.type.startsWith('image/')) return;
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+        document.getElementById('sf-photo-preview').innerHTML =
+            `<span class="photo-err">✕ Not an image — please pick a jpg, png, or webp file.</span>`;
+        return;
+    }
     const preview  = document.getElementById('sf-photo-preview');
     const progress = document.getElementById('sf-photo-progress');
     const bar      = document.getElementById('sf-photo-bar');
+    sfPhotoUrl = null;
     progress.classList.remove('hidden');
-    bar.style.width = '20%';
-    preview.innerHTML = `<span class="photo-uploading">Uploading…</span>`;
+    bar.style.width = '15%';
+    preview.innerHTML = `<span class="photo-uploading">⏳ Uploading…</span>`;
     try {
         const form = new FormData();
         form.append('photo', file);
-        bar.style.width = '55%';
+        bar.style.width = '50%';
         const res  = await fetch(`${API_BASE}/api/upload/photo`, {
             method: 'POST',
             headers: { Authorization: `Bearer ${auth.token}` },
@@ -395,37 +405,58 @@ async function handlePhotoFile(file) {
         if (!res.ok) throw new Error(data.error);
         sfPhotoUrl = data.url;
         bar.style.width = '100%';
-        preview.innerHTML = `<img src="${esc(data.url)}" class="photo-thumb-preview" alt="uploaded photo">`;
-        setTimeout(() => progress.classList.add('hidden'), 600);
+        preview.innerHTML = `
+            <img src="${esc(data.url)}" class="photo-thumb-preview" alt="uploaded photo">
+            <span class="photo-ok">✓ Photo uploaded</span>
+            <button type="button" class="link-btn photo-remove-btn" id="sf-photo-remove">✕ Remove</button>
+        `;
+        document.getElementById('sf-photo-drop').classList.add('has-photo');
+        document.getElementById('sf-photo-remove').addEventListener('click', e => {
+            e.stopPropagation();
+            resetPhotoState();
+        });
+        setTimeout(() => progress.classList.add('hidden'), 500);
     } catch (err) {
         progress.classList.add('hidden');
-        preview.innerHTML = `<span class="photo-err">✕ ${esc(err.message)}</span>`;
+        bar.style.width = '0';
+        preview.innerHTML = `
+            <span class="photo-err">✕ ${esc(err.message)}</span>
+            <button type="button" class="link-btn" id="sf-photo-retry" style="margin-top:4px">Try again</button>
+        `;
+        document.getElementById('sf-photo-retry')?.addEventListener('click', e => {
+            e.stopPropagation();
+            resetPhotoState();
+        });
         sfPhotoUrl = null;
     }
 }
 
-// Wire up drop zone (event delegation so we survive innerHTML resets)
-document.getElementById('sf-photo-drop').addEventListener('click', e => {
-    if (e.target.id === 'sf-photo-browse' || e.target.closest?.('#sf-photo-browse')) {
-        document.getElementById('sf-photo-file').click();
-    }
+// Drop zone — clicking anywhere opens the picker (unless photo already loaded)
+const sfDropZone = document.getElementById('sf-photo-drop');
+sfDropZone.addEventListener('click', e => {
+    if (e.target.id === 'sf-photo-remove' || e.target.id === 'sf-photo-retry') return;
+    if (sfPhotoUrl) return; // already uploaded; let user click Remove instead
+    document.getElementById('sf-photo-file').click();
 });
-document.getElementById('sf-photo-drop').addEventListener('dragover', e => {
+sfDropZone.addEventListener('dragenter', e => {
     e.preventDefault();
-    document.getElementById('sf-photo-drop').classList.add('drag-over');
+    sfDropZone.classList.add('drag-over');
 });
-document.getElementById('sf-photo-drop').addEventListener('dragleave', () => {
-    document.getElementById('sf-photo-drop').classList.remove('drag-over');
-});
-document.getElementById('sf-photo-drop').addEventListener('drop', e => {
+sfDropZone.addEventListener('dragover', e => {
     e.preventDefault();
-    document.getElementById('sf-photo-drop').classList.remove('drag-over');
-    const file = e.dataTransfer.files[0];
-    if (file) handlePhotoFile(file);
+    sfDropZone.classList.add('drag-over');
+});
+sfDropZone.addEventListener('dragleave', e => {
+    // only remove highlight when leaving the zone itself, not a child element
+    if (!sfDropZone.contains(e.relatedTarget)) sfDropZone.classList.remove('drag-over');
+});
+sfDropZone.addEventListener('drop', e => {
+    e.preventDefault();
+    sfDropZone.classList.remove('drag-over');
+    handlePhotoFile(e.dataTransfer.files[0]);
 });
 document.getElementById('sf-photo-file').addEventListener('change', e => {
-    const file = e.target.files[0];
-    if (file) handlePhotoFile(file);
+    handlePhotoFile(e.target.files[0]);
 });
 document.getElementById('sf-photo-url-toggle').addEventListener('click', e => {
     e.preventDefault();
