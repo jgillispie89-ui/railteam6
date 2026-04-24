@@ -46,7 +46,8 @@ async function migrate() {
         ALTER TABLE sites
             ADD COLUMN IF NOT EXISTS mod_status   VARCHAR(20) NOT NULL DEFAULT 'approved',
             ADD COLUMN IF NOT EXISTS submitted_by UUID REFERENCES users(id),
-            ADD COLUMN IF NOT EXISTS mod_note     TEXT
+            ADD COLUMN IF NOT EXISTS mod_note     TEXT,
+            ADD COLUMN IF NOT EXISTS photo_url    TEXT
     `);
 }
 
@@ -114,7 +115,7 @@ app.get('/api/sites', async (req, res) => {
         const sql = `
             SELECT s.id, s.name, s.site_type, s.status,
                    s.built_year, s.closed_year, s.demolished_year,
-                   s.city, s.state_province, s.country, s.description,
+                   s.city, s.state_province, s.country, s.description, s.photo_url,
                    ST_AsGeoJSON(s.geom)::json AS geometry,
                    COALESCE(array_agg(DISTINCT r.name) FILTER (WHERE r.name IS NOT NULL), '{}') AS railroads
             FROM sites s
@@ -135,6 +136,7 @@ app.get('/api/sites', async (req, res) => {
                     demolished_year: r.demolished_year, city: r.city,
                     state: r.state_province, country: r.country,
                     description: r.description, railroads: r.railroads,
+                    photo_url: r.photo_url,
                 },
             })),
         });
@@ -304,19 +306,19 @@ app.post('/api/sites', requireAuth, async (req, res) => {
         if (!user.verified)
             return res.status(403).json({ error: 'Verify your email before submitting sites' });
 
-        const { name, site_type, status, lng, lat, built_year, closed_year, demolished_year, city, state_province, description } = req.body;
+        const { name, site_type, status, lng, lat, built_year, closed_year, demolished_year, city, state_province, description, photo_url } = req.body;
         if (!name || !site_type || !status || lng == null || lat == null)
             return res.status(400).json({ error: 'name, site_type, status, lng, lat are required' });
 
         const mod_status = (user.role === 'admin' || user.role === 'trusted') ? 'approved' : 'pending';
         const { rows } = await pool.query(
             `INSERT INTO sites (name, site_type, status, geom, built_year, closed_year, demolished_year,
-                                city, state_province, description, mod_status, submitted_by)
-             VALUES ($1, $2, $3, ST_SetSRID(ST_MakePoint($4, $5), 4326), $6, $7, $8, $9, $10, $11, $12, $13)
+                                city, state_province, description, photo_url, mod_status, submitted_by)
+             VALUES ($1, $2, $3, ST_SetSRID(ST_MakePoint($4, $5), 4326), $6, $7, $8, $9, $10, $11, $12, $13, $14)
              RETURNING id, name, site_type, status, mod_status`,
             [name, site_type, status, lng, lat, built_year || null, closed_year || null,
              demolished_year || null, city || null, state_province || null, description || null,
-             mod_status, user.id]
+             photo_url || null, mod_status, user.id]
         );
         res.status(201).json(rows[0]);
     } catch (err) {

@@ -362,6 +362,7 @@ function openSiteForm() { document.getElementById('site-form').classList.remove(
 function closeSiteForm() {
     document.getElementById('site-form').classList.add('hidden');
     document.getElementById('sf-status-msg').textContent = '';
+    document.getElementById('sf-photo').value = '';
     state.pendingPinLngLat = null;
 }
 
@@ -380,14 +381,20 @@ document.getElementById('sf-submit').addEventListener('click', async () => {
         closed_year:    parseInt(document.getElementById('sf-closed').value) || null,
         demolished_year: parseInt(document.getElementById('sf-demo').value) || null,
         description:    document.getElementById('sf-desc').value.trim() || null,
+        photo_url:      document.getElementById('sf-photo').value.trim() || null,
     };
     try {
-        const res = await authedFetch(`${API_BASE}/api/sites`, {
+        const res  = await authedFetch(`${API_BASE}/api/sites`, {
             method: 'POST', body: JSON.stringify(body),
         });
-        if (!res.ok) throw new Error((await res.json()).error);
-        msg.textContent = '✓ Submitted for review! It will appear on the map once approved.';
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        const live = data.mod_status === 'approved';
+        msg.textContent = live
+            ? '✓ Published! Your site is now live on the map.'
+            : '✓ Submitted for review! It will appear once approved.';
         msg.className   = 'form-status ok';
+        if (live) { loadData(); }
         setTimeout(closeSiteForm, 2500);
     } catch (err) {
         msg.textContent = '✕ ' + err.message;
@@ -548,6 +555,7 @@ function showDetail(props) {
     if (props.closed_year)     dates.push(`Closed ${props.closed_year}`);
     if (props.demolished_year) dates.push(`Demolished ${props.demolished_year}`);
     content.innerHTML = `
+        ${props.photo_url ? `<img src="${esc(props.photo_url)}" class="site-photo" alt="${esc(props.name)}">` : ''}
         <h3>${esc(props.name)}</h3>
         <div class="meta">${esc(prettyType(props.site_type))}${props.city ? ' · ' + esc(props.city) + ', ' + esc(props.state || '') : ''}</div>
         <div>
