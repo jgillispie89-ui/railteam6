@@ -585,6 +585,7 @@ async function loadData() {
         addOrUpdateSource('sites', sites);
         addOrUpdateSource('lines', lines);
         applyFilters();
+        maybeHideMapNotice(sites.features?.length ?? 0);
     } catch (err) {
         console.warn('Backend unreachable:', err);
         useFallbackData();
@@ -862,6 +863,24 @@ function useFallbackData() {
 function makeSite(name, site_type, status, lng, lat, built, closed, demo, desc) {
     return { type: 'Feature', geometry: { type: 'Point', coordinates: [lng, lat] },
              properties: { name, site_type, status, built_year: built, closed_year: closed, demolished_year: demo, description: desc, railroads: [] } };
+}
+
+// =============================================================================
+// Map notice
+// =============================================================================
+(function initMapNotice() {
+    if (!localStorage.getItem('ir_notice_dismissed')) {
+        document.getElementById('map-notice')?.classList.remove('hidden');
+    }
+})();
+
+document.getElementById('map-notice-close')?.addEventListener('click', () => {
+    document.getElementById('map-notice').classList.add('hidden');
+    localStorage.setItem('ir_notice_dismissed', '1');
+});
+
+function maybeHideMapNotice(featureCount) {
+    if (featureCount >= 50) document.getElementById('map-notice')?.classList.add('hidden');
 }
 
 // =============================================================================
