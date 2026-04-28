@@ -677,72 +677,294 @@ function applyFilters() {
 // =============================================================================
 // Detail panel
 // =============================================================================
+let currentDetail = null;
+let currentProps  = null;
+let editPhotos    = [];
+
 async function showDetail(props) {
     const panel   = document.getElementById('detail-panel');
     const content = document.getElementById('detail-content');
     panel.classList.remove('hidden');
     content.innerHTML = '<p class="hint" style="margin-top:0">Loading…</p>';
 
+    let detail    = null;
     let sitePhotos = [];
     try {
         const res = await fetch(`${API_BASE}/api/sites/${props.id}`);
         if (res.ok) {
-            const detail = await res.json();
+            detail     = await res.json();
             sitePhotos = detail.site_photos || [];
         }
     } catch (_) {}
 
-    // Fallback: use photo_url from feature props if no site_photos rows yet
+    currentDetail = detail;
+    currentProps  = props;
+
+    // Use fresh detail values; fall back to GeoJSON props if fetch failed
+    const d             = detail || {};
+    const name          = d.name          ?? props.name;
+    const siteType      = d.site_type     ?? props.site_type;
+    const status        = d.status        ?? props.status;
+    const city          = d.city          != null ? d.city          : props.city;
+    const stateVal      = d.state_province != null ? d.state_province : props.state;
+    const builtYear     = d.built_year    != null ? d.built_year    : props.built_year;
+    const closedYear    = d.closed_year   != null ? d.closed_year   : props.closed_year;
+    const demolishedYear = d.demolished_year != null ? d.demolished_year : props.demolished_year;
+    const description   = d.description  != null ? d.description   : props.description;
+    const submittedBy   = d.submitted_by  != null ? d.submitted_by  : props.submitted_by;
+    const updatedAt     = d.updated_at;
+
     if (sitePhotos.length === 0 && props.photo_url) {
         sitePhotos = [{ url: props.photo_url, thumb_url: null }];
     }
 
     let photosHtml = '';
     if (sitePhotos.length === 1) {
-        photosHtml = `<img src="${esc(sitePhotos[0].url)}" class="site-photo" alt="${esc(props.name)}">`;
+        photosHtml = `<img src="${esc(sitePhotos[0].url)}" class="site-photo" alt="${esc(name)}">`;
     } else if (sitePhotos.length > 1) {
         photosHtml = `<div class="photo-gallery">${sitePhotos.map((p, i) =>
-            `<img src="${esc(p.thumb_url || p.url)}" class="gallery-thumb" alt="${esc(props.name)} photo ${i + 1}">`
+            `<img src="${esc(p.thumb_url || p.url)}" class="gallery-thumb" alt="${esc(name)} photo ${i + 1}">`
         ).join('')}</div>`;
     }
 
     const railroads = typeof props.railroads === 'string' ? JSON.parse(props.railroads) : (props.railroads || []);
     const dates = [];
-    if (props.built_year)      dates.push(`Built ${props.built_year}`);
-    if (props.closed_year)     dates.push(`Closed ${props.closed_year}`);
-    if (props.demolished_year) dates.push(`Demolished ${props.demolished_year}`);
-    const canDelete = auth.user && (auth.user.role === 'admin' || auth.user.id === props.submitted_by);
+    if (builtYear)       dates.push(`Built ${builtYear}`);
+    if (closedYear)      dates.push(`Closed ${closedYear}`);
+    if (demolishedYear)  dates.push(`Demolished ${demolishedYear}`);
+
+    const canAct = auth.user && (auth.user.role === 'admin' || auth.user.id === submittedBy);
+
     content.innerHTML = `
         ${photosHtml}
-        <h3>${esc(props.name)}</h3>
-        <div class="meta">${esc(prettyType(props.site_type))}${props.city ? ' · ' + esc(props.city) + ', ' + esc(props.state || '') : ''}</div>
+        <h3>${esc(name)}</h3>
+        <div class="meta">${esc(prettyType(siteType))}${city ? ' · ' + esc(city) + ', ' + esc(stateVal || '') : ''}</div>
         <div>
-            <span class="tag tag-${props.status}">${esc(prettyStatus(props.status))}</span>
+            <span class="tag tag-${status}">${esc(prettyStatus(status))}</span>
             ${railroads.map(r => `<span class="tag">${esc(r)}</span>`).join('')}
         </div>
-        <p>${esc(props.description || 'No description yet.')}</p>
+        <p>${esc(description || 'No description yet.')}</p>
         ${dates.length ? `<div class="dates">${dates.join(' · ')}</div>` : ''}
-        ${canDelete ? `<button class="btn-delete-site" data-id="${esc(props.id)}">Delete site</button>` : ''}
+        ${canAct ? `
+            <button class="btn-edit-site"   id="btn-edit-site">Edit</button>
+            <button class="btn-delete-site" data-id="${esc(props.id)}">Delete site</button>
+        ` : ''}
+        ${updatedAt ? `<div class="last-edited">Last edited: ${formatDate(updatedAt)}</div>` : ''}
     `;
-    // Photo click → lightbox
+
     const singlePhoto = content.querySelector('.site-photo');
     if (singlePhoto) singlePhoto.addEventListener('click', () => openLightbox(sitePhotos, 0));
     content.querySelectorAll('.gallery-thumb').forEach((img, i) => {
         img.addEventListener('click', () => openLightbox(sitePhotos, i));
     });
 
-    if (canDelete) {
-        content.querySelector('.btn-delete-site')?.addEventListener('click', async e => {
-            if (!confirm(`Delete "${props.name}"? This cannot be undone.`)) return;
+    document.getElementById('btn-edit-site')?.addEventListener('click', () => {
+        renderEditForm(detail || { id: props.id, name, site_type: siteType, status, city, state_province: stateVal, built_year: builtYear, closed_year: closedYear, demolished_year: demolishedYear, description });
+    });
+
+    if (canAct) {
+        content.querySelector('.btn-delete-site')?.addEventListener('click', async () => {
+            if (!confirm(`Delete "${name}"? This cannot be undone.`)) return;
             const res = await authedFetch(`${API_BASE}/api/sites/${props.id}`, { method: 'DELETE' });
             if (res.ok) {
                 document.getElementById('detail-panel').classList.add('hidden');
                 loadData();
             } else {
-                const d = await res.json();
-                alert('Delete failed: ' + d.error);
+                const d2 = await res.json();
+                alert('Delete failed: ' + d2.error);
             }
         });
+    }
+}
+
+// =============================================================================
+// Edit mode
+// =============================================================================
+function formatDate(iso) {
+    try { return new Date(iso).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }); }
+    catch { return ''; }
+}
+
+function renderEditForm(detail) {
+    const content = document.getElementById('detail-content');
+    const coords  = detail.geometry?.coordinates || [];
+    const lng     = coords[0] ?? '';
+    const lat     = coords[1] ?? '';
+    editPhotos    = [];
+
+    const typeOpts = [
+        ['depot','Depot'],['freight_house','Freight house'],['bridge','Bridge'],
+        ['trestle','Trestle'],['tunnel','Tunnel'],['yard','Yard'],
+        ['roundhouse','Roundhouse'],['other','Other'],
+    ];
+    const statusOpts = [
+        ['active','Active'],['preserved','Preserved'],['abandoned','Abandoned'],
+        ['ruins','Ruins'],['destroyed','Destroyed'],
+    ];
+    const mkOpts = (opts, cur) => opts.map(([v, l]) =>
+        `<option value="${v}"${v === cur ? ' selected' : ''}>${l}</option>`).join('');
+
+    content.innerHTML = `
+        <div class="edit-form">
+            <h3 style="margin:0 0 14px 0">Edit Site</h3>
+            <label>Name<input type="text" id="ef-name" value="${esc(detail.name || '')}"></label>
+            <label>Type<select id="ef-type">${mkOpts(typeOpts, detail.site_type)}</select></label>
+            <label>Status<select id="ef-status">${mkOpts(statusOpts, detail.status)}</select></label>
+            <label>City<input type="text" id="ef-city" value="${esc(detail.city || '')}"></label>
+            <label>State<input type="text" id="ef-state" value="${esc(detail.state_province || '')}" maxlength="2"></label>
+            <label>Latitude<input type="number" id="ef-lat" step="any" value="${lat}"></label>
+            <label>Longitude<input type="number" id="ef-lng" step="any" value="${lng}"></label>
+            <label>Year built<input type="number" id="ef-built" value="${detail.built_year || ''}"></label>
+            <label>Year closed<input type="number" id="ef-closed" value="${detail.closed_year || ''}"></label>
+            <label>Year demolished<input type="number" id="ef-demo" value="${detail.demolished_year || ''}"></label>
+            <label>Description<textarea id="ef-desc" rows="3">${esc(detail.description || '')}</textarea></label>
+            <p style="font-size:12px;font-weight:600;color:#555;margin:0 0 4px 0">Add Photos</p>
+            <div id="ef-photo-drop" class="photo-drop">
+                <input type="file" id="ef-photo-file" accept="image/*" class="photo-file-overlay" multiple>
+                <div id="ef-photo-preview" class="photo-preview-empty">
+                    <span>📷 Drop images here, or click to browse</span>
+                </div>
+                <div id="ef-photo-progress" class="photo-progress hidden">
+                    <div id="ef-photo-bar" class="photo-bar"></div>
+                </div>
+            </div>
+            <div id="ef-photo-grid" class="photo-grid"></div>
+            <div class="form-btns">
+                <button class="btn-secondary" id="ef-cancel">Cancel</button>
+                <button class="btn-primary"   id="ef-save">Save Changes</button>
+            </div>
+            <p id="ef-status-msg" class="form-status"></p>
+        </div>
+    `;
+
+    wireEditPhotoUpload();
+    document.getElementById('ef-cancel').addEventListener('click', () => showDetail(currentProps));
+    document.getElementById('ef-save').addEventListener('click',   () => saveEdit(detail.id));
+}
+
+function wireEditPhotoUpload() {
+    const dropZone  = document.getElementById('ef-photo-drop');
+    const fileInput = document.getElementById('ef-photo-file');
+    if (!dropZone || !fileInput) return;
+    dropZone.addEventListener('dragenter', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+    dropZone.addEventListener('dragover',  e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+    dropZone.addEventListener('dragleave', e => {
+        if (!dropZone.contains(e.relatedTarget)) dropZone.classList.remove('drag-over');
+    });
+    dropZone.addEventListener('drop', async e => {
+        e.preventDefault();
+        dropZone.classList.remove('drag-over');
+        for (const file of Array.from(e.dataTransfer.files).slice(0, 10 - editPhotos.length)) {
+            await handleEditPhotoFile(file);
+        }
+    });
+    fileInput.addEventListener('change', async e => {
+        for (const file of Array.from(e.target.files).slice(0, 10 - editPhotos.length)) {
+            await handleEditPhotoFile(file);
+        }
+    });
+}
+
+async function handleEditPhotoFile(file) {
+    if (!file?.type.startsWith('image/')) return;
+    const preview  = document.getElementById('ef-photo-preview');
+    const progress = document.getElementById('ef-photo-progress');
+    const bar      = document.getElementById('ef-photo-bar');
+    if (!preview || !progress || !bar) return;
+    progress.classList.remove('hidden');
+    bar.style.width = '15%';
+    preview.innerHTML = `<span class="photo-uploading">⏳ Uploading…</span>`;
+    try {
+        const form = new FormData();
+        form.append('photo', file);
+        bar.style.width = '50%';
+        const res  = await fetch(`${API_BASE}/api/upload/photo`, {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${auth.token}` },
+            body: form,
+        });
+        bar.style.width = '90%';
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        bar.style.width = '100%';
+        editPhotos.push({ url: data.url, thumb_url: data.thumb_url });
+        renderEditPhotoGrid();
+        setTimeout(() => {
+            progress.classList.add('hidden');
+            bar.style.width = '0';
+            const fi   = document.getElementById('ef-photo-file');
+            const prev = document.getElementById('ef-photo-preview');
+            if (fi)   fi.value = '';
+            if (prev) prev.innerHTML = `<span>📷 ${editPhotos.length > 0 ? 'Add another image' : 'Drop images here, or click to browse'}</span>`;
+        }, 400);
+    } catch (err) {
+        progress.classList.add('hidden');
+        bar.style.width = '0';
+        preview.innerHTML = `<span class="photo-err">✕ ${esc(err.message)}</span>`;
+    }
+}
+
+function renderEditPhotoGrid() {
+    const grid = document.getElementById('ef-photo-grid');
+    if (!grid) return;
+    if (editPhotos.length === 0) { grid.innerHTML = ''; return; }
+    grid.innerHTML = editPhotos.map((p, i) => `
+        <div class="photo-grid-item">
+            <img src="${esc(p.thumb_url || p.url)}" alt="New photo ${i + 1}">
+            <button type="button" class="photo-grid-remove" data-idx="${i}" title="Remove">×</button>
+        </div>
+    `).join('');
+    grid.querySelectorAll('.photo-grid-remove').forEach(btn => {
+        btn.addEventListener('click', () => {
+            editPhotos.splice(parseInt(btn.dataset.idx), 1);
+            renderEditPhotoGrid();
+        });
+    });
+}
+
+async function saveEdit(siteId) {
+    const msg      = document.getElementById('ef-status-msg');
+    const name     = document.getElementById('ef-name').value.trim();
+    const siteType = document.getElementById('ef-type').value;
+    const status   = document.getElementById('ef-status').value;
+    const latVal   = parseFloat(document.getElementById('ef-lat').value);
+    const lngVal   = parseFloat(document.getElementById('ef-lng').value);
+
+    if (!name || !siteType || !status) {
+        msg.textContent = '✕ Name, type, and status are required.';
+        msg.className   = 'form-status err';
+        return;
+    }
+    msg.textContent = 'Saving…';
+    msg.className   = 'form-status';
+
+    try {
+        const res = await authedFetch(`${API_BASE}/api/sites/${siteId}`, {
+            method: 'PATCH',
+            body: JSON.stringify({
+                name,
+                site_type:       siteType,
+                status,
+                lat:             Number.isFinite(latVal) ? latVal : null,
+                lng:             Number.isFinite(lngVal) ? lngVal : null,
+                city:            document.getElementById('ef-city').value.trim()   || null,
+                state_province:  document.getElementById('ef-state').value.trim().toUpperCase() || null,
+                built_year:      parseInt(document.getElementById('ef-built').value)   || null,
+                closed_year:     parseInt(document.getElementById('ef-closed').value)  || null,
+                demolished_year: parseInt(document.getElementById('ef-demo').value)    || null,
+                description:     document.getElementById('ef-desc').value.trim()   || null,
+                photos:          editPhotos.length > 0 ? editPhotos : undefined,
+            }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        msg.textContent = '✓ Saved!';
+        msg.className   = 'form-status ok';
+        await loadData();
+        setTimeout(() => showDetail(currentProps), 800);
+    } catch (err) {
+        msg.textContent = '✕ ' + err.message;
+        msg.className   = 'form-status err';
     }
 }
 

@@ -48,7 +48,8 @@ async function migrate() {
             ADD COLUMN IF NOT EXISTS mod_status   VARCHAR(20) NOT NULL DEFAULT 'approved',
             ADD COLUMN IF NOT EXISTS submitted_by UUID REFERENCES users(id),
             ADD COLUMN IF NOT EXISTS mod_note     TEXT,
-            ADD COLUMN IF NOT EXISTS photo_url    TEXT
+            ADD COLUMN IF NOT EXISTS photo_url    TEXT,
+            ADD COLUMN IF NOT EXISTS updated_at   TIMESTAMPTZ
     `);
 
     await pool.query(`
@@ -355,6 +356,68 @@ app.post('/api/sites', requireAuth, async (req, res) => {
         }
 
         res.status(201).json(rows[0]);
+    } catch (err) {
+        res.status(500).json({ error: (err as Error).message });
+    }
+});
+
+// =============================================================================
+// PATCH /api/sites/:id — admin or original submitter only; goes live immediately
+// =============================================================================
+app.patch('/api/sites/:id', requireAuth, async (req, res) => {
+    try {
+        const user = (req as any).user;
+        const { rows: existing } = await pool.query(
+            `SELECT submitted_by FROM sites WHERE id = $1`, [req.params.id]
+        );
+        if (!existing.length) return res.status(404).json({ error: 'Not found' });
+        if (user.role !== 'admin' && existing[0].submitted_by !== user.id)
+            return res.status(403).json({ error: 'Not authorized to edit this site' });
+
+        const { name, site_type, status, lng, lat, built_year, closed_year, demolished_year, city, state_province, description, photos } = req.body;
+        if (!name || !site_type || !status)
+            return res.status(400).json({ error: 'name, site_type, and status are required' });
+
+        const hasCoords = lng != null && lat != null && Number.isFinite(+lng) && Number.isFinite(+lat);
+        const params: any[] = [
+            name, site_type, status,
+            built_year || null, closed_year || null, demolished_year || null,
+            city || null, state_province || null, description || null,
+        ];
+        if (hasCoords) { params.push(+lng, +lat); }
+        params.push(req.params.id);
+        const idIdx = params.length;
+
+        const { rows } = await pool.query(
+            `UPDATE sites SET
+                name=$1, site_type=$2, status=$3,
+                built_year=$4, closed_year=$5, demolished_year=$6,
+                city=$7, state_province=$8, description=$9,
+                updated_at=NOW()
+                ${hasCoords ? `, geom=ST_SetSRID(ST_MakePoint($10,$11),4326)` : ''}
+             WHERE id=$${idIdx}
+             RETURNING id, name, site_type, status, built_year, closed_year, demolished_year,
+                       city, state_province, description, updated_at`,
+            params
+        );
+
+        if (Array.isArray(photos) && photos.length > 0) {
+            const { rows: ex } = await pool.query(
+                `SELECT COALESCE(MAX(sort_order), -1) AS mx FROM site_photos WHERE site_id=$1`,
+                [req.params.id]
+            );
+            const start = (ex[0]?.mx ?? -1) + 1;
+            await Promise.all(
+                photos.filter((p: any) => typeof p?.url === 'string').map((p: any, i: number) =>
+                    pool.query(
+                        `INSERT INTO site_photos (site_id, url, thumb_url, sort_order) VALUES ($1,$2,$3,$4)`,
+                        [req.params.id, p.url, p.thumb_url || null, start + i]
+                    )
+                )
+            );
+        }
+
+        res.json(rows[0]);
     } catch (err) {
         res.status(500).json({ error: (err as Error).message });
     }
