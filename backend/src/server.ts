@@ -53,6 +53,8 @@ async function migrate() {
     `);
 
     await pool.query(`ALTER TYPE site_status ADD VALUE IF NOT EXISTS 'daylighted'`);
+    await pool.query(`ALTER TYPE site_status ADD VALUE IF NOT EXISTS 'daylighted_active'`);
+    await pool.query(`ALTER TYPE site_status ADD VALUE IF NOT EXISTS 'daylighted_inactive'`);
 
     await pool.query(`
         CREATE TABLE IF NOT EXISTS site_photos (

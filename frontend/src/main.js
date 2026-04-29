@@ -261,7 +261,7 @@ const state = {
     year: 2026,
     lineStatuses: new Set(['active', 'abandoned', 'destroyed', 'rail_trail']),
     siteTypes: new Set(['depot','freight_house','bridge','trestle','tunnel','yard','roundhouse']),
-    siteStatuses: new Set(['active','preserved','abandoned','ruins','destroyed','daylighted']),
+    siteStatuses: new Set(['active','preserved','abandoned','ruins','destroyed','daylighted_active','daylighted_inactive']),
     overlayOpacity: 0,
     historicMaps: [],
     activeMapId: null,
@@ -630,6 +630,7 @@ function addLayers() {
             'circle-color': ['match', ['get', 'status'],
                 'active', '#0F6E56', 'preserved', '#1D9E75',
                 'abandoned', '#BA7517', 'ruins', '#854F0B', 'destroyed', '#A32D2D',
+                'daylighted_active', '#C8A500', 'daylighted_inactive', '#888888',
                 'daylighted', '#C8A500', '#666'],
             'circle-stroke-color': '#fff', 'circle-stroke-width': 1.5,
             'circle-opacity': ['match', ['get', 'status'], 'destroyed', 0.75, 1.0],
@@ -800,7 +801,8 @@ function renderEditForm(detail) {
     ];
     const statusOpts = [
         ['active','Active'],['preserved','Preserved'],['abandoned','Abandoned'],
-        ['ruins','Ruins'],['destroyed','Destroyed'],['daylighted','Daylighted'],
+        ['ruins','Ruins'],['destroyed','Destroyed'],
+        ['daylighted_active','Daylighted / Active'],['daylighted_inactive','Daylighted / Inactive'],
     ];
     const mkOpts = (opts, cur) => opts.map(([v, l]) =>
         `<option value="${v}"${v === cur ? ' selected' : ''}>${l}</option>`).join('');
@@ -1027,7 +1029,7 @@ document.addEventListener('keydown', e => {
 // =============================================================================
 function esc(s) { return String(s ?? '').replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'})[c]); }
 function prettyType(t) { return ({ depot:'Depot', freight_house:'Freight house', bridge:'Bridge', trestle:'Trestle', tunnel:'Tunnel', yard:'Yard', roundhouse:'Roundhouse' })[t] || t; }
-function prettyStatus(s) { return ({ active:'Active', preserved:'Preserved', abandoned:'Abandoned', ruins:'Ruins', destroyed:'Destroyed', daylighted:'Daylighted' })[s] || s; }
+function prettyStatus(s) { return ({ active:'Active', preserved:'Preserved', abandoned:'Abandoned', ruins:'Ruins', destroyed:'Destroyed', daylighted:'Daylighted', daylighted_active:'Daylighted / Active', daylighted_inactive:'Daylighted / Inactive' })[s] || s; }
 
 // =============================================================================
 // UI wiring — filter checkboxes
