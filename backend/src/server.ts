@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import { S3Client, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { pool } from './db.js';
 import authRouter from './routes/auth.js';
 import adminRouter from './routes/admin.js';
@@ -8,6 +9,15 @@ import uploadRouter from './routes/upload.js';
 import { requireAuth } from './middleware/auth.js';
 
 dotenv.config();
+
+const s3 = new S3Client({
+    region: 'auto',
+    endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+    credentials: {
+        accessKeyId:     process.env.R2_ACCESS_KEY_ID!,
+        secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
+    },
+});
 
 const app = express();
 app.use(cors({ origin: process.env.CORS_ORIGIN || 'http://localhost:5173' }));
@@ -182,7 +192,7 @@ app.get('/api/sites/:id', async (req, res) => {
             `SELECT * FROM photos WHERE site_id = $1 ORDER BY taken_year NULLS LAST`, [req.params.id]
         );
         const { rows: sitePhotos } = await pool.query(
-            `SELECT url, thumb_url, sort_order FROM site_photos WHERE site_id = $1 ORDER BY sort_order`,
+            `SELECT id, url, thumb_url, sort_order FROM site_photos WHERE site_id = $1 ORDER BY sort_order`,
             [req.params.id]
         );
         const { rows: sources } = await pool.query(
@@ -359,6 +369,55 @@ app.post('/api/sites', requireAuth, async (req, res) => {
         }
 
         res.status(201).json(rows[0]);
+    } catch (err) {
+        res.status(500).json({ error: (err as Error).message });
+    }
+});
+
+// =============================================================================
+// DELETE /api/sites/:siteId/photos/:photoId — admin or original submitter only
+// Deletes from R2 (best-effort) and removes the site_photos row immediately.
+// =============================================================================
+app.delete('/api/sites/:siteId/photos/:photoId', requireAuth, async (req, res) => {
+    try {
+        const user = (req as any).user;
+
+        const { rows: siteRows } = await pool.query(
+            `SELECT submitted_by FROM sites WHERE id = $1`, [req.params.siteId]
+        );
+        if (!siteRows.length) return res.status(404).json({ error: 'Site not found' });
+        if (user.role !== 'admin' && siteRows[0].submitted_by !== user.id)
+            return res.status(403).json({ error: 'Not authorized' });
+
+        const { rows: photoRows } = await pool.query(
+            `SELECT id, url, thumb_url FROM site_photos WHERE id = $1 AND site_id = $2`,
+            [req.params.photoId, req.params.siteId]
+        );
+        if (!photoRows.length) return res.status(404).json({ error: 'Photo not found' });
+
+        const photo = photoRows[0];
+        const base  = (process.env.R2_PUBLIC_URL || '').replace(/\/$/, '');
+        const toKey = (url: string) =>
+            base && url.startsWith(base + '/') ? url.slice(base.length + 1) : null;
+
+        // Delete full + thumb from R2 (best-effort — don't fail the request if R2 errors)
+        const keys = [toKey(photo.url), photo.thumb_url ? toKey(photo.thumb_url) : null]
+            .filter((k): k is string => Boolean(k));
+        await Promise.all(keys.map(k =>
+            s3.send(new DeleteObjectCommand({ Bucket: process.env.R2_BUCKET_NAME!, Key: k }))
+              .catch(() => {})
+        ));
+
+        // Remove the DB row
+        await pool.query(`DELETE FROM site_photos WHERE id = $1`, [photo.id]);
+
+        // Clear sites.photo_url if it pointed to this photo
+        await pool.query(
+            `UPDATE sites SET photo_url = NULL WHERE id = $1 AND photo_url = $2`,
+            [req.params.siteId, photo.url]
+        );
+
+        res.json({ ok: true });
     } catch (err) {
         res.status(500).json({ error: (err as Error).message });
     }

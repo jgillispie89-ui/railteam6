@@ -787,11 +787,12 @@ function formatDate(iso) {
 }
 
 function renderEditForm(detail) {
-    const content = document.getElementById('detail-content');
-    const coords  = detail.geometry?.coordinates || [];
-    const lng     = coords[0] ?? '';
-    const lat     = coords[1] ?? '';
-    editPhotos    = [];
+    const content        = document.getElementById('detail-content');
+    const coords         = detail.geometry?.coordinates || [];
+    const lng            = coords[0] ?? '';
+    const lat            = coords[1] ?? '';
+    const existingPhotos = detail.site_photos || [];
+    editPhotos           = [];
 
     const typeOpts = [
         ['depot','Depot'],['freight_house','Freight house'],['bridge','Bridge'],
@@ -820,6 +821,16 @@ function renderEditForm(detail) {
             <label>Year closed<input type="number" id="ef-closed" value="${detail.closed_year || ''}"></label>
             <label>Year demolished<input type="number" id="ef-demo" value="${detail.demolished_year || ''}"></label>
             <label>Description<textarea id="ef-desc" rows="3">${esc(detail.description || '')}</textarea></label>
+            ${existingPhotos.length > 0 ? `
+            <p style="font-size:12px;font-weight:600;color:#555;margin:0 0 4px 0">Existing Photos</p>
+            <div id="ef-existing-grid" class="photo-grid" style="margin-bottom:12px">
+                ${existingPhotos.map(p => `
+                    <div class="photo-grid-item" data-photo-id="${p.id}">
+                        <img src="${esc(p.thumb_url || p.url)}" alt="Photo">
+                        <button type="button" class="photo-grid-remove ef-del-photo" data-photo-id="${p.id}" title="Delete photo">×</button>
+                    </div>
+                `).join('')}
+            </div>` : ''}
             <p style="font-size:12px;font-weight:600;color:#555;margin:0 0 4px 0">Add Photos</p>
             <div id="ef-photo-drop" class="photo-drop">
                 <input type="file" id="ef-photo-file" accept="image/*" class="photo-file-overlay" multiple>
@@ -840,6 +851,24 @@ function renderEditForm(detail) {
     `;
 
     wireEditPhotoUpload();
+
+    document.querySelectorAll('.ef-del-photo').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            if (!confirm('Delete this photo? This cannot be undone.')) return;
+            const photoId = btn.dataset.photoId;
+            const res = await authedFetch(
+                `${API_BASE}/api/sites/${detail.id}/photos/${photoId}`,
+                { method: 'DELETE' }
+            );
+            if (res.ok) {
+                btn.closest('.photo-grid-item').remove();
+            } else {
+                const d = await res.json().catch(() => ({}));
+                alert('Delete failed: ' + (d.error || 'unknown error'));
+            }
+        });
+    });
+
     document.getElementById('ef-cancel').addEventListener('click', () => showDetail(currentProps));
     document.getElementById('ef-save').addEventListener('click',   () => saveEdit(detail.id));
 }
