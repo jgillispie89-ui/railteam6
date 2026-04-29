@@ -93,7 +93,6 @@ main { flex: 1; display: grid; grid-template-columns: 260px 1fr; position: relat
 #detail-content .tag-active { background: #d9f0e6; border-color: #0F6E56; color: #0a5340; }
 #detail-content .tag-abandoned { background: #f8e6d1; border-color: #BA7517; color: #7a4a0e; }
 #detail-content .tag-destroyed   { background: #f8d9d9; border-color: #A32D2D; color: #6b1818; }
-#detail-content .tag-daylighted          { background: #fdf6d0; border-color: #C8A500; color: #5c4800; }
 #detail-content .tag-daylighted_active   { background: #fdf6d0; border-color: #C8A500; color: #5c4800; }
 #detail-content .tag-daylighted_inactive { background: #f0f0f0; border-color: #888888; color: #444444; }
 #detail-content p { font-size: 13px; line-height: 1.6; color: #333; }

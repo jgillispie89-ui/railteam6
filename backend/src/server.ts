@@ -52,7 +52,6 @@ async function migrate() {
             ADD COLUMN IF NOT EXISTS updated_at   TIMESTAMPTZ
     `);
 
-    await pool.query(`ALTER TYPE site_status ADD VALUE IF NOT EXISTS 'daylighted'`);
     await pool.query(`ALTER TYPE site_status ADD VALUE IF NOT EXISTS 'daylighted_active'`);
     await pool.query(`ALTER TYPE site_status ADD VALUE IF NOT EXISTS 'daylighted_inactive'`);
 
