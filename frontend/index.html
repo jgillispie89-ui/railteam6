@@ -200,10 +200,13 @@
             <label>Email
                 <input type="email" id="auth-email" placeholder="you@example.com" autocomplete="email">
             </label>
-            <label>Password
+            <label id="auth-pw-label">Password
                 <input type="password" id="auth-password" placeholder="••••••••">
                 <span class="field-hint hidden" id="auth-pw-hint">At least 8 characters</span>
             </label>
+            <p id="auth-forgot-row" class="auth-toggle-row hidden" style="margin:4px 0 8px 0;font-size:13px">
+                <a href="#" id="auth-forgot-link">Forgot password?</a>
+            </p>
             <div class="form-btns" style="margin-top:16px">
                 <button id="auth-submit-btn" class="btn-primary" style="width:100%">Log in</button>
             </div>
@@ -212,6 +215,28 @@
                 <a href="#" id="auth-toggle-link"> Sign up</a>
             </p>
             <p id="auth-msg" class="form-status"></p>
+        </div>
+    </div>
+
+    <!-- Reset password modal — shown when /reset-password?token=… is visited -->
+    <div id="reset-modal" class="modal hidden">
+        <div class="modal-box">
+            <h3>Set new password</h3>
+            <p id="reset-error" class="form-status err" style="display:none"></p>
+            <label id="reset-fields">New password
+                <input type="password" id="reset-pw" placeholder="••••••••" autocomplete="new-password">
+                <span class="field-hint">At least 8 characters</span>
+            </label>
+            <label id="reset-fields2">Confirm password
+                <input type="password" id="reset-pw2" placeholder="••••••••" autocomplete="new-password">
+            </label>
+            <div class="form-btns" style="margin-top:16px">
+                <button id="reset-submit-btn" class="btn-primary" style="width:100%">Set New Password</button>
+            </div>
+            <p class="auth-toggle-row">
+                <a href="#" id="reset-to-forgot">Need a new reset link?</a>
+            </p>
+            <p id="reset-msg" class="form-status"></p>
         </div>
     </div>
 

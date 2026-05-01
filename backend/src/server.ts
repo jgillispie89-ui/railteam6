@@ -70,6 +70,17 @@ async function migrate() {
     await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS email_send_error TEXT`);
 
     await pool.query(`
+        CREATE TABLE IF NOT EXISTS password_reset_tokens (
+            id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            user_id    UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            token      TEXT NOT NULL UNIQUE,
+            expires_at TIMESTAMPTZ NOT NULL,
+            used       BOOLEAN NOT NULL DEFAULT false,
+            created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+        )
+    `);
+
+    await pool.query(`
         CREATE TABLE IF NOT EXISTS site_photos (
             id         SERIAL PRIMARY KEY,
             site_id    UUID NOT NULL REFERENCES sites(id) ON DELETE CASCADE,

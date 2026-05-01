@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import { pool } from '../db.js';
 import { signToken } from '../token.js';
-import { sendVerificationEmail, sendAdminNotificationEmail } from '../email.js';
+import { sendVerificationEmail, sendAdminNotificationEmail, sendPasswordResetEmail } from '../email.js';
 import { requireAuth } from '../middleware/auth.js';
 
 const router = Router();
@@ -150,6 +150,87 @@ router.post('/resend-verification', requireAuth, async (req, res) => {
             ).catch(e => console.error('[resend] Failed to record email failure:', e.message));
             return res.status(500).json({ error: 'Failed to send verification email — please try again in a few minutes.' });
         }
+    } catch (err: any) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// =============================================================================
+// POST /api/auth/forgot-password
+// Always returns the same success message — never reveals whether email exists.
+// Rate limit: max 3 tokens per email per hour (silently skipped when exceeded).
+// =============================================================================
+router.post('/forgot-password', async (req, res) => {
+    try {
+        const { email } = req.body;
+        if (!email) return res.status(400).json({ error: 'email required' });
+
+        const { rows } = await pool.query(
+            'SELECT id FROM users WHERE LOWER(email) = LOWER($1)', [email]
+        );
+
+        if (rows.length) {
+            const userId = rows[0].id;
+
+            // Rate limit: max 3 reset requests per user per hour
+            const { rows: recent } = await pool.query(
+                `SELECT COUNT(*) AS cnt FROM password_reset_tokens
+                 WHERE user_id = $1 AND created_at > NOW() - INTERVAL '1 hour'`,
+                [userId]
+            );
+
+            if (parseInt(recent[0].cnt, 10) < 3) {
+                const token   = crypto.randomBytes(32).toString('hex');
+                const expires = new Date(Date.now() + 60 * 60 * 1000);
+                await pool.query(
+                    `INSERT INTO password_reset_tokens (user_id, token, expires_at) VALUES ($1, $2, $3)`,
+                    [userId, token, expires]
+                );
+                sendPasswordResetEmail(email.toLowerCase(), token).catch(err =>
+                    console.error('[forgot-password] Email failed — userId:', userId, 'error:', err.message)
+                );
+            } else {
+                console.log('[forgot-password] Rate limit reached for userId:', userId);
+            }
+        }
+
+        // Always return success regardless of whether email was found
+        res.json({ ok: true });
+    } catch (err: any) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// =============================================================================
+// POST /api/auth/reset-password
+// Validates token, hashes new password, marks token used. Does NOT log user in.
+// =============================================================================
+router.post('/reset-password', async (req, res) => {
+    try {
+        const { token, password } = req.body;
+        if (!token || !password) return res.status(400).json({ error: 'token and password required' });
+        if (password.length < 8) return res.status(400).json({ error: 'Password must be at least 8 characters' });
+
+        // Clean up expired tokens opportunistically
+        await pool.query(`DELETE FROM password_reset_tokens WHERE expires_at < NOW()`);
+
+        const { rows } = await pool.query(
+            `SELECT id, user_id FROM password_reset_tokens
+             WHERE token = $1 AND expires_at > NOW() AND used = false`,
+            [token]
+        );
+        if (!rows.length)
+            return res.status(400).json({ error: 'This reset link is invalid or has expired. Please request a new one.' });
+
+        const { id: tokenId, user_id: userId } = rows[0];
+        const hash = await bcrypt.hash(password, 12);
+
+        await Promise.all([
+            pool.query('UPDATE users SET password_hash = $1 WHERE id = $2', [hash, userId]),
+            pool.query('UPDATE password_reset_tokens SET used = true WHERE id = $1', [tokenId]),
+        ]);
+
+        res.json({ ok: true });
     } catch (err: any) {
         res.status(500).json({ error: err.message });
     }

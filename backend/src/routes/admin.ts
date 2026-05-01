@@ -1,6 +1,8 @@
 import { Router } from 'express';
+import crypto from 'crypto';
 import { pool } from '../db.js';
 import { requireAdmin } from '../middleware/auth.js';
+import { sendPasswordResetEmail } from '../email.js';
 
 const router = Router();
 
@@ -86,6 +88,35 @@ router.post('/verify-user', requireAdmin, async (req, res) => {
         );
         if (!rows.length) return res.status(404).json({ error: 'User not found' });
         res.json({ ok: true, user: rows[0] });
+    } catch (err: any) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// =============================================================================
+// POST /api/admin/send-password-reset — trigger a reset email for any user by email
+// Bypasses the per-user rate limit. Awaits send so admin gets a real error if it fails.
+// =============================================================================
+router.post('/send-password-reset', requireAdmin, async (req, res) => {
+    try {
+        const { email } = req.body;
+        if (!email) return res.status(400).json({ error: 'email required' });
+
+        const { rows } = await pool.query(
+            'SELECT id FROM users WHERE LOWER(email) = LOWER($1)', [email]
+        );
+        if (!rows.length) return res.status(404).json({ error: 'User not found' });
+
+        const userId  = rows[0].id;
+        const token   = crypto.randomBytes(32).toString('hex');
+        const expires = new Date(Date.now() + 60 * 60 * 1000);
+        await pool.query(
+            `INSERT INTO password_reset_tokens (user_id, token, expires_at) VALUES ($1, $2, $3)`,
+            [userId, token, expires]
+        );
+
+        await sendPasswordResetEmail(email.toLowerCase(), token);
+        res.json({ ok: true });
     } catch (err: any) {
         res.status(500).json({ error: err.message });
     }

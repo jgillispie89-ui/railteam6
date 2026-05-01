@@ -97,12 +97,17 @@ function closeAuthModal() {
 
 function setAuthMode(mode) {
     authMode = mode;
-    const isLogin = mode === 'login';
-    document.getElementById('auth-title').textContent          = isLogin ? 'Log in' : 'Create account';
-    document.getElementById('auth-submit-btn').textContent     = isLogin ? 'Log in' : 'Create account';
-    document.getElementById('auth-pw-hint').classList.toggle('hidden', isLogin);
-    document.getElementById('auth-toggle-prompt').textContent  = isLogin ? "Don't have an account?" : 'Already have an account?';
-    document.getElementById('auth-toggle-link').textContent    = isLogin ? ' Sign up' : ' Log in';
+    const isLogin    = mode === 'login';
+    const isRegister = mode === 'register';
+    const isForgot   = mode === 'forgot';
+    document.getElementById('auth-title').textContent          = isLogin ? 'Log in' : isRegister ? 'Create account' : 'Forgot password?';
+    document.getElementById('auth-submit-btn').textContent     = isLogin ? 'Log in' : isRegister ? 'Create account' : 'Send Reset Link';
+    document.getElementById('auth-submit-btn').disabled       = false;
+    document.getElementById('auth-pw-hint').classList.toggle('hidden', !isRegister);
+    document.getElementById('auth-pw-label').classList.toggle('hidden', isForgot);
+    document.getElementById('auth-forgot-row').classList.toggle('hidden', !isLogin);
+    document.getElementById('auth-toggle-prompt').textContent  = isLogin ? "Don't have an account?" : isRegister ? 'Already have an account?' : 'Remember your password?';
+    document.getElementById('auth-toggle-link').textContent    = isLogin ? ' Sign up' : isRegister ? ' Log in' : ' Back to login';
     document.getElementById('auth-msg').textContent            = '';
 }
 
@@ -110,7 +115,17 @@ document.getElementById('auth-close').addEventListener('click', closeAuthModal);
 
 document.getElementById('auth-toggle-link').addEventListener('click', e => {
     e.preventDefault();
-    setAuthMode(authMode === 'login' ? 'register' : 'login');
+    if (authMode === 'forgot') setAuthMode('login');
+    else setAuthMode(authMode === 'login' ? 'register' : 'login');
+});
+
+document.getElementById('auth-forgot-link').addEventListener('click', e => {
+    e.preventDefault();
+    setAuthMode('forgot');
+});
+
+document.getElementById('auth-email').addEventListener('keydown', e => {
+    if (e.key === 'Enter' && authMode === 'forgot') document.getElementById('auth-submit-btn').click();
 });
 
 document.getElementById('auth-submit-btn').addEventListener('click', async () => {
@@ -118,6 +133,25 @@ document.getElementById('auth-submit-btn').addEventListener('click', async () =>
     const email    = document.getElementById('auth-email').value.trim();
     const password = document.getElementById('auth-password').value;
     msg.className  = 'form-status';
+
+    if (authMode === 'forgot') {
+        try {
+            const res  = await fetch(`${API_BASE}/api/auth/forgot-password`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email }),
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error);
+            msg.textContent = "If that address is registered, we've sent a reset link. Check your inbox (and spam folder).";
+            msg.className   = 'form-status ok';
+            document.getElementById('auth-submit-btn').disabled = true;
+        } catch (err) {
+            msg.textContent = '✕ ' + err.message;
+            msg.className   = 'form-status err';
+        }
+        return;
+    }
 
     if (authMode === 'login') {
         try {
@@ -163,6 +197,7 @@ document.getElementById('auth-password').addEventListener('keydown', e => {
 // Email verification (/verify?token=XXX in URL)
 // =============================================================================
 async function handleVerifyEmail() {
+    if (window.location.pathname === '/reset-password') return;
     const params = new URLSearchParams(window.location.search);
     const token  = params.get('token');
     if (!token) return;
@@ -196,6 +231,80 @@ async function resendVerification() {
         showBanner('✕ Could not send email. Try again later.', 'err');
     }
 }
+
+// =============================================================================
+// Password reset (/reset-password?token=XXX in URL)
+// =============================================================================
+let resetToken = null;
+
+async function handleResetPassword() {
+    if (window.location.pathname !== '/reset-password') return;
+    const params = new URLSearchParams(window.location.search);
+    resetToken   = params.get('token');
+    const modal  = document.getElementById('reset-modal');
+    modal.classList.remove('hidden');
+
+    if (!resetToken) {
+        document.getElementById('reset-error').textContent = 'No reset token found in the link. Please request a new password reset.';
+        document.getElementById('reset-error').style.display = 'block';
+        document.getElementById('reset-fields').style.display  = 'none';
+        document.getElementById('reset-fields2').style.display = 'none';
+        document.getElementById('reset-submit-btn').disabled = true;
+    }
+}
+
+document.getElementById('reset-submit-btn').addEventListener('click', async () => {
+    const msg  = document.getElementById('reset-msg');
+    const pw   = document.getElementById('reset-pw').value;
+    const pw2  = document.getElementById('reset-pw2').value;
+    msg.className = 'form-status';
+
+    if (pw.length < 8) {
+        msg.textContent = '✕ Password must be at least 8 characters.';
+        msg.className   = 'form-status err';
+        return;
+    }
+    if (pw !== pw2) {
+        msg.textContent = '✕ Passwords do not match.';
+        msg.className   = 'form-status err';
+        return;
+    }
+
+    msg.textContent = 'Saving…';
+    try {
+        const res  = await fetch(`${API_BASE}/api/auth/reset-password`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: resetToken, password: pw }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        msg.textContent = '✓ Password updated! Please log in with your new password.';
+        msg.className   = 'form-status ok';
+        document.getElementById('reset-submit-btn').disabled = true;
+        window.history.replaceState({}, '', '/');
+        setTimeout(() => {
+            document.getElementById('reset-modal').classList.add('hidden');
+            openAuthModal('login');
+        }, 2000);
+    } catch (err) {
+        msg.textContent = '✕ ' + err.message;
+        msg.className   = 'form-status err';
+    }
+});
+
+['reset-pw', 'reset-pw2'].forEach(id => {
+    document.getElementById(id).addEventListener('keydown', e => {
+        if (e.key === 'Enter') document.getElementById('reset-submit-btn').click();
+    });
+});
+
+document.getElementById('reset-to-forgot').addEventListener('click', e => {
+    e.preventDefault();
+    document.getElementById('reset-modal').classList.add('hidden');
+    window.history.replaceState({}, '', '/');
+    openAuthModal('forgot');
+});
 
 function showBanner(msg, type) {
     const b = document.getElementById('site-banner');
@@ -266,7 +375,8 @@ async function refreshUnverifiedUsers() {
                 </div>
                 ${u.email_send_error ? `<div class="queue-desc" style="color:#999;font-size:11px">${esc(u.email_send_error)}</div>` : ''}
                 <div class="queue-actions">
-                    <button class="btn-approve" data-email="${esc(u.email)}">✓ Manually Verify</button>
+                    <button class="btn-approve"   data-email="${esc(u.email)}">✓ Manually Verify</button>
+                    <button class="btn-reset-pw"  data-email="${esc(u.email)}">✉ Send Reset Link</button>
                 </div>
             </div>
         `).join('');
@@ -285,6 +395,23 @@ async function refreshUnverifiedUsers() {
                     await refreshUnverifiedUsers();
                 } else {
                     alert('Verify failed: ' + (data.error || 'unknown error'));
+                }
+            })
+        );
+
+        list.querySelectorAll('.btn-reset-pw').forEach(btn =>
+            btn.addEventListener('click', async () => {
+                const email = btn.dataset.email;
+                if (!confirm(`Send a password reset email to ${email}?`)) return;
+                const r = await authedFetch(`${API_BASE}/api/admin/send-password-reset`, {
+                    method: 'POST',
+                    body: JSON.stringify({ email }),
+                });
+                const data = await r.json();
+                if (r.ok) {
+                    showBanner(`✓ Password reset email sent to ${email}.`, 'ok');
+                } else {
+                    alert('Failed to send: ' + (data.error || 'unknown error'));
                 }
             })
         );
@@ -1190,3 +1317,4 @@ map.on('load', () => {
 
 renderNav();
 handleVerifyEmail();
+handleResetPassword();

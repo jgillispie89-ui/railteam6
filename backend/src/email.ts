@@ -60,6 +60,30 @@ export async function sendVerificationEmail(to: string, token: string): Promise<
     console.log(`[email] Verification email sent successfully to ${to}`);
 }
 
+export async function sendPasswordResetEmail(to: string, token: string): Promise<void> {
+    const link = `${BASE}/reset-password?token=${token}`;
+    await withRetry(
+        () => transporter.sendMail({
+            from: FROM,
+            to,
+            subject: 'Reset your RailTeam6 password',
+            text: [
+                `Hi,`,
+                ``,
+                `We received a request to reset your RailTeam6 password. Click the link below to set a new one:`,
+                ``,
+                link,
+                ``,
+                `This link expires in 1 hour. If you didn't request a password reset, you can ignore this email — your password will not change.`,
+                ``,
+                `— The RailTeam6 team`,
+            ].join('\n'),
+        }),
+        `password reset to ${to}`
+    );
+    console.log(`[email] Password reset email sent successfully to ${to}`);
+}
+
 export async function sendAdminNotificationEmail(email: string, userId: string): Promise<void> {
     const timestamp = new Date().toUTCString();
     const adminLink = `${BASE}/admin/users/${userId}`;
