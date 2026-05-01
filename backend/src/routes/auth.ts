@@ -32,9 +32,20 @@ router.post('/register', async (req, res) => {
         );
         const u = rows[0];
 
-        sendVerificationEmail(u.email, vtoken).catch(err =>
-            console.error('Verification email failed:', err.message)
-        );
+        // Fire-and-forget verification email with retry; track failure in DB if all attempts exhausted
+        (async () => {
+            try {
+                await sendVerificationEmail(u.email, vtoken);
+            } catch (err: any) {
+                console.error('[register] Verification email failed after all retries — userId:', u.id, 'to:', u.email, 'error:', err.message);
+                await pool.query(
+                    'UPDATE users SET email_send_failed = true, email_send_error = $1 WHERE id = $2',
+                    [String(err.message).slice(0, 500), u.id]
+                ).catch(e => console.error('[register] Failed to record email failure in DB:', e.message));
+            }
+        })();
+
+        // Admin notification — best-effort, no retry
         sendAdminNotificationEmail(u.email, u.id).catch(err =>
             console.error('Admin notification failed:', err.message)
         );
@@ -78,7 +89,8 @@ router.get('/verify', async (req, res) => {
 
         const { rows } = await pool.query(
             `UPDATE users
-             SET verified = true, verification_token = NULL, verification_token_expires_at = NULL
+             SET verified = true, verification_token = NULL, verification_token_expires_at = NULL,
+                 email_send_failed = false, email_send_error = NULL
              WHERE verification_token = $1
                AND verification_token_expires_at > NOW()
              RETURNING id, email, role`,
@@ -96,7 +108,7 @@ router.get('/verify', async (req, res) => {
 
 // =============================================================================
 // POST /api/auth/resend-verification
-// Throttled: one email per 5 minutes
+// Throttled: one email per 5 minutes. Awaits send so user gets a real error if it fails.
 // =============================================================================
 router.post('/resend-verification', requireAuth, async (req, res) => {
     try {
@@ -124,10 +136,20 @@ router.post('/resend-verification', requireAuth, async (req, res) => {
             [vtoken, vexpiry, id]
         );
 
-        sendVerificationEmail(u.email, vtoken).catch(err =>
-            console.error('Resend verification failed:', err.message)
-        );
-        res.json({ ok: true });
+        try {
+            await sendVerificationEmail(u.email, vtoken);
+            await pool.query(
+                'UPDATE users SET email_send_failed = false, email_send_error = NULL WHERE id = $1', [id]
+            );
+            res.json({ ok: true });
+        } catch (err: any) {
+            console.error('[resend] Verification email failed — userId:', id, 'to:', u.email, 'error:', err.message);
+            await pool.query(
+                'UPDATE users SET email_send_failed = true, email_send_error = $1 WHERE id = $2',
+                [String(err.message).slice(0, 500), id]
+            ).catch(e => console.error('[resend] Failed to record email failure:', e.message));
+            return res.status(500).json({ error: 'Failed to send verification email — please try again in a few minutes.' });
+        }
     } catch (err: any) {
         res.status(500).json({ error: err.message });
     }

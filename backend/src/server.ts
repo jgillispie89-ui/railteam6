@@ -65,6 +65,10 @@ async function migrate() {
     await pool.query(`ALTER TYPE site_status ADD VALUE IF NOT EXISTS 'daylighted_active'`);
     await pool.query(`ALTER TYPE site_status ADD VALUE IF NOT EXISTS 'daylighted_inactive'`);
 
+    await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS display_name TEXT`);
+    await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS email_send_failed BOOLEAN NOT NULL DEFAULT false`);
+    await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS email_send_error TEXT`);
+
     await pool.query(`
         CREATE TABLE IF NOT EXISTS site_photos (
             id         SERIAL PRIMARY KEY,

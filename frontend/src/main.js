@@ -210,7 +210,7 @@ function showBanner(msg, type) {
 // =============================================================================
 async function openAdminPanel() {
     document.getElementById('admin-modal').classList.remove('hidden');
-    await refreshAdminQueue();
+    await Promise.all([refreshAdminQueue(), refreshUnverifiedUsers()]);
 }
 
 async function refreshAdminQueue() {
@@ -243,6 +243,49 @@ async function refreshAdminQueue() {
             btn.addEventListener('click', async () => {
                 await authedFetch(`${API_BASE}/api/admin/reject/${btn.dataset.id}`, { method: 'POST', body: '{}' });
                 await refreshAdminQueue();
+            })
+        );
+    } catch (err) {
+        list.innerHTML = `<p class="form-status err">${esc(err.message)}</p>`;
+    }
+}
+
+async function refreshUnverifiedUsers() {
+    const list = document.getElementById('admin-users');
+    list.innerHTML = '<p class="hint">Loading…</p>';
+    try {
+        const res  = await authedFetch(`${API_BASE}/api/admin/unverified-users`);
+        const rows = await res.json();
+        if (!rows.length) { list.innerHTML = '<p class="hint">No unverified users.</p>'; return; }
+        list.innerHTML = rows.map(u => `
+            <div class="queue-item" data-id="${esc(u.id)}">
+                <div class="queue-name">${esc(u.email)}</div>
+                <div class="queue-meta">
+                    Registered: ${new Date(u.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                    ${u.email_send_failed ? ' &nbsp;·&nbsp; <span style="color:#c00">⚠ Verification email failed to send</span>' : ''}
+                </div>
+                ${u.email_send_error ? `<div class="queue-desc" style="color:#999;font-size:11px">${esc(u.email_send_error)}</div>` : ''}
+                <div class="queue-actions">
+                    <button class="btn-approve" data-email="${esc(u.email)}">✓ Manually Verify</button>
+                </div>
+            </div>
+        `).join('');
+
+        list.querySelectorAll('.btn-approve').forEach(btn =>
+            btn.addEventListener('click', async () => {
+                const email = btn.dataset.email;
+                if (!confirm(`Manually verify ${email}?\n\nThey will need to log out and log back in for contribution access to unlock.`)) return;
+                const r = await authedFetch(`${API_BASE}/api/admin/verify-user`, {
+                    method: 'POST',
+                    body: JSON.stringify({ email }),
+                });
+                const data = await r.json();
+                if (r.ok) {
+                    showBanner(`✓ ${email} verified successfully.`, 'ok');
+                    await refreshUnverifiedUsers();
+                } else {
+                    alert('Verify failed: ' + (data.error || 'unknown error'));
+                }
             })
         );
     } catch (err) {
