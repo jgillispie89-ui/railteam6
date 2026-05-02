@@ -6,6 +6,7 @@ import { pool } from './db.js';
 import authRouter from './routes/auth.js';
 import adminRouter from './routes/admin.js';
 import uploadRouter from './routes/upload.js';
+import feedbackRouter from './routes/feedback.js';
 import { requireAuth } from './middleware/auth.js';
 
 dotenv.config();
@@ -89,14 +90,43 @@ async function migrate() {
             sort_order INT  NOT NULL DEFAULT 0
         )
     `);
+
+    await pool.query(`
+        DO $$ BEGIN
+            CREATE TYPE feedback_type AS ENUM ('suggestion', 'bug_report', 'site_correction', 'other');
+        EXCEPTION WHEN duplicate_object THEN NULL;
+        END $$
+    `);
+    await pool.query(`
+        DO $$ BEGIN
+            CREATE TYPE feedback_status AS ENUM ('new', 'in_review', 'resolved', 'dismissed');
+        EXCEPTION WHEN duplicate_object THEN NULL;
+        END $$
+    `);
+    await pool.query(`
+        CREATE TABLE IF NOT EXISTS feedback (
+            id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            type              feedback_type NOT NULL,
+            subject           TEXT NOT NULL,
+            description       TEXT NOT NULL,
+            submitter_name    TEXT,
+            submitter_email   TEXT,
+            submitter_user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+            status            feedback_status NOT NULL DEFAULT 'new',
+            admin_notes       TEXT,
+            created_at        TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+            updated_at        TIMESTAMPTZ NOT NULL DEFAULT NOW()
+        )
+    `);
 }
 
 // =============================================================================
 // Routes
 // =============================================================================
-app.use('/api/auth',   authRouter);
-app.use('/api/admin',  adminRouter);
-app.use('/api/upload', uploadRouter);
+app.use('/api/auth',     authRouter);
+app.use('/api/admin',   adminRouter);
+app.use('/api/upload',  uploadRouter);
+app.use('/api/feedback', feedbackRouter);
 
 app.get('/api/health', async (_req, res) => {
     try {

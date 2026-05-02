@@ -83,6 +83,54 @@ export async function sendPasswordResetEmail(to: string, token: string): Promise
     console.log(`[email] Password reset email sent successfully to ${to}`);
 }
 
+interface FeedbackPayload {
+    id:              string;
+    type:            string;
+    subject:         string;
+    description:     string;
+    submitterName:   string | null;
+    submitterEmail:  string | null;
+    submitterUserId: string | null;
+    createdAt:       Date | string;
+}
+
+export async function sendFeedbackNotificationEmail(fb: FeedbackPayload): Promise<void> {
+    const labels: Record<string, string> = {
+        suggestion: 'Suggestion', bug_report: 'Bug Report',
+        site_correction: 'Site Correction', other: 'Other',
+    };
+    const label = labels[fb.type] ?? fb.type;
+    await withRetry(async () => {
+        const { error } = await resend.emails.send({
+            from:    FROM,
+            to:      [ADMIN_NOTIFY],
+            replyTo: fb.submitterEmail ?? REPLY_TO,
+            subject: `[RailTeam6 Feedback] [${label}] - ${fb.subject}`,
+            text: [
+                `New feedback submitted on RailTeam6.`,
+                ``,
+                `Type:         ${label}`,
+                `Subject:      ${fb.subject}`,
+                ``,
+                `Description:`,
+                fb.description,
+                ``,
+                `Submitter:    ${fb.submitterName   || '(not provided)'}`,
+                `Email:        ${fb.submitterEmail  || '(not provided)'}`,
+                `User ID:      ${fb.submitterUserId || 'anonymous'}`,
+                `Submitted:    ${new Date(fb.createdAt as any).toUTCString()}`,
+                `Feedback ID:  ${fb.id}`,
+                ``,
+                `Open admin panel: ${BASE}`,
+                ``,
+                `— RailTeam6 automated alert`,
+            ].join('\n'),
+        });
+        if (error) throw Object.assign(new Error(error.message), { statusCode: (error as any).statusCode });
+    }, `feedback notification for "${fb.subject}"`);
+    console.log(`[email] Feedback notification sent for "${fb.subject}"`);
+}
+
 export async function sendAdminNotificationEmail(email: string, userId: string): Promise<void> {
     const timestamp = new Date().toUTCString();
     const adminLink = `${BASE}/admin/users/${userId}`;

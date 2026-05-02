@@ -12,6 +12,14 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
     }
 }
 
+export function optionalAuth(req: Request, _res: Response, next: NextFunction) {
+    const h = req.headers.authorization;
+    if (h?.startsWith('Bearer ')) {
+        try { (req as any).user = verifyToken(h.slice(7)); } catch {}
+    }
+    next();
+}
+
 export function requireAdmin(req: Request, res: Response, next: NextFunction) {
     requireAuth(req, res, () => {
         if ((req as any).user?.role !== 'admin')

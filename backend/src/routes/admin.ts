@@ -94,6 +94,72 @@ router.post('/verify-user', requireAdmin, async (req, res) => {
 });
 
 // =============================================================================
+// GET /api/admin/feedback/new-count — badge count for nav
+// =============================================================================
+router.get('/feedback/new-count', requireAdmin, async (_req, res) => {
+    try {
+        const { rows } = await pool.query(`SELECT COUNT(*) AS count FROM feedback WHERE status = 'new'`);
+        res.json({ count: parseInt(rows[0].count, 10) });
+    } catch (err: any) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// =============================================================================
+// GET /api/admin/feedback — list all; ?show_all=1 includes resolved/dismissed
+// =============================================================================
+router.get('/feedback', requireAdmin, async (req, res) => {
+    try {
+        const showAll = req.query.show_all === '1';
+        const { rows } = await pool.query(
+            showAll
+                ? `SELECT * FROM feedback ORDER BY created_at DESC`
+                : `SELECT * FROM feedback WHERE status NOT IN ('resolved','dismissed') ORDER BY created_at DESC`
+        );
+        res.json(rows);
+    } catch (err: any) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// =============================================================================
+// PATCH /api/admin/feedback/:id — update status and/or admin_notes
+// =============================================================================
+router.patch('/feedback/:id', requireAdmin, async (req, res) => {
+    try {
+        const sets: string[] = ['updated_at = NOW()'];
+        const params: any[]  = [];
+        let i = 1;
+        if (req.body.status      !== undefined) { sets.push(`status      = $${i++}`); params.push(req.body.status); }
+        if (req.body.admin_notes !== undefined) { sets.push(`admin_notes = $${i++}`); params.push(req.body.admin_notes || null); }
+        params.push(req.params.id);
+        const { rows } = await pool.query(
+            `UPDATE feedback SET ${sets.join(', ')} WHERE id = $${i} RETURNING *`,
+            params
+        );
+        if (!rows.length) return res.status(404).json({ error: 'Not found' });
+        res.json(rows[0]);
+    } catch (err: any) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// =============================================================================
+// DELETE /api/admin/feedback/:id
+// =============================================================================
+router.delete('/feedback/:id', requireAdmin, async (req, res) => {
+    try {
+        const { rows } = await pool.query(
+            `DELETE FROM feedback WHERE id = $1 RETURNING id`, [req.params.id]
+        );
+        if (!rows.length) return res.status(404).json({ error: 'Not found' });
+        res.json({ ok: true });
+    } catch (err: any) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// =============================================================================
 // POST /api/admin/send-password-reset — trigger a reset email for any user by email
 // Bypasses the per-user rate limit. Awaits send so admin gets a real error if it fails.
 // =============================================================================
