@@ -427,6 +427,8 @@ document.getElementById('admin-close').addEventListener('click', () => {
 // =============================================================================
 // State
 // =============================================================================
+let siteFeatures = [];  // kept in sync with loaded GeoJSON for local site search
+
 const state = {
     year: 2026,
     lineStatuses: new Set(['active', 'abandoned', 'destroyed', 'rail_trail']),
@@ -752,6 +754,7 @@ async function loadData() {
         ]);
         const sites = await sitesRes.json();
         const lines = await linesRes.json();
+        siteFeatures = sites.features || [];
         addOrUpdateSource('sites', sites);
         addOrUpdateSource('lines', lines);
         applyFilters();
@@ -766,6 +769,197 @@ function addOrUpdateSource(id, geojson) {
     if (map.getSource(id)) map.getSource(id).setData(geojson);
     else map.addSource(id, { type: 'geojson', data: geojson });
 }
+
+// =============================================================================
+// Location + site search
+// =============================================================================
+let searchDebounce  = null;
+let searchResults   = [];   // [{kind, label, sub?, lat, lng, props?}] — no dividers
+let activeResultIdx = -1;
+let searchMarker    = null;
+let markerTimer     = null;
+const geocodeCache  = new Map();
+
+function parseCoords(q) {
+    const m = q.trim().match(/^(-?\d{1,3}\.?\d*)[,\s]+(-?\d{1,3}\.?\d*)$/);
+    if (!m) return null;
+    const a = parseFloat(m[1]), b = parseFloat(m[2]);
+    if (!isFinite(a) || !isFinite(b)) return null;
+    if (a >= -90 && a <= 90 && b >= -180 && b <= 180) return { lat: a, lng: b };
+    return null;
+}
+
+function searchLocalSites(q) {
+    const lower = q.toLowerCase();
+    return siteFeatures
+        .filter(f => f.properties?.name?.toLowerCase().includes(lower))
+        .slice(0, 3)
+        .map(f => ({
+            kind:  'site',
+            label: f.properties.name,
+            sub:   [f.properties.city, f.properties.state].filter(Boolean).join(', ') || null,
+            lat:   f.geometry?.coordinates[1],
+            lng:   f.geometry?.coordinates[0],
+            props: f.properties,
+        }));
+}
+
+async function geocode(q) {
+    if (geocodeCache.has(q)) return geocodeCache.get(q);
+    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=5&countrycodes=us`;
+    const res = await fetch(url, {
+        headers: { 'User-Agent': 'RailTeam6/1.0 (https://railteam6.com)' },
+    });
+    if (!res.ok) throw new Error('Geocoder unavailable');
+    const data = await res.json();
+    const results = data.map(r => ({
+        kind:  'location',
+        label: r.display_name,
+        lat:   parseFloat(r.lat),
+        lng:   parseFloat(r.lon),
+    }));
+    geocodeCache.set(q, results);
+    return results;
+}
+
+async function doSearch(q) {
+    if (!q || q.length < 2) { hideSearchResults(); return; }
+
+    // Coordinate shortcut — skip geocoding entirely
+    const coords = parseCoords(q);
+    if (coords) {
+        searchResults = [{ kind: 'coords', label: q, lat: coords.lat, lng: coords.lng }];
+        renderSearchResults(searchResults);
+        return;
+    }
+
+    const sites = searchLocalSites(q);
+    try {
+        const locations = await geocode(q);
+        searchResults = [...sites, ...locations];
+    } catch {
+        searchResults = sites;
+    }
+    renderSearchResults(searchResults);
+}
+
+function renderSearchResults(results) {
+    const list = document.getElementById('mapsearch-results');
+    activeResultIdx = -1;
+    if (!results.length) { list.style.display = 'none'; return; }
+
+    const items = [];
+    let lastKind = null;
+    for (const r of results) {
+        if (r.kind !== lastKind) {
+            const label = r.kind === 'site' ? 'Sites' : r.kind === 'coords' ? 'Coordinates' : 'Places';
+            items.push(`<li class="sr-divider">${label}</li>`);
+            lastKind = r.kind;
+        }
+        const icon = r.kind === 'site' ? '📍' : r.kind === 'coords' ? '🎯' : '📌';
+        items.push(`
+            <li role="option" tabindex="-1">
+                <span class="sr-icon">${icon}</span>
+                <span class="sr-text">
+                    <span class="sr-label">${esc(r.label)}</span>
+                    ${r.sub ? `<span class="sr-sub">${esc(r.sub)}</span>` : ''}
+                </span>
+            </li>
+        `);
+    }
+    list.innerHTML = items.join('');
+    list.style.display = 'block';
+
+    let clickIdx = 0;
+    list.querySelectorAll('li[role="option"]').forEach(li => {
+        const i = clickIdx++;
+        li.addEventListener('mousedown', e => { e.preventDefault(); selectResult(i); });
+    });
+}
+
+function hideSearchResults() {
+    document.getElementById('mapsearch-results').style.display = 'none';
+    activeResultIdx = -1;
+}
+
+function clearSearchMarker() {
+    if (searchMarker) { searchMarker.remove(); searchMarker = null; }
+    if (markerTimer)  { clearTimeout(markerTimer); markerTimer = null; }
+}
+
+function selectResult(idx) {
+    const r = searchResults[idx];
+    if (!r) return;
+    document.getElementById('mapsearch-input').value = r.kind === 'coords' ? r.label : r.label;
+    document.getElementById('mapsearch-clear').style.display = 'block';
+    hideSearchResults();
+
+    if (r.lat == null || r.lng == null) return;
+    map.flyTo({ center: [r.lng, r.lat], zoom: 13, speed: 1.6, essential: true });
+
+    clearSearchMarker();
+    searchMarker = new maplibregl.Marker({ color: '#BA7517' })
+        .setLngLat([r.lng, r.lat])
+        .addTo(map);
+    markerTimer = setTimeout(clearSearchMarker, 5000);
+
+    if (r.kind === 'site' && r.props) showDetail(r.props);
+}
+
+function updateActiveItem() {
+    const items = document.getElementById('mapsearch-results').querySelectorAll('li[role="option"]');
+    items.forEach((li, i) => li.classList.toggle('sr-active', i === activeResultIdx));
+    if (activeResultIdx >= 0) items[activeResultIdx]?.scrollIntoView({ block: 'nearest' });
+}
+
+document.getElementById('mapsearch-input').addEventListener('input', () => {
+    const q = document.getElementById('mapsearch-input').value.trim();
+    document.getElementById('mapsearch-clear').style.display = q ? 'block' : 'none';
+    clearTimeout(searchDebounce);
+    if (q.length < 2) { hideSearchResults(); return; }
+    searchDebounce = setTimeout(() => doSearch(q), 300);
+});
+
+document.getElementById('mapsearch-input').addEventListener('keydown', e => {
+    const list  = document.getElementById('mapsearch-results');
+    const open  = list.style.display !== 'none';
+    const items = list.querySelectorAll('li[role="option"]');
+    const n     = items.length;
+
+    if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        if (!open) { doSearch(document.getElementById('mapsearch-input').value.trim()); return; }
+        activeResultIdx = (activeResultIdx + 1) % n;
+        updateActiveItem();
+    } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        activeResultIdx = (activeResultIdx - 1 + n) % n;
+        updateActiveItem();
+    } else if (e.key === 'Enter') {
+        e.preventDefault();
+        if (open && searchResults.length) {
+            selectResult(activeResultIdx >= 0 ? activeResultIdx : 0);
+        } else {
+            clearTimeout(searchDebounce);
+            doSearch(document.getElementById('mapsearch-input').value.trim());
+        }
+    } else if (e.key === 'Escape') {
+        hideSearchResults();
+        document.getElementById('mapsearch-input').blur();
+    }
+});
+
+document.getElementById('mapsearch-clear').addEventListener('click', () => {
+    document.getElementById('mapsearch-input').value = '';
+    document.getElementById('mapsearch-clear').style.display = 'none';
+    hideSearchResults();
+    clearSearchMarker();
+    document.getElementById('mapsearch-input').focus();
+});
+
+document.addEventListener('click', e => {
+    if (!document.getElementById('map-search').contains(e.target)) hideSearchResults();
+});
 
 // =============================================================================
 // Layers
@@ -1278,6 +1472,7 @@ function useFallbackData() {
             makeSite('Cincinnati Union Terminal',  'depot',    'preserved', -84.5370, 39.1099, 1933, null, null, 'Art Deco masterpiece, now the Cincinnati Museum Center.'),
         ],
     };
+    siteFeatures = sites.features;
     addOrUpdateSource('sites', sites);
     addOrUpdateSource('lines', { type: 'FeatureCollection', features: [] });
     applyFilters();
