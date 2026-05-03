@@ -99,10 +99,12 @@ async function migrate() {
     `);
     await pool.query(`
         DO $$ BEGIN
-            CREATE TYPE feedback_status AS ENUM ('new', 'in_review', 'resolved', 'dismissed');
+            CREATE TYPE feedback_status AS ENUM ('new', 'in_progress', 'resolved', 'dismissed');
         EXCEPTION WHEN duplicate_object THEN NULL;
         END $$
     `);
+    // Backfill: add in_progress if this enum was created before the rename
+    await pool.query(`ALTER TYPE feedback_status ADD VALUE IF NOT EXISTS 'in_progress'`);
     await pool.query(`
         CREATE TABLE IF NOT EXISTS feedback (
             id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),

@@ -33,6 +33,8 @@ const auth = {
     user:  JSON.parse(localStorage.getItem('ir_user') || 'null'),
 };
 
+let adminFeedbackNewCount = 0;
+
 function saveAuth(token, user) {
     auth.token = token;
     auth.user  = user;
@@ -65,7 +67,7 @@ function renderNav() {
         nav.innerHTML = `
             ${unverifiedBtn}
             <span class="nav-user">${esc(auth.user.email)}</span>
-            ${auth.user.role === 'admin' ? '<button class="nav-btn" id="btn-admin">Admin</button>' : ''}
+            ${auth.user.role === 'admin' ? `<button class="nav-btn" id="btn-admin">${adminFeedbackNewCount > 0 ? `Admin (${adminFeedbackNewCount} new)` : 'Admin'}</button>` : ''}
             <button class="nav-btn" id="btn-logout">Logout</button>
         `;
         document.getElementById('btn-resend-nav')?.addEventListener('click', resendVerification);
@@ -431,7 +433,7 @@ function prettyFbType(t) {
     return { suggestion: 'Suggestion', bug_report: 'Bug Report', site_correction: 'Site Correction', other: 'Other' }[t] ?? t;
 }
 function prettyFbStatus(s) {
-    return { new: 'New', in_review: 'In Review', resolved: 'Resolved', dismissed: 'Dismissed' }[s] ?? s;
+    return { new: 'New', in_progress: 'In Progress', resolved: 'Resolved', dismissed: 'Dismissed' }[s] ?? s;
 }
 
 async function updateAdminBadge() {
@@ -439,11 +441,15 @@ async function updateAdminBadge() {
     try {
         const res   = await authedFetch(`${API_BASE}/api/admin/feedback/new-count`);
         const data  = await res.json();
-        const badge = document.getElementById('admin-fb-badge');
-        if (!badge) return;
         const count = data.count || 0;
-        badge.textContent = count;
-        badge.style.display = count > 0 ? 'inline-block' : 'none';
+        adminFeedbackNewCount = count;
+        const badge = document.getElementById('admin-fb-badge');
+        if (badge) {
+            badge.textContent = count;
+            badge.style.display = count > 0 ? 'inline-block' : 'none';
+        }
+        const navBtn = document.getElementById('btn-admin');
+        if (navBtn) navBtn.textContent = count > 0 ? `Admin (${count} new)` : 'Admin';
     } catch {}
 }
 
@@ -462,41 +468,58 @@ async function refreshAdminFeedback() {
                     <span class="fb-status-badge fb-status-${esc(fb.status)}">${esc(prettyFbStatus(fb.status))}</span>
                     <span class="queue-meta" style="margin-left:auto;font-size:11px">${new Date(fb.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                 </div>
-                <div class="queue-name" style="margin-top:4px">${esc(fb.subject)}</div>
-                <div class="queue-desc">${esc(fb.description)}</div>
+                <button class="fb-subject-toggle queue-name" data-id="${esc(fb.id)}" style="margin-top:4px;text-align:left;background:none;border:none;padding:0;cursor:pointer;font-size:inherit;font-weight:600;color:var(--ink);width:100%">
+                    ${esc(fb.subject)}
+                </button>
+                <div class="fb-desc-body hidden" data-id="${esc(fb.id)}">
+                    <div class="queue-desc" style="margin-top:4px">${esc(fb.description)}</div>
+                </div>
                 ${fb.submitter_name || fb.submitter_email
-                    ? `<div class="queue-meta">From: ${esc(fb.submitter_name || '')}${fb.submitter_email ? ' &lt;' + esc(fb.submitter_email) + '&gt;' : ''}</div>`
+                    ? `<div class="queue-meta" style="margin-top:4px">From: ${esc(fb.submitter_name || '')}${fb.submitter_email ? ' &lt;' + esc(fb.submitter_email) + '&gt;' : ''}</div>`
                     : ''}
                 <div class="fb-item-actions">
-                    <select class="fb-status-select" data-id="${esc(fb.id)}">
-                        <option value="new"${fb.status === 'new' ? ' selected' : ''}>New</option>
-                        <option value="in_review"${fb.status === 'in_review' ? ' selected' : ''}>In Review</option>
-                        <option value="resolved"${fb.status === 'resolved' ? ' selected' : ''}>Resolved</option>
-                        <option value="dismissed"${fb.status === 'dismissed' ? ' selected' : ''}>Dismissed</option>
-                    </select>
-                    <textarea class="fb-notes-input" data-id="${esc(fb.id)}" placeholder="Admin notes (optional)">${esc(fb.admin_notes || '')}</textarea>
-                    <div style="display:flex;gap:8px;margin-top:4px">
-                        <button class="btn-approve fb-save-btn" data-id="${esc(fb.id)}">Save</button>
-                        <button class="btn-reject fb-delete-btn" data-id="${esc(fb.id)}">Delete</button>
+                    <div class="fb-action-btns">
+                        ${fb.status !== 'in_progress' ? `<button class="fb-action-btn fb-action-inprogress" data-id="${esc(fb.id)}" data-status="in_progress">Mark In Progress</button>` : ''}
+                        ${fb.status !== 'resolved'    ? `<button class="fb-action-btn fb-action-resolve"    data-id="${esc(fb.id)}" data-status="resolved">Mark Resolved</button>` : ''}
+                        ${fb.status !== 'dismissed'   ? `<button class="fb-action-btn fb-action-dismiss"    data-id="${esc(fb.id)}" data-status="dismissed">Dismiss</button>` : ''}
+                        <button class="fb-action-btn fb-action-delete" data-id="${esc(fb.id)}">Delete</button>
                     </div>
+                    <textarea class="fb-notes-input" data-id="${esc(fb.id)}" placeholder="Admin notes (optional)">${esc(fb.admin_notes || '')}</textarea>
+                    <button class="btn-approve fb-save-notes-btn" data-id="${esc(fb.id)}" style="margin-top:4px">Save Notes</button>
                 </div>
             </div>
         `).join('');
 
-        container.querySelectorAll('.fb-save-btn').forEach(btn =>
+        container.querySelectorAll('.fb-subject-toggle').forEach(btn =>
+            btn.addEventListener('click', () => {
+                const body = container.querySelector(`.fb-desc-body[data-id="${btn.dataset.id}"]`);
+                body?.classList.toggle('hidden');
+            })
+        );
+
+        container.querySelectorAll('.fb-action-inprogress, .fb-action-resolve, .fb-action-dismiss').forEach(btn =>
             btn.addEventListener('click', async () => {
-                const id     = btn.dataset.id;
-                const status = container.querySelector(`.fb-status-select[data-id="${id}"]`).value;
-                const notes  = container.querySelector(`.fb-notes-input[data-id="${id}"]`).value.trim() || null;
-                await authedFetch(`${API_BASE}/api/admin/feedback/${id}`, {
+                await authedFetch(`${API_BASE}/api/admin/feedback/${btn.dataset.id}`, {
                     method: 'PATCH',
-                    body: JSON.stringify({ status, admin_notes: notes }),
+                    body: JSON.stringify({ status: btn.dataset.status }),
                 });
                 await Promise.all([refreshAdminFeedback(), updateAdminBadge()]);
             })
         );
 
-        container.querySelectorAll('.fb-delete-btn').forEach(btn =>
+        container.querySelectorAll('.fb-save-notes-btn').forEach(btn =>
+            btn.addEventListener('click', async () => {
+                const notes = container.querySelector(`.fb-notes-input[data-id="${btn.dataset.id}"]`).value.trim() || null;
+                await authedFetch(`${API_BASE}/api/admin/feedback/${btn.dataset.id}`, {
+                    method: 'PATCH',
+                    body: JSON.stringify({ admin_notes: notes }),
+                });
+                btn.textContent = 'Saved ✓';
+                setTimeout(() => { btn.textContent = 'Save Notes'; }, 1500);
+            })
+        );
+
+        container.querySelectorAll('.fb-action-delete').forEach(btn =>
             btn.addEventListener('click', async () => {
                 if (!confirm('Delete this feedback entry? This cannot be undone.')) return;
                 await authedFetch(`${API_BASE}/api/admin/feedback/${btn.dataset.id}`, { method: 'DELETE' });
@@ -516,14 +539,24 @@ document.getElementById('admin-fb-show-all')?.addEventListener('change', refresh
 function openFeedbackModal() {
     const modal = document.getElementById('feedback-modal');
     modal.classList.remove('hidden');
-    document.getElementById('fb-msg').textContent     = '';
-    document.getElementById('fb-msg').className       = 'form-status';
-    document.getElementById('fb-subject').value       = '';
-    document.getElementById('fb-desc').value          = '';
-    document.getElementById('fb-name').value          = '';
-    document.getElementById('fb-email').value         = '';
-    document.getElementById('fb-hp').value            = '';
-    document.getElementById('fb-submit').disabled     = false;
+    document.getElementById('fb-msg').textContent = '';
+    document.getElementById('fb-msg').className   = 'form-status';
+    document.getElementById('fb-subject').value   = '';
+    document.getElementById('fb-desc').value      = '';
+    document.getElementById('fb-name').value      = '';
+    document.getElementById('fb-hp').value        = '';
+    document.getElementById('fb-submit').disabled = false;
+    document.getElementById('fb-submit').textContent = 'Send Feedback';
+    const emailEl = document.getElementById('fb-email');
+    if (auth.user?.email) {
+        emailEl.value    = auth.user.email;
+        emailEl.readOnly = true;
+        emailEl.style.opacity = '0.7';
+    } else {
+        emailEl.value    = '';
+        emailEl.readOnly = false;
+        emailEl.style.opacity = '';
+    }
     setTimeout(() => document.getElementById('fb-subject')?.focus(), 50);
 }
 
@@ -538,12 +571,13 @@ document.getElementById('fb-submit').addEventListener('click', async () => {
     const msg = document.getElementById('fb-msg');
     msg.className   = 'form-status';
     msg.textContent = '';
+    const submitterEmail = document.getElementById('fb-email').value.trim();
     const payload = {
         type:            document.getElementById('fb-type').value,
         subject:         document.getElementById('fb-subject').value.trim(),
         description:     document.getElementById('fb-desc').value.trim(),
-        submitter_name:  document.getElementById('fb-name').value.trim()  || null,
-        submitter_email: document.getElementById('fb-email').value.trim() || null,
+        submitter_name:  document.getElementById('fb-name').value.trim() || null,
+        submitter_email: submitterEmail || null,
         hp:              document.getElementById('fb-hp').value,
     };
     if (!payload.subject || !payload.description) {
@@ -552,7 +586,8 @@ document.getElementById('fb-submit').addEventListener('click', async () => {
         return;
     }
     const btn = document.getElementById('fb-submit');
-    btn.disabled = true;
+    btn.disabled    = true;
+    btn.textContent = 'Submitting…';
     try {
         const headers = { 'Content-Type': 'application/json' };
         if (auth.token) headers['Authorization'] = `Bearer ${auth.token}`;
@@ -560,17 +595,21 @@ document.getElementById('fb-submit').addEventListener('click', async () => {
         const data = await res.json();
         if (res.ok) {
             msg.className   = 'form-status ok';
-            msg.textContent = 'Thanks! Your feedback was submitted.';
-            setTimeout(closeFeedbackModal, 2000);
+            msg.textContent = submitterEmail
+                ? 'Thanks for the feedback! We\'ll review it shortly. We\'ll get back to you if needed.'
+                : 'Thanks for the feedback! We\'ll review it shortly.';
+            setTimeout(closeFeedbackModal, 3000);
         } else {
-            msg.className   = 'form-status err';
-            msg.textContent = data.error || 'Submission failed.';
-            btn.disabled = false;
+            msg.className    = 'form-status err';
+            msg.textContent  = data.error || 'Submission failed.';
+            btn.disabled     = false;
+            btn.textContent  = 'Send Feedback';
         }
     } catch {
-        msg.className   = 'form-status err';
-        msg.textContent = 'Network error. Please try again.';
-        btn.disabled = false;
+        msg.className    = 'form-status err';
+        msg.textContent  = 'Network error. Please try again.';
+        btn.disabled     = false;
+        btn.textContent  = 'Send Feedback';
     }
 });
 
