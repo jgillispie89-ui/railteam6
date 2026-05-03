@@ -134,7 +134,13 @@ document.getElementById('auth-submit-btn').addEventListener('click', async () =>
     const msg      = document.getElementById('auth-msg');
     const email    = document.getElementById('auth-email').value.trim();
     const password = document.getElementById('auth-password').value;
-    msg.className  = 'form-status';
+    msg.className   = 'form-status';
+    msg.textContent = '';
+
+    const btn      = document.getElementById('auth-submit-btn');
+    const loadText = authMode === 'login' ? 'Logging in…' : authMode === 'register' ? 'Creating account…' : 'Sending…';
+    const restore  = btnLoading(btn, loadText);
+    const cancel   = coldStartHint(msg);
 
     if (authMode === 'forgot') {
         try {
@@ -144,11 +150,14 @@ document.getElementById('auth-submit-btn').addEventListener('click', async () =>
                 body: JSON.stringify({ email }),
             });
             const data = await res.json();
+            cancel();
             if (!res.ok) throw new Error(data.error);
             msg.textContent = "If that address is registered, we've sent a reset link. Check your inbox (and spam folder).";
             msg.className   = 'form-status ok';
-            document.getElementById('auth-submit-btn').disabled = true;
+            // leave disabled — prevents accidental re-send
         } catch (err) {
+            cancel();
+            restore();
             msg.textContent = '✕ ' + err.message;
             msg.className   = 'form-status err';
         }
@@ -163,10 +172,13 @@ document.getElementById('auth-submit-btn').addEventListener('click', async () =>
                 body: JSON.stringify({ email, password }),
             });
             const data = await res.json();
+            cancel();
             if (!res.ok) throw new Error(data.error);
             saveAuth(data.token, data.user);
             closeAuthModal();
         } catch (err) {
+            cancel();
+            restore();
             msg.textContent = '✕ ' + err.message;
             msg.className   = 'form-status err';
         }
@@ -178,12 +190,16 @@ document.getElementById('auth-submit-btn').addEventListener('click', async () =>
                 body: JSON.stringify({ email, password }),
             });
             const data = await res.json();
+            cancel();
             if (!res.ok) throw new Error(data.error);
             saveAuth(data.token, data.user);
+            restore();
             msg.textContent = '✓ Account created! Check your email to verify your address.';
             msg.className   = 'form-status ok';
             setTimeout(closeAuthModal, 3000);
         } catch (err) {
+            cancel();
+            restore();
             msg.textContent = '✕ ' + err.message;
             msg.className   = 'form-status err';
         }
@@ -259,7 +275,8 @@ document.getElementById('reset-submit-btn').addEventListener('click', async () =
     const msg  = document.getElementById('reset-msg');
     const pw   = document.getElementById('reset-pw').value;
     const pw2  = document.getElementById('reset-pw2').value;
-    msg.className = 'form-status';
+    msg.className   = 'form-status';
+    msg.textContent = '';
 
     if (pw.length < 8) {
         msg.textContent = '✕ Password must be at least 8 characters.';
@@ -272,7 +289,8 @@ document.getElementById('reset-submit-btn').addEventListener('click', async () =
         return;
     }
 
-    msg.textContent = 'Saving…';
+    const btn     = document.getElementById('reset-submit-btn');
+    const restore = btnLoading(btn, 'Resetting…');
     try {
         const res  = await fetch(`${API_BASE}/api/auth/reset-password`, {
             method: 'POST',
@@ -283,13 +301,14 @@ document.getElementById('reset-submit-btn').addEventListener('click', async () =
         if (!res.ok) throw new Error(data.error);
         msg.textContent = '✓ Password updated! Please log in with your new password.';
         msg.className   = 'form-status ok';
-        document.getElementById('reset-submit-btn').disabled = true;
+        // leave disabled — one-time use
         window.history.replaceState({}, '', '/');
         setTimeout(() => {
             document.getElementById('reset-modal').classList.add('hidden');
             openAuthModal('login');
         }, 2000);
     } catch (err) {
+        restore();
         msg.textContent = '✕ ' + err.message;
         msg.className   = 'form-status err';
     }
@@ -866,23 +885,29 @@ document.getElementById('sf-submit').addEventListener('click', async () => {
     const msg = document.getElementById('sf-status-msg');
     const [lng, lat] = state.pendingPinLngLat || [null, null];
     const body = {
-        name:           document.getElementById('sf-name').value.trim(),
-        site_type:      document.getElementById('sf-type').value,
-        status:         document.getElementById('sf-status').value,
+        name:            document.getElementById('sf-name').value.trim(),
+        site_type:       document.getElementById('sf-type').value,
+        status:          document.getElementById('sf-status').value,
         lng, lat,
-        city:           document.getElementById('sf-city').value.trim() || null,
-        state_province: document.getElementById('sf-state').value.trim().toUpperCase() || null,
-        built_year:     parseInt(document.getElementById('sf-built').value) || null,
-        closed_year:    parseInt(document.getElementById('sf-closed').value) || null,
+        city:            document.getElementById('sf-city').value.trim() || null,
+        state_province:  document.getElementById('sf-state').value.trim().toUpperCase() || null,
+        built_year:      parseInt(document.getElementById('sf-built').value) || null,
+        closed_year:     parseInt(document.getElementById('sf-closed').value) || null,
         demolished_year: parseInt(document.getElementById('sf-demo').value) || null,
-        description:    document.getElementById('sf-desc').value.trim() || null,
-        photos:         sfPhotos.length > 0 ? sfPhotos : undefined,
-        photo_url:      sfPhotos.length === 0 ? (document.getElementById('sf-photo-url')?.value.trim() || null) : null,
+        description:     document.getElementById('sf-desc').value.trim() || null,
+        photos:          sfPhotos.length > 0 ? sfPhotos : undefined,
+        photo_url:       sfPhotos.length === 0 ? (document.getElementById('sf-photo-url')?.value.trim() || null) : null,
     };
+    msg.textContent = '';
+    msg.className   = 'form-status';
+    const btn     = document.getElementById('sf-submit');
+    const restore = btnLoading(btn, 'Submitting…');
+    const cancel  = coldStartHint(msg);
     try {
         const res  = await authedFetch(`${API_BASE}/api/sites`, {
             method: 'POST', body: JSON.stringify(body),
         });
+        cancel();
         const data = await res.json();
         if (!res.ok) throw new Error(data.error);
         const live = data.mod_status === 'approved';
@@ -893,6 +918,8 @@ document.getElementById('sf-submit').addEventListener('click', async () => {
         if (live) { loadData(); }
         setTimeout(closeSiteForm, 2500);
     } catch (err) {
+        cancel();
+        restore();
         msg.textContent = '✕ ' + err.message;
         msg.className   = 'form-status err';
     }
@@ -941,11 +968,19 @@ document.getElementById('mf-submit').addEventListener('click', async () => {
 // Data loading
 // =============================================================================
 async function loadData() {
+    const statusEl = document.getElementById('map-load-status');
+    const textEl   = document.getElementById('map-load-text');
+    if (statusEl) statusEl.classList.remove('hidden');
+    const t = setTimeout(() => {
+        if (textEl) textEl.textContent = 'Server waking up — first request may take ~30 seconds…';
+    }, 5000);
     try {
         const [sitesRes, linesRes] = await Promise.all([
             fetch(`${API_BASE}/api/sites`),
             fetch(`${API_BASE}/api/lines`),
         ]);
+        clearTimeout(t);
+        if (statusEl) statusEl.classList.add('hidden');
         const sites = await sitesRes.json();
         const lines = await linesRes.json();
         siteFeatures = sites.features || [];
@@ -954,6 +989,8 @@ async function loadData() {
         applyFilters();
         maybeHideMapNotice(sites.features?.length ?? 0);
     } catch (err) {
+        clearTimeout(t);
+        if (statusEl) statusEl.classList.add('hidden');
         console.warn('Backend unreachable:', err);
         useFallbackData();
     }
@@ -1027,12 +1064,16 @@ async function doSearch(q) {
         return;
     }
 
-    const sites = searchLocalSites(q);
+    const sites   = searchLocalSites(q);
+    const spinner = document.getElementById('mapsearch-spinner');
+    if (spinner) spinner.classList.remove('hidden');
     try {
         const locations = await geocode(q);
         searchResults = [...sites, ...locations];
     } catch {
         searchResults = sites;
+    } finally {
+        if (spinner) spinner.classList.add('hidden');
     }
     renderSearchResults(searchResults);
 }
@@ -1524,8 +1565,10 @@ async function saveEdit(siteId) {
         msg.className   = 'form-status err';
         return;
     }
-    msg.textContent = 'Saving…';
+    msg.textContent = '';
     msg.className   = 'form-status';
+    const saveBtn = document.getElementById('ef-save');
+    const restore = saveBtn ? btnLoading(saveBtn, 'Saving…') : () => {};
 
     try {
         const res = await authedFetch(`${API_BASE}/api/sites/${siteId}`, {
@@ -1552,6 +1595,7 @@ async function saveEdit(siteId) {
         await loadData();
         setTimeout(() => showDetail(currentProps), 800);
     } catch (err) {
+        restore();
         msg.textContent = '✕ ' + err.message;
         msg.className   = 'form-status err';
     }
@@ -1616,6 +1660,26 @@ document.addEventListener('keydown', e => {
 function esc(s) { return String(s ?? '').replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'})[c]); }
 function prettyType(t) { return ({ depot:'Depot', freight_house:'Freight house', bridge:'Bridge', trestle:'Trestle', tunnel:'Tunnel', yard:'Yard', roundhouse:'Roundhouse' })[t] || t; }
 function prettyStatus(s) { return ({ active:'Active', preserved:'Preserved', abandoned:'Abandoned', ruins:'Ruins', destroyed:'Destroyed', daylighted_active:'Daylighted / Active', daylighted_inactive:'Daylighted / Inactive' })[s] || s; }
+
+// Puts btn into loading state; returns a restore-fn that re-enables it.
+function btnLoading(btn, loadText) {
+    const orig      = btn.textContent;
+    btn.disabled    = true;
+    btn.textContent = loadText;
+    return () => { btn.disabled = false; btn.textContent = orig; };
+}
+
+// Arms a timer that writes a wake-up hint into msgEl after delayMs if it's still blank.
+// Returns a cancel-fn; call it once the request resolves.
+function coldStartHint(msgEl, delayMs = 5000) {
+    const t = setTimeout(() => {
+        if (msgEl && !msgEl.textContent.trim()) {
+            msgEl.textContent = 'Server is waking up — first request may take up to 30 seconds…';
+            msgEl.className   = 'form-status';
+        }
+    }, delayMs);
+    return () => clearTimeout(t);
+}
 
 // =============================================================================
 // UI wiring — filter checkboxes
