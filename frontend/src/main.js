@@ -23,7 +23,7 @@ const map = new maplibregl.Map({
     center: [-84.33, 38.68],
     zoom: 8,
 });
-map.addControl(new maplibregl.NavigationControl(), 'top-right');
+map.addControl(new maplibregl.NavigationControl(), 'top-left');
 
 // =============================================================================
 // Auth state
@@ -1807,8 +1807,14 @@ async function openHistoricPanel(lat, lng) {
 
     document.getElementById('hp-title').textContent = 'Historic Maps';
     document.getElementById('hp-coords').textContent = `${lat.toFixed(4)}° N, ${Math.abs(lng).toFixed(4)}° W`;
-    document.getElementById('hp-results').innerHTML =
-        '<p class="hint" style="padding:8px 0">Searching for maps…<span class="topo-search-spinner"></span></p>';
+    document.getElementById('hp-results').innerHTML = `
+        <div class="topo-loading">
+            <span class="topo-loading-spinner"></span>
+            <div>
+                <div class="topo-loading-main">Searching for historic maps near your location…</div>
+                <div class="topo-loading-hint">Initial searches can take 5–10 seconds. Tip: USGS searches the entire historical archive — first request may be slow.</div>
+            </div>
+        </div>`;
 
     allTopoItems = [];
     await searchUsgsTopos(lat, lng);
@@ -1822,7 +1828,7 @@ async function searchUsgsTopos(lat, lng) {
         return;
     }
 
-    const delta  = 0.3;
+    const delta  = 0.05;
     const params = new URLSearchParams({
         datasets:     'Historical Topographic Maps',
         bbox:         `${lng - delta},${lat - delta},${lng + delta},${lat + delta}`,
@@ -1936,7 +1942,7 @@ function renderTopoCards() {
                     <button class="topo-btn${isActive ? ' topo-show-active' : ''} topo-show-btn" data-id="${esc(id)}">${isActive ? 'Hide' : 'Show on Map'}</button>
                     ${item.downloadURL ? `<a class="topo-link" href="${esc(item.downloadURL)}" target="_blank" rel="noopener">Download</a>` : ''}
                     ${item.moreInfoUrl ? `<a class="topo-link" href="${esc(item.moreInfoUrl)}" target="_blank" rel="noopener">USGS</a>` : ''}
-                    ${isAdmin ? `<button class="topo-btn topo-add-btn" data-id="${esc(id)}" ${activeTopoOverlays.get(id) ? '' : ''}>+ Add to DB</button>` : ''}
+                    ${isAdmin ? `<button class="topo-btn topo-add-btn" data-id="${esc(id)}" title="Permanently add this map to RailTeam6's library so it appears on the timeline slider for all users.">Save to RailTeam6</button>` : ''}
                 </div>
             </div>
         </div>`;
@@ -2157,6 +2163,7 @@ map.on('load', () => {
     // Right-click anywhere on the map → open historic topo panel for that location
     map.on('contextmenu', e => {
         e.preventDefault();
+        showBanner('Opening historic topo maps for this location…', 'ok');
         openHistoricPanel(e.lngLat.lat, e.lngLat.lng);
     });
 });

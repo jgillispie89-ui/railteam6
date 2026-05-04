@@ -894,7 +894,35 @@ main { flex: 1; display: grid; grid-template-columns: 260px 1fr; position: relat
 }
 .topo-widget-remove:hover { color: white; }
 
-/* Inline search spinner for panel */
+/* Loading state inside the topo panel */
+.topo-loading {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px 4px;
+}
+.topo-loading-spinner {
+    width: 20px; height: 20px;
+    border: 3px solid #ddd;
+    border-top-color: var(--rail-rust);
+    border-radius: 50%;
+    animation: spin 0.75s linear infinite;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+.topo-loading-main {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 5px;
+}
+.topo-loading-hint {
+    font-size: 11px;
+    color: #888;
+    line-height: 1.5;
+}
+
+/* Inline search spinner for panel (legacy, kept for fallback) */
 .topo-search-spinner {
     display: inline-block;
     width: 11px; height: 11px;
