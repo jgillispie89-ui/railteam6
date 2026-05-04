@@ -37,6 +37,7 @@
             <a href="#about">About</a>
             <a href="#contribute">Contribute</a>
             <a href="#" id="nav-feedback">Feedback</a>
+            <button class="nav-btn" id="btn-historic-maps" title="Browse USGS historic topo maps">Historic Maps</button>
             <div id="nav-auth"></div>
         </nav>
     </header>
@@ -124,6 +125,48 @@
                 </div>
             </div>
         </div>
+
+        <!-- USGS Historic Topo Map Browser panel -->
+        <div id="historic-panel" class="historic-panel">
+            <div class="hp-head">
+                <div style="flex:1;min-width:0">
+                    <h3 id="hp-title" style="margin:0 0 2px 0;font-size:16px">Historic Maps</h3>
+                    <p id="hp-coords" class="hp-coords"></p>
+                </div>
+                <button class="close-btn" id="historic-close" style="position:static;margin-left:8px;flex-shrink:0">×</button>
+            </div>
+            <div class="hp-filters">
+                <div class="hp-filter-row">
+                    <span class="hp-filter-label">Year</span>
+                    <input type="number" id="hp-year-from" class="hp-year-input" min="1880" max="2025" value="1880">
+                    <span style="color:#aaa;font-size:13px">–</span>
+                    <input type="number" id="hp-year-to" class="hp-year-input" min="1880" max="2025" value="2025">
+                </div>
+                <div class="hp-filter-row">
+                    <span class="hp-filter-label">Scale</span>
+                    <select id="hp-scale" class="hp-select">
+                        <option value="">All</option>
+                        <option value="24000">1:24,000</option>
+                        <option value="62500">1:62,500</option>
+                        <option value="125000">1:125,000</option>
+                        <option value="250000">1:250,000</option>
+                    </select>
+                    <select id="hp-sort" class="hp-select">
+                        <option value="newest">Newest first</option>
+                        <option value="oldest">Oldest first</option>
+                    </select>
+                </div>
+            </div>
+            <div id="hp-results" class="hp-results">
+                <p class="hint" style="padding:16px">Click a location on the map to see historic topo maps for that area.</p>
+            </div>
+            <div id="hp-footer" class="hp-footer" style="display:none">
+                <button class="btn-secondary" id="hp-remove-all" style="width:100%;font-size:12px">Remove all overlays</button>
+            </div>
+        </div>
+
+        <!-- Floating topo overlay opacity controls -->
+        <div id="topo-overlay-controls" class="topo-overlay-controls"></div>
 
         <div id="detail-panel" class="hidden">
             <button class="close-btn" id="close-detail">×</button>

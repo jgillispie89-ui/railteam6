@@ -652,3 +652,261 @@ main { flex: 1; display: grid; grid-template-columns: 260px 1fr; position: relat
 
 /* Status in_progress badge (alongside new/resolved/dismissed) */
 .fb-status-in_progress { background: #fef9c3; color: #854d0e; }
+
+/* =============================================================================
+   USGS Historic Topo Map Browser
+   ============================================================================= */
+
+.historic-panel {
+    position: absolute;
+    top: 0; right: 0; bottom: 0;
+    width: 400px;
+    background: white;
+    z-index: 15;
+    display: flex;
+    flex-direction: column;
+    box-shadow: -4px 0 24px rgba(0,0,0,0.18);
+    transform: translateX(100%);
+    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    border-left: 1px solid var(--border);
+}
+.historic-panel.open { transform: translateX(0); }
+
+.hp-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 14px 16px 10px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+}
+.hp-coords { font-size: 11px; color: #888; margin: 0; font-family: monospace; }
+
+.hp-filters {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex-shrink: 0;
+    background: var(--paper-2);
+}
+.hp-filter-row {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    flex-wrap: wrap;
+}
+.hp-filter-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: #777;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    min-width: 34px;
+}
+.hp-year-input {
+    width: 62px;
+    padding: 4px 6px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 12px;
+    font-family: inherit;
+}
+.hp-select {
+    padding: 4px 6px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 12px;
+    font-family: inherit;
+    background: white;
+    cursor: pointer;
+}
+
+.hp-results {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+}
+.hp-footer {
+    padding: 10px 14px;
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
+}
+
+/* Individual topo map card */
+.topo-card {
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: 8px;
+    background: white;
+    transition: box-shadow 0.15s;
+}
+.topo-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+
+.topo-thumb {
+    width: 78px; height: 78px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+    background: var(--paper-2);
+    cursor: zoom-in;
+}
+.topo-thumb-placeholder {
+    width: 78px; height: 78px;
+    border-radius: 4px;
+    border: 1px dashed var(--border-2);
+    background: var(--paper-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    color: #bbb;
+    flex-shrink: 0;
+    text-align: center;
+    padding: 4px;
+}
+.topo-card-body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.topo-card-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    line-height: 1.3;
+}
+.topo-card-meta { display: flex; gap: 4px; flex-wrap: wrap; }
+.topo-badge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 3px;
+    background: var(--paper-2);
+    border: 1px solid var(--border);
+    color: #555;
+}
+.topo-card-actions {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+    margin-top: 2px;
+    align-items: center;
+}
+.topo-btn {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 9px;
+    border-radius: 4px;
+    border: 1px solid var(--border-2);
+    cursor: pointer;
+    background: white;
+    color: var(--ink);
+    transition: background 0.12s;
+}
+.topo-btn:hover { background: var(--paper-2); }
+.topo-btn:disabled { opacity: 0.6; cursor: default; }
+.topo-show-active {
+    background: var(--rail-alive);
+    color: white;
+    border-color: var(--rail-alive);
+}
+.topo-show-active:hover { background: #0a5340; }
+.topo-add-btn { color: var(--rail-rust); border-color: var(--rail-rust); font-size: 11px; }
+.topo-add-btn:hover { background: #fff8ee; }
+.topo-link {
+    font-size: 11px;
+    color: var(--rail-rust);
+    text-decoration: none;
+}
+.topo-link:hover { text-decoration: underline; }
+
+/* Floating overlay controls (above timeline) */
+.topo-overlay-controls {
+    position: absolute;
+    bottom: 92px;
+    left: 280px;
+    right: 20px;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    pointer-events: none;
+}
+.topo-widget {
+    background: rgba(28,28,26,0.88);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    color: white;
+    padding: 7px 12px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    pointer-events: auto;
+    max-width: 420px;
+}
+.topo-widget-name {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 500;
+    font-size: 11px;
+}
+.topo-widget-opacity {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-shrink: 0;
+    font-size: 10px;
+    color: rgba(255,255,255,0.65);
+    white-space: nowrap;
+}
+.topo-opacity-slider {
+    width: 68px;
+    accent-color: var(--rail-rust);
+    cursor: pointer;
+}
+.topo-widget-remove {
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.55);
+    font-size: 18px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+    flex-shrink: 0;
+}
+.topo-widget-remove:hover { color: white; }
+
+/* Inline search spinner for panel */
+.topo-search-spinner {
+    display: inline-block;
+    width: 11px; height: 11px;
+    border: 2px solid #ccc;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.65s linear infinite;
+    vertical-align: middle;
+    margin-left: 4px;
+}
+
+@media (max-width: 768px) {
+    .historic-panel { width: 100%; }
+    .topo-overlay-controls { left: 8px; right: 8px; bottom: 80px; }
+}

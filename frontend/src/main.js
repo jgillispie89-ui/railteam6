@@ -1235,9 +1235,12 @@ function addLayers() {
         },
     });
 
-    map.on('click', 'sites-layer', e => { showDetail(e.features[0].properties); });
-    map.on('mouseenter', 'sites-layer', () => { map.getCanvas().style.cursor = state.pinMode ? 'crosshair' : 'pointer'; });
-    map.on('mouseleave', 'sites-layer', () => { map.getCanvas().style.cursor = state.pinMode ? 'crosshair' : ''; });
+    map.on('click', 'sites-layer', e => {
+        if (historicMode) return; // let the historic mode handler pick it up
+        showDetail(e.features[0].properties);
+    });
+    map.on('mouseenter', 'sites-layer', () => { map.getCanvas().style.cursor = (state.pinMode || historicMode) ? 'crosshair' : 'pointer'; });
+    map.on('mouseleave', 'sites-layer', () => { map.getCanvas().style.cursor = (state.pinMode || historicMode) ? 'crosshair' : ''; });
 }
 
 // =============================================================================
@@ -1760,12 +1763,402 @@ function maybeHideMapNotice(featureCount) {
 }
 
 // =============================================================================
+// USGS Historic Topo Map Browser
+// =============================================================================
+let historicMode         = false;
+let allTopoItems         = [];
+const activeTopoOverlays = new Map(); // id → { item, year, sourceId, layerId, opacity }
+const topoCache          = new Map(); // `${lat},${lng}` → items[]
+
+function enterHistoricMode() {
+    historicMode = true;
+    document.getElementById('btn-historic-maps')?.classList.add('active');
+    map.getCanvas().style.cursor = 'crosshair';
+    showBanner('Click any location on the map to see historic topo maps.', 'ok');
+    map.once('click', onHistoricMapClick);
+}
+
+function exitHistoricMode() {
+    historicMode = false;
+    document.getElementById('btn-historic-maps')?.classList.remove('active');
+    if (!state.pinMode) map.getCanvas().style.cursor = '';
+    map.off('click', onHistoricMapClick);
+}
+
+function closeHistoricPanel() {
+    document.getElementById('historic-panel').classList.remove('open');
+    const ctrl = document.getElementById('topo-overlay-controls');
+    if (ctrl) ctrl.style.right = '';
+    exitHistoricMode();
+}
+
+function onHistoricMapClick(e) {
+    const { lng, lat } = e.lngLat;
+    openHistoricPanel(lat, lng);
+}
+
+async function openHistoricPanel(lat, lng) {
+    exitHistoricMode();
+    const panel = document.getElementById('historic-panel');
+    panel.classList.add('open');
+    document.getElementById('detail-panel').classList.add('hidden');
+    const ctrl = document.getElementById('topo-overlay-controls');
+    if (ctrl) ctrl.style.right = '420px';
+
+    document.getElementById('hp-title').textContent = 'Historic Maps';
+    document.getElementById('hp-coords').textContent = `${lat.toFixed(4)}° N, ${Math.abs(lng).toFixed(4)}° W`;
+    document.getElementById('hp-results').innerHTML =
+        '<p class="hint" style="padding:8px 0">Searching for maps…<span class="topo-search-spinner"></span></p>';
+
+    allTopoItems = [];
+    await searchUsgsTopos(lat, lng);
+}
+
+async function searchUsgsTopos(lat, lng) {
+    const key = `${lat.toFixed(3)},${lng.toFixed(3)}`;
+    if (topoCache.has(key)) {
+        allTopoItems = topoCache.get(key);
+        renderTopoCards();
+        return;
+    }
+
+    const delta  = 0.3;
+    const params = new URLSearchParams({
+        datasets:     'Historical Topographic Maps',
+        bbox:         `${lng - delta},${lat - delta},${lng + delta},${lat + delta}`,
+        outputFormat: 'JSON',
+        max:          '100',
+    });
+
+    try {
+        const res  = await fetch(`https://tnmaccess.nationalmap.gov/api/v1/products?${params}`);
+        const data = await res.json();
+        allTopoItems = (data.items || []);
+        topoCache.set(key, allTopoItems);
+
+        // Reverse geocode for a nicer panel title
+        try {
+            const geo  = await fetch(
+                `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`,
+                { headers: { 'User-Agent': 'RailTeam6/1.0 (https://railteam6.com)' } }
+            );
+            const gd   = await geo.json();
+            const city  = gd.address?.city || gd.address?.town || gd.address?.village || gd.address?.county || '';
+            const state = gd.address?.state_code || gd.address?.state || '';
+            const label = [city, state].filter(Boolean).join(', ');
+            if (label) document.getElementById('hp-title').textContent = `Historic Maps Near ${label}`;
+        } catch (_) {}
+
+        renderTopoCards();
+    } catch (err) {
+        document.getElementById('hp-results').innerHTML =
+            `<p class="form-status err" style="padding:8px 0">Search failed: ${esc(err.message)}</p>`;
+    }
+}
+
+function parseTopoYear(item) {
+    const d = item.publicationDate || item.dateCreated || '';
+    const m = d.match(/^(\d{4})/);
+    return m ? parseInt(m[1]) : null;
+}
+
+function parseTopoScale(item) {
+    if (typeof item.extent === 'number' && item.extent > 1000) return item.extent;
+    const t = (item.title || '').toLowerCase();
+    if (t.includes('7.5-minute') || t.includes('7.5 minute')) return 24000;
+    if (t.includes('15-minute')  || t.includes('15 minute'))  return 62500;
+    if (t.includes('30-minute')  || t.includes('30 minute'))  return 125000;
+    if (t.includes('1-degree')   || t.includes('1 degree'))   return 250000;
+    const sm = t.match(/1:(\d[\d,]+)/);
+    if (sm) return parseInt(sm[1].replace(/,/g, ''));
+    return null;
+}
+
+function filteredSortedItems() {
+    const yearFrom = parseInt(document.getElementById('hp-year-from')?.value) || 1880;
+    const yearTo   = parseInt(document.getElementById('hp-year-to')?.value)   || 2025;
+    const scale    = document.getElementById('hp-scale')?.value || '';
+    const sort     = document.getElementById('hp-sort')?.value  || 'newest';
+
+    const items = allTopoItems.filter(item => {
+        const year = parseTopoYear(item);
+        if (year !== null && (year < yearFrom || year > yearTo)) return false;
+        if (scale) {
+            const s = parseTopoScale(item);
+            if (s !== null && String(s) !== scale) return false;
+        }
+        return true;
+    });
+
+    items.sort((a, b) => {
+        const ya = parseTopoYear(a) ?? 0, yb = parseTopoYear(b) ?? 0;
+        return sort === 'oldest' ? ya - yb : yb - ya;
+    });
+    return items;
+}
+
+function renderTopoCards() {
+    const results = document.getElementById('hp-results');
+    if (!results) return;
+
+    if (!allTopoItems.length) {
+        results.innerHTML = '<p class="hint" style="padding:8px 0">No historic topo maps found for this location. Try clicking somewhere else nearby.</p>';
+        return;
+    }
+
+    const items   = filteredSortedItems();
+    const isAdmin = auth.user?.role === 'admin';
+
+    if (!items.length) {
+        results.innerHTML = '<p class="hint" style="padding:8px 0">No maps match the current filters.</p>';
+        return;
+    }
+
+    results.innerHTML = items.map(item => {
+        const year    = parseTopoYear(item);
+        const scale   = parseTopoScale(item);
+        const id      = item.sourceId || item.title || Math.random().toString(36);
+        const isActive = activeTopoOverlays.has(id);
+        const thumb   = item.previewGraphicURL || '';
+        const scaleStr = scale ? `1:${scale.toLocaleString()}` : '';
+
+        return `<div class="topo-card" data-id="${esc(id)}">
+            ${thumb
+                ? `<img class="topo-thumb" src="${esc(thumb)}" alt="${esc(item.title || '')}" loading="lazy" onerror="this.style.display='none'">`
+                : '<div class="topo-thumb-placeholder">No preview</div>'}
+            <div class="topo-card-body">
+                <div class="topo-card-title">${esc(item.title || 'Untitled')}</div>
+                <div class="topo-card-meta">
+                    ${year    ? `<span class="topo-badge">${year}</span>` : ''}
+                    ${scaleStr ? `<span class="topo-badge">${scaleStr}</span>` : ''}
+                </div>
+                <div class="topo-card-actions">
+                    <button class="topo-btn${isActive ? ' topo-show-active' : ''} topo-show-btn" data-id="${esc(id)}">${isActive ? 'Hide' : 'Show on Map'}</button>
+                    ${item.downloadURL ? `<a class="topo-link" href="${esc(item.downloadURL)}" target="_blank" rel="noopener">Download</a>` : ''}
+                    ${item.moreInfoUrl ? `<a class="topo-link" href="${esc(item.moreInfoUrl)}" target="_blank" rel="noopener">USGS</a>` : ''}
+                    ${isAdmin ? `<button class="topo-btn topo-add-btn" data-id="${esc(id)}" ${activeTopoOverlays.get(id) ? '' : ''}>+ Add to DB</button>` : ''}
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+
+    // Wire "Show on Map" / "Hide"
+    results.querySelectorAll('.topo-show-btn').forEach(btn => {
+        const id   = btn.dataset.id;
+        const item = items.find(i => (i.sourceId || i.title) === id);
+        if (!item) return;
+        btn.addEventListener('click', async () => {
+            if (activeTopoOverlays.has(id)) {
+                removeTopoFromMap(id);
+                renderTopoCards();
+                return;
+            }
+            if (activeTopoOverlays.size >= 5) {
+                showBanner('Maximum 5 overlays at once — remove one first.', 'err');
+                return;
+            }
+            const restore = btnLoading(btn, 'Loading…');
+            try {
+                await showTopoOnMap(id, item);
+                renderTopoCards();
+            } catch (err) {
+                restore();
+                showBanner('Could not load overlay: ' + err.message, 'err');
+            }
+        });
+    });
+
+    // Wire "Add to DB" (admin)
+    results.querySelectorAll('.topo-add-btn').forEach(btn => {
+        const id   = btn.dataset.id;
+        const item = items.find(i => (i.sourceId || i.title) === id);
+        if (!item) return;
+        btn.addEventListener('click', async () => {
+            const restore = btnLoading(btn, 'Saving…');
+            try {
+                await addTopoToDatabase(item);
+                btn.textContent = 'Added ✓';
+                btn.disabled    = true;
+            } catch (err) {
+                restore();
+                showBanner('Add failed: ' + err.message, 'err');
+            }
+        });
+    });
+}
+
+async function fetchTopoObjectId(item) {
+    const bb   = item.boundingBox || {};
+    const year = parseTopoYear(item);
+    if (bb.minX == null) return null;
+    try {
+        const cLng = (bb.minX + bb.maxX) / 2;
+        const cLat = (bb.minY + bb.maxY) / 2;
+        const params = new URLSearchParams({
+            geometry:       `${cLng},${cLat}`,
+            geometryType:   'esriGeometryPoint',
+            inSR:           '4326',
+            distance:       '8000',
+            units:          'esriSRUnit_Meter',
+            outFields:      'OBJECTID,map_name,imprint_year',
+            where:          year ? `imprint_year = ${year}` : '1=1',
+            returnGeometry: 'false',
+            f:              'json',
+        });
+        const res  = await fetch(
+            `https://ngmdb.usgs.gov/arcgis/rest/services/topoview/ustOverlay/MapServer/0/query?${params}`
+        );
+        const data = await res.json();
+        return data.features?.[0]?.attributes?.OBJECTID ?? null;
+    } catch (_) { return null; }
+}
+
+function buildWmsTileUrl(objectId) {
+    const base      = 'https://ngmdb.usgs.gov/arcgis/services/topoview/ustOverlay/MapServer/WMSServer';
+    const layerDefs = objectId
+        ? `&LAYERDEFS=${encodeURIComponent(JSON.stringify({ '0': `OBJECTID = ${objectId}` }))}`
+        : '';
+    return `${base}?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap` +
+        `&BBOX={bbox-epsg-3857}&SRS=EPSG:3857&WIDTH=256&HEIGHT=256` +
+        `&LAYERS=0&STYLES=&FORMAT=image%2Fpng&TRANSPARENT=TRUE${layerDefs}`;
+}
+
+async function showTopoOnMap(id, item) {
+    const objectId = await fetchTopoObjectId(item);
+    const wmsUrl   = buildWmsTileUrl(objectId);
+    const safe     = id.replace(/[^a-zA-Z0-9]/g, '_').slice(0, 60);
+    const sourceId = `htmc-${safe}`;
+    const layerId  = `htmc-layer-${safe}`;
+
+    map.addSource(sourceId, {
+        type:        'raster',
+        tiles:       [wmsUrl],
+        tileSize:    256,
+        attribution: 'USGS Historical Topographic Map Collection',
+    });
+    map.addLayer({
+        id:   layerId,
+        type: 'raster',
+        source: sourceId,
+        paint: { 'raster-opacity': 0.7 },
+    });
+
+    const year = parseTopoYear(item);
+    activeTopoOverlays.set(id, { item, year, sourceId, layerId, opacity: 70, objectId });
+    renderOverlayWidgets();
+    document.getElementById('hp-footer').style.display = '';
+
+    // Zoom to map extent
+    const bb = item.boundingBox || {};
+    if (bb.minX != null) {
+        map.fitBounds([[bb.minX, bb.minY], [bb.maxX, bb.maxY]], { padding: 60, maxZoom: 14 });
+    }
+}
+
+function removeTopoFromMap(id) {
+    const ov = activeTopoOverlays.get(id);
+    if (!ov) return;
+    try { if (map.getLayer(ov.layerId))   map.removeLayer(ov.layerId);  } catch (_) {}
+    try { if (map.getSource(ov.sourceId)) map.removeSource(ov.sourceId); } catch (_) {}
+    activeTopoOverlays.delete(id);
+    renderOverlayWidgets();
+    if (activeTopoOverlays.size === 0) document.getElementById('hp-footer').style.display = 'none';
+}
+
+function renderOverlayWidgets() {
+    const container = document.getElementById('topo-overlay-controls');
+    if (!container) return;
+    if (!activeTopoOverlays.size) { container.innerHTML = ''; return; }
+
+    container.innerHTML = [...activeTopoOverlays.entries()].map(([id, ov]) => `
+        <div class="topo-widget" data-id="${esc(id)}">
+            <span class="topo-widget-name">${esc(ov.item.title || 'Historic Map')}${ov.year ? ` (${ov.year})` : ''}</span>
+            <label class="topo-widget-opacity">
+                <span class="topo-opacity-pct">${ov.opacity}%</span>
+                <input type="range" class="topo-opacity-slider" min="0" max="100" value="${ov.opacity}" data-id="${esc(id)}">
+            </label>
+            <button class="topo-widget-remove" data-id="${esc(id)}" title="Remove">×</button>
+        </div>
+    `).join('');
+
+    container.querySelectorAll('.topo-opacity-slider').forEach(slider => {
+        slider.addEventListener('input', () => {
+            const ov = activeTopoOverlays.get(slider.dataset.id);
+            if (!ov) return;
+            ov.opacity = parseInt(slider.value);
+            slider.closest('.topo-widget').querySelector('.topo-opacity-pct').textContent = `${ov.opacity}%`;
+            try { map.setPaintProperty(ov.layerId, 'raster-opacity', ov.opacity / 100); } catch (_) {}
+        });
+    });
+
+    container.querySelectorAll('.topo-widget-remove').forEach(btn => {
+        btn.addEventListener('click', () => {
+            removeTopoFromMap(btn.dataset.id);
+            renderTopoCards();
+        });
+    });
+}
+
+async function addTopoToDatabase(item) {
+    const year = parseTopoYear(item);
+    if (!year) throw new Error('Could not determine publication year');
+
+    const objectId = await fetchTopoObjectId(item);
+    const wmsUrl   = buildWmsTileUrl(objectId);
+
+    const res = await authedFetch(`${API_BASE}/api/historic-maps`, {
+        method: 'POST',
+        body: JSON.stringify({
+            title:          item.title,
+            published_year: year,
+            tile_url:       wmsUrl,
+            publisher:      'USGS HTMC',
+            source_url:     item.downloadURL || item.moreInfoUrl || null,
+        }),
+    });
+    if (!res.ok) throw new Error((await res.json()).error || 'Failed to save');
+    await loadHistoricMaps();
+    showBanner(`✓ "${item.title}" added to map library.`, 'ok');
+}
+
+document.getElementById('btn-historic-maps').addEventListener('click', () => {
+    const panel = document.getElementById('historic-panel');
+    if (panel.classList.contains('open')) {
+        closeHistoricPanel();
+    } else if (historicMode) {
+        exitHistoricMode();
+    } else {
+        enterHistoricMode();
+    }
+});
+
+document.getElementById('historic-close').addEventListener('click', closeHistoricPanel);
+
+['hp-year-from', 'hp-year-to'].forEach(id =>
+    document.getElementById(id)?.addEventListener('change', renderTopoCards)
+);
+['hp-scale', 'hp-sort'].forEach(id =>
+    document.getElementById(id)?.addEventListener('change', renderTopoCards)
+);
+
+document.getElementById('hp-remove-all')?.addEventListener('click', () => {
+    for (const id of [...activeTopoOverlays.keys()]) removeTopoFromMap(id);
+    renderTopoCards();
+});
+
+// =============================================================================
 // Boot
 // =============================================================================
 map.on('load', () => {
     addLayers();
     loadData();
     loadHistoricMaps();
+
+    // Right-click anywhere on the map → open historic topo panel for that location
+    map.on('contextmenu', e => {
+        e.preventDefault();
+        openHistoricPanel(e.lngLat.lat, e.lngLat.lng);
+    });
 });
 
 renderNav();
