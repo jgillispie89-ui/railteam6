@@ -1992,10 +1992,14 @@ function buildWmsTileUrl() {
 }
 
 async function showTopoOnMap(id, item) {
-    const wmsUrl = buildWmsTileUrl();
+    const wmsUrl   = buildWmsTileUrl();
     const safe     = id.replace(/[^a-zA-Z0-9]/g, '_').slice(0, 60);
     const sourceId = `htmc-${safe}`;
     const layerId  = `htmc-layer-${safe}`;
+
+    // Clean up any stale layer/source from a previous show/hide cycle
+    try { if (map.getLayer(layerId))   map.removeLayer(layerId);  } catch (_) {}
+    try { if (map.getSource(sourceId)) map.removeSource(sourceId); } catch (_) {}
 
     map.addSource(sourceId, {
         type:        'raster',
