@@ -1959,10 +1959,8 @@ function renderTopoCards() {
                 renderTopoCards();
                 return;
             }
-            if (activeTopoOverlays.size >= 5) {
-                showBanner('Maximum 5 overlays at once — remove one first.', 'err');
-                return;
-            }
+            // Remove any existing overlay before adding the new one
+            for (const existingId of [...activeTopoOverlays.keys()]) removeTopoFromMap(existingId);
             const restore = btnLoading(btn, 'Loading…');
             try {
                 await showTopoOnMap(id, item);
@@ -2053,12 +2051,6 @@ async function showTopoOnMap(id, item) {
     activeTopoOverlays.set(id, { item, year, sourceId, layerId, opacity: 70, objectId });
     renderOverlayWidgets();
     document.getElementById('hp-footer').style.display = '';
-
-    // Zoom to map extent
-    const bb = item.boundingBox || {};
-    if (bb.minX != null) {
-        map.fitBounds([[bb.minX, bb.minY], [bb.maxX, bb.maxY]], { padding: 60, maxZoom: 14 });
-    }
 }
 
 function removeTopoFromMap(id) {
