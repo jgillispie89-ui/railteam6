@@ -326,7 +326,7 @@ app.get('/api/railroads', async (_req, res) => {
 app.get('/api/historic-maps', async (_req, res) => {
     try {
         const { rows } = await pool.query(
-            `SELECT id, title, publisher, published_year, tile_url, thumbnail_url, source, license FROM historic_maps ORDER BY published_year`
+            `SELECT id, title, publisher, published_year, tile_url, thumbnail_url, source, license, bounds FROM historic_maps ORDER BY published_year`
         );
         res.json(rows);
     } catch (err) {
@@ -339,14 +339,14 @@ app.get('/api/historic-maps', async (_req, res) => {
 // =============================================================================
 app.post('/api/historic-maps', requireAuth, async (req, res) => {
     try {
-        const { title, publisher, published_year, tile_url, thumbnail_url, source, source_url, license } = req.body;
+        const { title, publisher, published_year, tile_url, thumbnail_url, source, source_url, license, bounds } = req.body;
         if (!title || !published_year || !tile_url)
             return res.status(400).json({ error: 'title, published_year, and tile_url are required' });
         const { rows } = await pool.query(
-            `INSERT INTO historic_maps (title, publisher, published_year, tile_url, thumbnail_url, source, source_url, license, bbox)
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, ST_GeomFromText('POLYGON((-180 -90, 180 -90, 180 90, -180 90, -180 -90))', 4326))
-             RETURNING id, title, published_year, tile_url`,
-            [title, publisher || null, published_year, tile_url, thumbnail_url || null, source || null, source_url || null, license || 'public domain']
+            `INSERT INTO historic_maps (title, publisher, published_year, tile_url, thumbnail_url, source, source_url, license, bbox, bounds)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, ST_GeomFromText('POLYGON((-180 -90, 180 -90, 180 90, -180 90, -180 -90))', 4326), $9)
+             RETURNING id, title, published_year, tile_url, bounds`,
+            [title, publisher || null, published_year, tile_url, thumbnail_url || null, source || null, source_url || null, license || 'public domain', bounds ? JSON.stringify(bounds) : null]
         );
         res.status(201).json(rows[0]);
     } catch (err) {

@@ -1,0 +1,1 @@
+ALTER TABLE historic_maps ADD COLUMN IF NOT EXISTS bounds JSONB;

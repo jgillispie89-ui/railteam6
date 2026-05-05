@@ -201,6 +201,7 @@ CREATE TABLE historic_maps (
     thumbnail_url   TEXT,
     source          TEXT,                 -- "Library of Congress"
     source_url      TEXT,
+    bounds          JSONB,                -- {minX, minY, maxX, maxY} for image-source overlay
     license         TEXT DEFAULT 'public domain',
     created_at      TIMESTAMPTZ DEFAULT now()
 );

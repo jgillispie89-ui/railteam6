@@ -687,13 +687,27 @@ function activateMap(id) {
     if (!m) return;
     state.activeMapId = id;
     const opacity = state.overlayOpacity / 100;
-    if (map.getSource('historic-overlay')) {
-        map.getSource('historic-overlay').setTiles([m.tile_url]);
-        map.setPaintProperty('historic-overlay', 'raster-opacity', opacity);
+
+    // Always remove/re-add — image and raster sources can't be swapped in-place
+    try { if (map.getLayer('historic-overlay')) map.removeLayer('historic-overlay'); } catch (_) {}
+    try { if (map.getSource('historic-overlay')) map.removeSource('historic-overlay'); } catch (_) {}
+
+    if (m.bounds) {
+        const bb = m.bounds;
+        map.addSource('historic-overlay', {
+            type: 'image',
+            url:  m.tile_url,
+            coordinates: [
+                [bb.minX, bb.maxY],
+                [bb.maxX, bb.maxY],
+                [bb.maxX, bb.minY],
+                [bb.minX, bb.minY],
+            ],
+        });
     } else {
         map.addSource('historic-overlay', { type: 'raster', tiles: [m.tile_url], tileSize: 256, attribution: m.title });
-        map.addLayer({ id: 'historic-overlay', type: 'raster', source: 'historic-overlay', paint: { 'raster-opacity': opacity } }, 'lines-layer');
     }
+    map.addLayer({ id: 'historic-overlay', type: 'raster', source: 'historic-overlay', paint: { 'raster-opacity': opacity } }, 'lines-layer');
     document.getElementById('overlay-hint').textContent = `Showing: ${m.title} (${m.published_year})`;
     renderMapLibrary();
 }
@@ -1984,12 +1998,13 @@ function renderTopoCards() {
     });
 }
 
-function buildEsriTileUrl() {
-    return 'https://services.arcgisonline.com/arcgis/rest/services/USA_Topo_Maps/MapServer/tile/{z}/{y}/{x}';
-}
-
 async function showTopoOnMap(id, item) {
-    const tileUrl  = buildEsriTileUrl();
+    if (!item.previewGraphicURL)
+        throw new Error('No preview image available for this map');
+    const bb = item.boundingBox || {};
+    if (bb.minX == null || bb.minY == null || bb.maxX == null || bb.maxY == null)
+        throw new Error('No geographic bounds available for this map');
+
     const safe     = id.replace(/[^a-zA-Z0-9]/g, '_').slice(0, 60);
     const sourceId = `htmc-${safe}`;
     const layerId  = `htmc-layer-${safe}`;
@@ -1999,16 +2014,20 @@ async function showTopoOnMap(id, item) {
     try { if (map.getSource(sourceId)) map.removeSource(sourceId); } catch (_) {}
 
     map.addSource(sourceId, {
-        type:        'raster',
-        tiles:       [tileUrl],
-        tileSize:    256,
-        attribution: 'Esri, USGS',
+        type: 'image',
+        url:  item.previewGraphicURL,
+        coordinates: [
+            [bb.minX, bb.maxY],  // top-left
+            [bb.maxX, bb.maxY],  // top-right
+            [bb.maxX, bb.minY],  // bottom-right
+            [bb.minX, bb.minY],  // bottom-left
+        ],
     });
     map.addLayer({
-        id:   layerId,
-        type: 'raster',
+        id:     layerId,
+        type:   'raster',
         source: sourceId,
-        paint: { 'raster-opacity': 0.7 },
+        paint:  { 'raster-opacity': 0.7 },
     });
 
     const year = parseTopoYear(item);
@@ -2064,15 +2083,20 @@ function renderOverlayWidgets() {
 async function addTopoToDatabase(item) {
     const year = parseTopoYear(item);
     if (!year) throw new Error('Could not determine publication year');
+    if (!item.previewGraphicURL) throw new Error('No preview image available');
+    const bb = item.boundingBox || {};
+    if (bb.minX == null || bb.minY == null || bb.maxX == null || bb.maxY == null)
+        throw new Error('No geographic bounds available for this map');
 
     const res = await authedFetch(`${API_BASE}/api/historic-maps`, {
         method: 'POST',
         body: JSON.stringify({
             title:          item.title,
             published_year: year,
-            tile_url:       buildEsriTileUrl(),
+            tile_url:       item.previewGraphicURL,
             publisher:      'USGS HTMC',
             source_url:     item.downloadURL || item.moreInfoUrl || null,
+            bounds: { minX: bb.minX, minY: bb.minY, maxX: bb.maxX, maxY: bb.maxY },
         }),
     });
     if (!res.ok) throw new Error((await res.json()).error || 'Failed to save');
