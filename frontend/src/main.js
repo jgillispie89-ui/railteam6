@@ -2015,7 +2015,7 @@ async function showTopoOnMap(id, item) {
     });
 
     const year = parseTopoYear(item);
-    activeTopoOverlays.set(id, { item, year, sourceId, layerId, opacity: 70, objectId });
+    activeTopoOverlays.set(id, { item, year, sourceId, layerId, opacity: 70 });
     renderOverlayWidgets();
     document.getElementById('hp-footer').style.display = '';
 }
