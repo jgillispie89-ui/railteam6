@@ -1249,10 +1249,6 @@ function addLayers() {
         },
     });
 
-    map.on('click', 'sites-layer', e => {
-        if (historicMode) return; // let the historic mode handler pick it up
-        showDetail(e.features[0].properties);
-    });
     map.on('mouseenter', 'sites-layer', () => { map.getCanvas().style.cursor = (state.pinMode || historicMode) ? 'crosshair' : 'pointer'; });
     map.on('mouseleave', 'sites-layer', () => { map.getCanvas().style.cursor = (state.pinMode || historicMode) ? 'crosshair' : ''; });
 }
@@ -1835,16 +1831,9 @@ async function searchUsgsTopos(lat, lng) {
         return;
     }
 
-    const delta  = 0.05;
-    const params = new URLSearchParams({
-        datasets:     'Historical Topographic Maps',
-        bbox:         `${lng - delta},${lat - delta},${lng + delta},${lat + delta}`,
-        outputFormat: 'JSON',
-        max:          '100',
-    });
-
     try {
-        const res  = await fetch(`https://tnmaccess.nationalmap.gov/api/v1/products?${params}`);
+        const res  = await fetch(`${API_BASE}/api/usgs-topos?lat=${lat}&lng=${lng}`);
+        if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || `Server error ${res.status}`);
         const data = await res.json();
         allTopoItems = (data.items || []);
         topoCache.set(key, allTopoItems);
@@ -2137,16 +2126,18 @@ map.on('load', () => {
     loadData();
     loadHistoricMaps();
 
-    // Persistent click handler for historic mode — fires whenever historicMode is true
+    // Unified click handler — historicMode takes priority over site detail
     map.on('click', e => {
-        if (!historicMode) return;
-        openHistoricPanel(e.lngLat.lat, e.lngLat.lng);
+        if (historicMode) {
+            openHistoricPanel(e.lngLat.lat, e.lngLat.lng);
+            return;
+        }
+        const features = map.queryRenderedFeatures(e.point, { layers: ['sites-layer'] });
+        if (features.length > 0) showDetail(features[0].properties);
     });
 
-    // Right-click anywhere on the map → open historic topo panel for that location
     map.on('contextmenu', e => {
         e.preventDefault();
-        showBanner('Opening historic topo maps for this location…', 'ok');
         openHistoricPanel(e.lngLat.lat, e.lngLat.lng);
     });
 });
