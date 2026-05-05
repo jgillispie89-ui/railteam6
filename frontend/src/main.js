@@ -1775,14 +1775,12 @@ function enterHistoricMode() {
     document.getElementById('btn-historic-maps')?.classList.add('active');
     map.getCanvas().style.cursor = 'crosshair';
     showBanner('Click any location on the map to see historic topo maps.', 'ok');
-    map.once('click', onHistoricMapClick);
 }
 
 function exitHistoricMode() {
     historicMode = false;
     document.getElementById('btn-historic-maps')?.classList.remove('active');
     if (!state.pinMode) map.getCanvas().style.cursor = '';
-    map.off('click', onHistoricMapClick);
 }
 
 function closeHistoricPanel() {
@@ -1790,11 +1788,6 @@ function closeHistoricPanel() {
     const ctrl = document.getElementById('topo-overlay-controls');
     if (ctrl) ctrl.style.right = '';
     exitHistoricMode();
-}
-
-function onHistoricMapClick(e) {
-    const { lng, lat } = e.lngLat;
-    openHistoricPanel(lat, lng);
 }
 
 async function openHistoricPanel(lat, lng) {
@@ -1991,45 +1984,15 @@ function renderTopoCards() {
     });
 }
 
-async function fetchTopoObjectId(item) {
-    const bb   = item.boundingBox || {};
-    const year = parseTopoYear(item);
-    if (bb.minX == null) return null;
-    try {
-        const cLng = (bb.minX + bb.maxX) / 2;
-        const cLat = (bb.minY + bb.maxY) / 2;
-        const params = new URLSearchParams({
-            geometry:       `${cLng},${cLat}`,
-            geometryType:   'esriGeometryPoint',
-            inSR:           '4326',
-            distance:       '8000',
-            units:          'esriSRUnit_Meter',
-            outFields:      'OBJECTID,map_name,imprint_year',
-            where:          year ? `imprint_year = ${year}` : '1=1',
-            returnGeometry: 'false',
-            f:              'json',
-        });
-        const res  = await fetch(
-            `https://ngmdb.usgs.gov/arcgis/rest/services/topoview/ustOverlay/MapServer/0/query?${params}`
-        );
-        const data = await res.json();
-        return data.features?.[0]?.attributes?.OBJECTID ?? null;
-    } catch (_) { return null; }
-}
-
-function buildWmsTileUrl(objectId) {
-    const base      = 'https://ngmdb.usgs.gov/arcgis/services/topoview/ustOverlay/MapServer/WMSServer';
-    const layerDefs = objectId
-        ? `&LAYERDEFS=${encodeURIComponent(JSON.stringify({ '0': `OBJECTID = ${objectId}` }))}`
-        : '';
-    return `${base}?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap` +
-        `&BBOX={bbox-epsg-3857}&SRS=EPSG:3857&WIDTH=256&HEIGHT=256` +
-        `&LAYERS=0&STYLES=&FORMAT=image%2Fpng&TRANSPARENT=TRUE${layerDefs}`;
+function buildWmsTileUrl() {
+    return 'https://ngmdb.usgs.gov/arcgis/services/topoview/ustOverlay/MapServer/WMSServer' +
+        '?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap' +
+        '&BBOX={bbox-epsg-3857}&SRS=EPSG:3857&WIDTH=256&HEIGHT=256' +
+        '&LAYERS=0&STYLES=&FORMAT=image%2Fpng&TRANSPARENT=TRUE';
 }
 
 async function showTopoOnMap(id, item) {
-    const objectId = await fetchTopoObjectId(item);
-    const wmsUrl   = buildWmsTileUrl(objectId);
+    const wmsUrl = buildWmsTileUrl();
     const safe     = id.replace(/[^a-zA-Z0-9]/g, '_').slice(0, 60);
     const sourceId = `htmc-${safe}`;
     const layerId  = `htmc-layer-${safe}`;
@@ -2101,8 +2064,7 @@ async function addTopoToDatabase(item) {
     const year = parseTopoYear(item);
     if (!year) throw new Error('Could not determine publication year');
 
-    const objectId = await fetchTopoObjectId(item);
-    const wmsUrl   = buildWmsTileUrl(objectId);
+    const wmsUrl = buildWmsTileUrl();
 
     const res = await authedFetch(`${API_BASE}/api/historic-maps`, {
         method: 'POST',
@@ -2151,6 +2113,12 @@ map.on('load', () => {
     addLayers();
     loadData();
     loadHistoricMaps();
+
+    // Persistent click handler for historic mode — fires whenever historicMode is true
+    map.on('click', e => {
+        if (!historicMode) return;
+        openHistoricPanel(e.lngLat.lat, e.lngLat.lng);
+    });
 
     // Right-click anywhere on the map → open historic topo panel for that location
     map.on('contextmenu', e => {
