@@ -1984,15 +1984,12 @@ function renderTopoCards() {
     });
 }
 
-function buildWmsTileUrl() {
-    return 'https://ngmdb.usgs.gov/arcgis/services/topoview/ustOverlay/MapServer/WMSServer' +
-        '?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap' +
-        '&BBOX={bbox-epsg-3857}&SRS=EPSG:3857&WIDTH=256&HEIGHT=256' +
-        '&LAYERS=0&STYLES=&FORMAT=image%2Fpng&TRANSPARENT=TRUE';
+function buildEsriTileUrl() {
+    return 'https://services.arcgisonline.com/arcgis/rest/services/USA_Topo_Maps/MapServer/tile/{z}/{y}/{x}';
 }
 
 async function showTopoOnMap(id, item) {
-    const wmsUrl   = buildWmsTileUrl();
+    const wmsUrl   = buildEsriTileUrl();
     const safe     = id.replace(/[^a-zA-Z0-9]/g, '_').slice(0, 60);
     const sourceId = `htmc-${safe}`;
     const layerId  = `htmc-layer-${safe}`;
@@ -2068,14 +2065,12 @@ async function addTopoToDatabase(item) {
     const year = parseTopoYear(item);
     if (!year) throw new Error('Could not determine publication year');
 
-    const wmsUrl = buildWmsTileUrl();
-
     const res = await authedFetch(`${API_BASE}/api/historic-maps`, {
         method: 'POST',
         body: JSON.stringify({
             title:          item.title,
             published_year: year,
-            tile_url:       wmsUrl,
+            tile_url:       buildEsriTileUrl(),
             publisher:      'USGS HTMC',
             source_url:     item.downloadURL || item.moreInfoUrl || null,
         }),
