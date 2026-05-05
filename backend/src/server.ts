@@ -321,28 +321,6 @@ app.get('/api/railroads', async (_req, res) => {
 });
 
 // =============================================================================
-// GET /api/usgs-topos — proxy for USGS TNM Access API (avoids browser CORS)
-// =============================================================================
-app.get('/api/usgs-topos', async (req, res) => {
-    const { lat, lng } = req.query as Record<string, string>;
-    if (!lat || !lng) return res.status(400).json({ error: 'lat and lng are required' });
-    const latN  = parseFloat(lat);
-    const lngN  = parseFloat(lng);
-    if (isNaN(latN) || isNaN(lngN)) return res.status(400).json({ error: 'lat and lng must be numbers' });
-    const delta = 0.05;
-    const bbox  = `${lngN - delta},${latN - delta},${lngN + delta},${latN + delta}`;
-    const url   = `https://tnmaccess.nationalmap.gov/api/v1/products?datasets=Historical%20Topographic%20Maps&bbox=${bbox}&outputFormat=JSON&max=100`;
-    try {
-        const upstream = await fetch(url, { headers: { 'User-Agent': 'RailTeam6/1.0' } });
-        if (!upstream.ok) throw new Error(`USGS API returned ${upstream.status}`);
-        const data = await upstream.json();
-        res.json(data);
-    } catch (err) {
-        res.status(500).json({ error: (err as Error).message });
-    }
-});
-
-// =============================================================================
 // GET /api/historic-maps
 // =============================================================================
 app.get('/api/historic-maps', async (_req, res) => {
