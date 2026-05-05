@@ -1989,7 +1989,7 @@ function buildEsriTileUrl() {
 }
 
 async function showTopoOnMap(id, item) {
-    const wmsUrl   = buildEsriTileUrl();
+    const tileUrl  = buildEsriTileUrl();
     const safe     = id.replace(/[^a-zA-Z0-9]/g, '_').slice(0, 60);
     const sourceId = `htmc-${safe}`;
     const layerId  = `htmc-layer-${safe}`;
@@ -2000,9 +2000,9 @@ async function showTopoOnMap(id, item) {
 
     map.addSource(sourceId, {
         type:        'raster',
-        tiles:       [wmsUrl],
+        tiles:       [tileUrl],
         tileSize:    256,
-        attribution: 'USGS Historical Topographic Map Collection',
+        attribution: 'Esri, USGS',
     });
     map.addLayer({
         id:   layerId,
