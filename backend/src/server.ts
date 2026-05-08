@@ -550,9 +550,28 @@ app.delete('/api/sites/:id', requireAuth, async (req, res) => {
 });
 
 // =============================================================================
-// Boot
+// Boot — retry startup on transient Neon wake-up errors
 // =============================================================================
 const port = parseInt(process.env.PORT || '3001', 10);
-migrate()
-    .then(() => app.listen(port, () => console.log(`Iron Roads API listening on http://localhost:${port}`)))
-    .catch(err => { console.error('Migration failed:', err); process.exit(1); });
+
+async function boot(attempt = 1): Promise<void> {
+    try {
+        await migrate();
+        app.listen(port, () => console.log(`Iron Roads API listening on http://localhost:${port}`));
+    } catch (err: any) {
+        const transient =
+            err?.message?.includes('Control plane request failed') ||
+            err?.message?.includes('endpoint is disabled') ||
+            err?.code === 'ECONNRESET';
+        if (transient && attempt <= 5) {
+            const delay = 1000 * attempt;
+            console.error(`[boot] Transient DB error on attempt ${attempt}, retrying in ${delay}ms:`, err.message);
+            await new Promise(r => setTimeout(r, delay));
+            return boot(attempt + 1);
+        }
+        console.error('Migration failed:', err);
+        process.exit(1);
+    }
+}
+
+boot();
