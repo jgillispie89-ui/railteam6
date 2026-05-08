@@ -123,20 +123,40 @@ async function migrate() {
 }
 
 // =============================================================================
+// Migration state — set true once migrate() completes
+// =============================================================================
+let migrationComplete = false;
+
+// =============================================================================
 // Routes
 // =============================================================================
-app.use('/api/auth',     authRouter);
-app.use('/api/admin',   adminRouter);
-app.use('/api/upload',  uploadRouter);
-app.use('/api/feedback', feedbackRouter);
 
-app.get('/api/health', async (_req, res) => {
+// Lightweight health — no DB hit, keeps UptimeRobot from waking Neon unnecessarily
+app.get('/api/health', (_req, res) => {
+    res.json({ ok: true, ready: migrationComplete, uptime: process.uptime() });
+});
+
+// DB health check (separate so /api/health stays cheap)
+app.get('/api/health/db', async (_req, res) => {
     try {
         const { rows } = await pool.query('SELECT postgis_version()');
         res.json({ ok: true, postgis: rows[0].postgis_version });
     } catch (err) {
         res.status(500).json({ ok: false, error: (err as Error).message });
     }
+});
+
+app.use('/api/auth',     authRouter);
+app.use('/api/admin',   adminRouter);
+app.use('/api/upload',  uploadRouter);
+app.use('/api/feedback', feedbackRouter);
+
+// 503 guard — returns a friendly error for any data endpoint hit before migration finishes
+app.use('/api', (req, res, next) => {
+    if (!migrationComplete) {
+        return res.status(503).json({ error: 'Server is starting up, please retry in 30 seconds' });
+    }
+    next();
 });
 
 // =============================================================================
@@ -550,28 +570,33 @@ app.delete('/api/sites/:id', requireAuth, async (req, res) => {
 });
 
 // =============================================================================
-// Boot — retry startup on transient Neon wake-up errors
+// Boot — bind port immediately, run migration in background
+// Render requires a bound port within 60s; Neon cold-starts can take 30-60s,
+// so we must not block app.listen() on migrate().
 // =============================================================================
 const port = parseInt(process.env.PORT || '3001', 10);
 
-async function boot(attempt = 1): Promise<void> {
-    try {
-        await migrate();
-        app.listen(port, () => console.log(`Iron Roads API listening on http://localhost:${port}`));
-    } catch (err: any) {
-        const transient =
-            err?.message?.includes('Control plane request failed') ||
-            err?.message?.includes('endpoint is disabled') ||
-            err?.code === 'ECONNRESET';
-        if (transient && attempt <= 5) {
-            const delay = 1000 * attempt;
-            console.error(`[boot] Transient DB error on attempt ${attempt}, retrying in ${delay}ms:`, err.message);
-            await new Promise(r => setTimeout(r, delay));
-            return boot(attempt + 1);
+async function runMigrationInBackground(): Promise<void> {
+    const MAX = 20;
+    for (let attempt = 1; attempt <= MAX; attempt++) {
+        try {
+            await migrate();
+            migrationComplete = true;
+            console.log(`[boot] Migration complete on attempt ${attempt}`);
+            return;
+        } catch (err: any) {
+            const delay = Math.min(30000, 5000 * attempt);
+            console.error(`[boot] Migration attempt ${attempt}/${MAX} failed: ${err.message}`);
+            if (attempt < MAX) {
+                console.log(`[boot] Retrying in ${delay / 1000}s…`);
+                await new Promise(r => setTimeout(r, delay));
+            }
         }
-        console.error('Migration failed:', err);
-        process.exit(1);
     }
+    console.error('[boot] Migration failed after all attempts. DB queries will fail until restart.');
 }
 
-boot();
+app.listen(port, () => {
+    console.log(`Iron Roads API listening on http://localhost:${port}`);
+    runMigrationInBackground();
+});

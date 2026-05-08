@@ -6,28 +6,34 @@ const { Pool } = pkg;
 const _pool = new Pool({
     connectionString: process.env.DATABASE_URL,
     ssl: process.env.DATABASE_URL?.includes('neon.tech') ? { rejectUnauthorized: false } : undefined,
-    max: 5,
+    max: 3,
     idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 15000,
+    connectionTimeoutMillis: 30000,
 });
 
-// Neon free-tier computes auto-suspend and return "Control plane request failed"
-// on the first query while waking up. Retry up to 3x with backoff.
+// Neon free-tier computes auto-suspend; transient errors during wake-up need patient retries.
 const isTransient = (err: any) =>
     err?.message?.includes('Control plane request failed') ||
     err?.message?.includes('endpoint is disabled') ||
+    err?.message?.includes('connection timeout') ||
+    err?.message?.includes('Too many') ||
     err?.code === 'ECONNRESET';
+
+// Backoff schedule: 2s, 4s, 8s, 8s, 8s = up to ~30s total
+const BACKOFF = [2000, 4000, 8000, 8000, 8000];
 
 export const pool = {
     query: async (text: any, values?: any): Promise<pkg.QueryResult<any>> => {
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i <= BACKOFF.length; i++) {
             try {
                 return await _pool.query(text, values);
             } catch (err: any) {
-                if (isTransient(err) && i < 2) {
-                    await new Promise(r => setTimeout(r, 600 * (i + 1)));
+                if (isTransient(err) && i < BACKOFF.length) {
+                    console.error(`[db] Transient error (attempt ${i + 1}/${BACKOFF.length + 1}), retrying in ${BACKOFF[i] / 1000}s:`, err.message);
+                    await new Promise(r => setTimeout(r, BACKOFF[i]));
                     continue;
                 }
+                console.error(`[db] Query failed after ${i + 1} attempt(s):`, err.message);
                 throw err;
             }
         }
