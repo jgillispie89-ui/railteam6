@@ -21,7 +21,10 @@ const s3 = new S3Client({
 });
 
 const app = express();
-app.use(cors({ origin: process.env.CORS_ORIGIN || 'http://localhost:5173' }));
+// CORS_ORIGIN may be a comma-separated list (e.g. prod domain + Vercel preview).
+const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:5173')
+    .split(',').map(s => s.trim()).filter(Boolean);
+app.use(cors({ origin: allowedOrigins }));
 app.use(express.json());
 
 // =============================================================================
@@ -62,6 +65,8 @@ async function migrate() {
             ADD COLUMN IF NOT EXISTS photo_url    TEXT,
             ADD COLUMN IF NOT EXISTS updated_at   TIMESTAMPTZ
     `);
+
+    await pool.query(`ALTER TABLE historic_maps ADD COLUMN IF NOT EXISTS bounds JSONB`);
 
     await pool.query(`ALTER TYPE site_status ADD VALUE IF NOT EXISTS 'daylighted_active'`);
     await pool.query(`ALTER TYPE site_status ADD VALUE IF NOT EXISTS 'daylighted_inactive'`);

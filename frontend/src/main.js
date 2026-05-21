@@ -1409,7 +1409,7 @@ function renderEditForm(detail) {
     const typeOpts = [
         ['depot','Depot'],['freight_house','Freight house'],['bridge','Bridge'],
         ['trestle','Trestle'],['tunnel','Tunnel'],['yard','Yard'],
-        ['roundhouse','Roundhouse'],['other','Other'],
+        ['roundhouse','Roundhouses & Turntables'],['other','Other'],
     ];
     const statusOpts = [
         ['active','Active'],['preserved','Preserved'],['abandoned','Abandoned'],
@@ -1671,7 +1671,7 @@ document.addEventListener('keydown', e => {
 // Helpers
 // =============================================================================
 function esc(s) { return String(s ?? '').replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'})[c]); }
-function prettyType(t) { return ({ depot:'Depot', freight_house:'Freight house', bridge:'Bridge', trestle:'Trestle', tunnel:'Tunnel', yard:'Yard', roundhouse:'Roundhouse' })[t] || t; }
+function prettyType(t) { return ({ depot:'Depot', freight_house:'Freight house', bridge:'Bridge', trestle:'Trestle', tunnel:'Tunnel', yard:'Yard', roundhouse:'Roundhouses & Turntables' })[t] || t; }
 function prettyStatus(s) { return ({ active:'Active', preserved:'Preserved', abandoned:'Abandoned', ruins:'Ruins', destroyed:'Destroyed', daylighted_active:'Daylighted / Active', daylighted_inactive:'Daylighted / Inactive' })[s] || s; }
 
 // Puts btn into loading state; returns a restore-fn that re-enables it.

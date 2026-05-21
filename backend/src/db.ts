@@ -5,7 +5,8 @@ const { Pool } = pkg;
 
 const _pool = new Pool({
     connectionString: process.env.DATABASE_URL,
-    ssl: process.env.DATABASE_URL?.includes('neon.tech') ? { rejectUnauthorized: false } : undefined,
+    // Enable SSL for any remote host (Neon, Supabase, etc.); disable only for local dev.
+    ssl: /@(localhost|127\.0\.0\.1)/.test(process.env.DATABASE_URL || '') ? undefined : { rejectUnauthorized: false },
     max: 3,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 30000,

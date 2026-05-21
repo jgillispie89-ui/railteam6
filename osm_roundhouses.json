@@ -1,0 +1,5967 @@
+{
+  "fetched_at": "2026-05-19T03:29:08.307Z",
+  "overpass_query": "[out:json][timeout:60];\narea[\"name\"=\"United States\"]->.usa;\n(\n  nwr[\"railway\"=\"roundhouse\"](area.usa);\n  nwr[\"building\"=\"roundhouse\"](area.usa);\n  nwr[\"railway\"=\"turntable\"](area.usa);\n);\nout center;",
+  "counts": {
+    "raw": 426,
+    "kept": 369,
+    "removed_no_coords": 0,
+    "removed_out_of_bbox": 2,
+    "removed_dedup": 55
+  },
+  "removed_examples": {
+    "no_coords": [],
+    "out_of_bbox": [
+      {
+        "osm_type": "way",
+        "osm_id": 1131422172,
+        "name": "Unnamed Roundhouse",
+        "lat": 61.5704287,
+        "lon": -149.463175
+      },
+      {
+        "osm_type": "way",
+        "osm_id": 1131422192,
+        "name": "Unnamed Turntable",
+        "lat": 61.5704564,
+        "lon": -149.4630721
+      }
+    ],
+    "dedup": [
+      {
+        "kept": {
+          "osm_type": "node",
+          "osm_id": 5645199153,
+          "name": "Unnamed Turntable"
+        },
+        "dropped": {
+          "osm_type": "node",
+          "osm_id": 5650692988,
+          "name": "Unnamed Turntable",
+          "lat": 43.0232193,
+          "lon": -76.9133951
+        }
+      },
+      {
+        "kept": {
+          "osm_type": "way",
+          "osm_id": 34681316,
+          "name": "Roundhouse"
+        },
+        "dropped": {
+          "osm_type": "way",
+          "osm_id": 34898055,
+          "name": "Unnamed Turntable",
+          "lat": 47.6531744,
+          "lon": -122.3819554
+        }
+      },
+      {
+        "kept": {
+          "osm_type": "node",
+          "osm_id": 1080634911,
+          "name": "Unnamed Turntable"
+        },
+        "dropped": {
+          "osm_type": "way",
+          "osm_id": 42242807,
+          "name": "Boston & Maine RR Roundhouse",
+          "lat": 42.7454658,
+          "lon": -73.6806083
+        }
+      }
+    ]
+  },
+  "duplicates": [
+    {
+      "kept": {
+        "osm_type": "node",
+        "osm_id": 5645199153,
+        "name": "Unnamed Turntable"
+      },
+      "dropped": {
+        "osm_type": "node",
+        "osm_id": 5650692988,
+        "name": "Unnamed Turntable",
+        "lat": 43.0232193,
+        "lon": -76.9133951
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "way",
+        "osm_id": 34681316,
+        "name": "Roundhouse"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 34898055,
+        "name": "Unnamed Turntable",
+        "lat": 47.6531744,
+        "lon": -122.3819554
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "node",
+        "osm_id": 1080634911,
+        "name": "Unnamed Turntable"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 42242807,
+        "name": "Boston & Maine RR Roundhouse",
+        "lat": 42.7454658,
+        "lon": -73.6806083
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "node",
+        "osm_id": 660931629,
+        "name": "Unnamed Turntable"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 51804132,
+        "name": "Unnamed Roundhouse",
+        "lat": 43.1080708,
+        "lon": -75.2337741
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "node",
+        "osm_id": 663690255,
+        "name": "Unnamed Turntable"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 52070659,
+        "name": "Unnamed Roundhouse",
+        "lat": 42.995171,
+        "lon": -78.1908916
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "way",
+        "osm_id": 64357538,
+        "name": "Unnamed Turntable"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 64357543,
+        "name": "Unnamed Roundhouse",
+        "lat": 39.7720806,
+        "lon": -105.1921081
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "node",
+        "osm_id": 986576188,
+        "name": "Unnamed Turntable"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 85000264,
+        "name": "Unnamed Roundhouse",
+        "lat": 46.1317925,
+        "lon": -112.9642511
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "node",
+        "osm_id": 212832059,
+        "name": "Unnamed Turntable"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 88222879,
+        "name": "Unnamed Roundhouse",
+        "lat": 42.9652334,
+        "lon": -77.2344636
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "node",
+        "osm_id": 1141792407,
+        "name": "Unnamed Turntable"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 98694326,
+        "name": "Unnamed Roundhouse",
+        "lat": 43.1502321,
+        "lon": -77.6532506
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "way",
+        "osm_id": 100291278,
+        "name": "Unnamed Roundhouse"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 100291287,
+        "name": "Unnamed Turntable",
+        "lat": 39.0794884,
+        "lon": -94.6009495
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "node",
+        "osm_id": 1232497688,
+        "name": "Unnamed Turntable"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 107201397,
+        "name": "Unnamed Turntable",
+        "lat": 35.6860254,
+        "lon": -80.4359563
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "way",
+        "osm_id": 107372384,
+        "name": "Roundhouse Railroad Museum"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 107372389,
+        "name": "Unnamed Turntable",
+        "lat": 32.0755333,
+        "lon": -81.1014412
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "way",
+        "osm_id": 155529577,
+        "name": "Unnamed Turntable"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 155529581,
+        "name": "Conway Scenic Roundhouse",
+        "lat": 44.0523571,
+        "lon": -71.1297751
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "way",
+        "osm_id": 220432961,
+        "name": "Unnamed Turntable"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 220432962,
+        "name": "Unnamed Roundhouse",
+        "lat": 37.2682255,
+        "lon": -107.8825623
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "way",
+        "osm_id": 205967573,
+        "name": "Unnamed Turntable"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 246237338,
+        "name": "Unnamed Roundhouse",
+        "lat": 44.5134401,
+        "lon": -89.5677188
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "way",
+        "osm_id": 253569863,
+        "name": "Unnamed Turntable"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 253569956,
+        "name": "Unnamed Turntable",
+        "lat": 41.2769549,
+        "lon": -82.8326235
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "way",
+        "osm_id": 267606230,
+        "name": "Unnamed Roundhouse"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 267606234,
+        "name": "Unnamed Turntable",
+        "lat": 41.7148806,
+        "lon": -72.2356188
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "way",
+        "osm_id": 275440313,
+        "name": "Unnamed Turntable"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 275440315,
+        "name": "Unnamed Turntable",
+        "lat": 44.5662823,
+        "lon": -69.6193138
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "way",
+        "osm_id": 186809837,
+        "name": "Unnamed Turntable"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 287891274,
+        "name": "Unnamed Turntable",
+        "lat": 42.5717552,
+        "lon": -72.5669382
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "way",
+        "osm_id": 308646427,
+        "name": "Unnamed Turntable"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 308646428,
+        "name": "Unnamed Turntable",
+        "lat": 45.6677946,
+        "lon": -110.5566671
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "way",
+        "osm_id": 172093620,
+        "name": "Unnamed Roundhouse"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 387239878,
+        "name": "Unnamed Turntable",
+        "lat": 39.9097136,
+        "lon": -82.9838943
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "way",
+        "osm_id": 388836615,
+        "name": "Unnamed Roundhouse"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 388836626,
+        "name": "Unnamed Turntable",
+        "lat": 43.2976928,
+        "lon": -93.2063365
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "node",
+        "osm_id": 3978572454,
+        "name": "Unnamed Turntable"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 394967751,
+        "name": "Unnamed Turntable",
+        "lat": 32.7028301,
+        "lon": -117.1538139
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "way",
+        "osm_id": 439092140,
+        "name": "Unnamed Turntable"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 439092143,
+        "name": "Unnamed Turntable",
+        "lat": 34.1547119,
+        "lon": -118.3025479
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "way",
+        "osm_id": 439092140,
+        "name": "Unnamed Turntable"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 439092144,
+        "name": "Unnamed Turntable",
+        "lat": 34.1550382,
+        "lon": -118.3024461
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "way",
+        "osm_id": 189444290,
+        "name": "Unnamed Turntable"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 451419840,
+        "name": "East Broad Top Roundhouse",
+        "lat": 40.2406426,
+        "lon": -77.9000528
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "way",
+        "osm_id": 101241052,
+        "name": "Detroit,Toledo & Milwaukee Railroad Roundhouse"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 556403675,
+        "name": "Unnamed Turntable",
+        "lat": 42.3067812,
+        "lon": -83.2298919
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "way",
+        "osm_id": 76792892,
+        "name": "Unnamed Roundhouse"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 593007795,
+        "name": "Unnamed Turntable",
+        "lat": 42.8493019,
+        "lon": -78.765085
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "way",
+        "osm_id": 206168738,
+        "name": "Unnamed Roundhouse"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 633824656,
+        "name": "Unnamed Turntable",
+        "lat": 42.5066562,
+        "lon": -92.3320253
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "node",
+        "osm_id": 440916809,
+        "name": "Unnamed Turntable"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 701916409,
+        "name": "Unnamed Turntable",
+        "lat": 37.2366707,
+        "lon": -121.9749314
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "node",
+        "osm_id": 6918495664,
+        "name": "Unnamed Turntable"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 738892843,
+        "name": "Unnamed Turntable",
+        "lat": 35.4292861,
+        "lon": -83.4484987
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "way",
+        "osm_id": 794432554,
+        "name": "Unnamed Turntable"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 794432555,
+        "name": "Unnamed Roundhouse",
+        "lat": 46.8634098,
+        "lon": -67.9976604
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "way",
+        "osm_id": 818555149,
+        "name": "Wabash Frisco and Pacific"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 818555153,
+        "name": "Unnamed Roundhouse",
+        "lat": 38.5425846,
+        "lon": -90.6245687
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "way",
+        "osm_id": 830746710,
+        "name": "Bessemer & Lake Erie Roundhouse"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 852450038,
+        "name": "Unnamed Turntable",
+        "lat": 41.3987051,
+        "lon": -80.3870426
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "way",
+        "osm_id": 745154054,
+        "name": "Unnamed Roundhouse"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 876241448,
+        "name": "Unnamed Turntable",
+        "lat": 39.6030566,
+        "lon": -105.2232998
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "way",
+        "osm_id": 220440028,
+        "name": "Unnamed Turntable"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 1014893488,
+        "name": "Unnamed Roundhouse",
+        "lat": 41.2721937,
+        "lon": -110.9711925
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "way",
+        "osm_id": 683398600,
+        "name": "Unnamed Roundhouse"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 1020123001,
+        "name": "Unnamed Turntable",
+        "lat": 43.158221,
+        "lon": -89.0562941
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "node",
+        "osm_id": 9167533006,
+        "name": "Unnamed Turntable"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 1052348702,
+        "name": "Unnamed Turntable",
+        "lat": 44.1062881,
+        "lon": -69.6179265
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "node",
+        "osm_id": 5156368198,
+        "name": "Unnamed Turntable"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 1052348703,
+        "name": "Unnamed Turntable",
+        "lat": 44.0607537,
+        "lon": -69.6239379
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "way",
+        "osm_id": 1087768568,
+        "name": "Unnamed Turntable"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 1087768569,
+        "name": "Unnamed Turntable",
+        "lat": 41.1744356,
+        "lon": -81.9408097
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "way",
+        "osm_id": 1147177253,
+        "name": "Unnamed Roundhouse"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 1147177254,
+        "name": "Unnamed Roundhouse",
+        "lat": 47.1047901,
+        "lon": -104.7085431
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "way",
+        "osm_id": 1159156118,
+        "name": "Unnamed Roundhouse"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 1159156120,
+        "name": "Unnamed Turntable",
+        "lat": 40.4036557,
+        "lon": -75.8649958
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "way",
+        "osm_id": 1165978387,
+        "name": "Unnamed Turntable"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 1165978389,
+        "name": "Unnamed Turntable",
+        "lat": 45.512396,
+        "lon": -122.4579437
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "way",
+        "osm_id": 1165978387,
+        "name": "Unnamed Turntable"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 1165978390,
+        "name": "Unnamed Turntable",
+        "lat": 45.5123962,
+        "lon": -122.4578509
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "way",
+        "osm_id": 1165978387,
+        "name": "Unnamed Turntable"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 1165978391,
+        "name": "Unnamed Turntable",
+        "lat": 45.5123966,
+        "lon": -122.4577564
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "way",
+        "osm_id": 1165978387,
+        "name": "Unnamed Turntable"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 1165978392,
+        "name": "Unnamed Turntable",
+        "lat": 45.5123971,
+        "lon": -122.4576639
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "way",
+        "osm_id": 109495757,
+        "name": "Unnamed Turntable"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 1224797830,
+        "name": "Unnamed Turntable",
+        "lat": 44.1012486,
+        "lon": -69.1226789
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "way",
+        "osm_id": 1086823644,
+        "name": "Unnamed Turntable"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 1313634772,
+        "name": "Unnamed Turntable",
+        "lat": 42.0736713,
+        "lon": -72.7957008
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "way",
+        "osm_id": 1086823644,
+        "name": "Unnamed Turntable"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 1313634779,
+        "name": "Unnamed Turntable",
+        "lat": 42.0737625,
+        "lon": -72.7953424
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "way",
+        "osm_id": 1086823644,
+        "name": "Unnamed Turntable"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 1313634791,
+        "name": "Unnamed Turntable",
+        "lat": 42.0732575,
+        "lon": -72.7953572
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "node",
+        "osm_id": 6279710906,
+        "name": "Unnamed Turntable"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 1356434109,
+        "name": "Unnamed Turntable",
+        "lat": 40.7161332,
+        "lon": -74.1588379
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "node",
+        "osm_id": 12971553107,
+        "name": "Unnamed Turntable"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 1409597957,
+        "name": "Unnamed Turntable",
+        "lat": 45.051857,
+        "lon": -122.9805474
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "node",
+        "osm_id": 12971553107,
+        "name": "Unnamed Turntable"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 1411633628,
+        "name": "Unnamed Turntable",
+        "lat": 45.0518763,
+        "lon": -122.9805972
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "way",
+        "osm_id": 1429871265,
+        "name": "John E. Schmidt Memorial Roundhouse"
+      },
+      "dropped": {
+        "osm_type": "way",
+        "osm_id": 1429871266,
+        "name": "Unnamed Turntable",
+        "lat": 44.9065341,
+        "lon": -92.7392447
+      }
+    },
+    {
+      "kept": {
+        "osm_type": "way",
+        "osm_id": 221521492,
+        "name": "Unnamed Turntable"
+      },
+      "dropped": {
+        "osm_type": "relation",
+        "osm_id": 11687560,
+        "name": "Steamtown Roundhouse",
+        "lat": 41.4072231,
+        "lon": -75.6711951
+      }
+    }
+  ],
+  "entries": [
+    {
+      "name": "Santa Fe RR turntable and roundhouse site",
+      "lat": 37.6619653,
+      "lon": -95.4572833,
+      "osm_type": "node",
+      "osm_id": 121589372,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "name": "Santa Fe RR turntable and roundhouse site",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 42.9649607,
+      "lon": -77.2344821,
+      "osm_type": "node",
+      "osm_id": 212832059,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 47.5000333,
+      "lon": -111.3139875,
+      "osm_type": "node",
+      "osm_id": 315018759,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "AT&SF RR Roundhouse",
+      "lat": 35.5869107,
+      "lon": -105.2153729,
+      "osm_type": "node",
+      "osm_id": 366374780,
+      "railway_tag": "turntable",
+      "state": "NM",
+      "address": "NM",
+      "raw_tags": {
+        "addr:state": "NM",
+        "ele": "1961",
+        "gnis:feature_id": "933348",
+        "name": "AT&SF RR Roundhouse",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 37.2366693,
+      "lon": -121.9749298,
+      "osm_type": "node",
+      "osm_id": 440916809,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 43.0990178,
+      "lon": -77.6902815,
+      "osm_type": "node",
+      "osm_id": 606292731,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 42.315824,
+      "lon": -77.652638,
+      "osm_type": "node",
+      "osm_id": 615114519,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 41.251817,
+      "lon": -74.3731306,
+      "osm_type": "node",
+      "osm_id": 638852405,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 42.6191225,
+      "lon": -77.4067088,
+      "osm_type": "node",
+      "osm_id": 647571331,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 43.1080902,
+      "lon": -75.2337225,
+      "osm_type": "node",
+      "osm_id": 660931629,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 43.3310606,
+      "lon": -75.1857536,
+      "osm_type": "node",
+      "osm_id": 660931895,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 42.9950766,
+      "lon": -78.1905508,
+      "osm_type": "node",
+      "osm_id": 663690255,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 39.268732,
+      "lon": -76.6015023,
+      "osm_type": "node",
+      "osm_id": 848214372,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 46.1318727,
+      "lon": -112.9643083,
+      "osm_type": "node",
+      "osm_id": 986576188,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 43.1076829,
+      "lon": -75.2424433,
+      "osm_type": "node",
+      "osm_id": 1053515122,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable",
+        "url": "http://www.railroad.net/forums/viewtopic.php?f=57&t=87392"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 42.7452446,
+      "lon": -73.6804798,
+      "osm_type": "node",
+      "osm_id": 1080634911,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 43.150503,
+      "lon": -77.6531497,
+      "osm_type": "node",
+      "osm_id": 1141792407,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 35.6860213,
+      "lon": -80.4359505,
+      "osm_type": "node",
+      "osm_id": 1232497688,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 31.8015477,
+      "lon": -95.3013288,
+      "osm_type": "node",
+      "osm_id": 1260939392,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 34.0976332,
+      "lon": -118.2390389,
+      "osm_type": "node",
+      "osm_id": 1439781485,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 42.096574,
+      "lon": -75.8533366,
+      "osm_type": "node",
+      "osm_id": 1456330622,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 42.0981379,
+      "lon": -75.857133,
+      "osm_type": "node",
+      "osm_id": 1456330683,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 43.8936887,
+      "lon": -75.3977216,
+      "osm_type": "node",
+      "osm_id": 1475052744,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 44.9167987,
+      "lon": -73.1294912,
+      "osm_type": "node",
+      "osm_id": 1514995120,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 42.7185724,
+      "lon": -77.8688105,
+      "osm_type": "node",
+      "osm_id": 1564767646,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 42.0419529,
+      "lon": -92.9107298,
+      "osm_type": "node",
+      "osm_id": 1652399353,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable",
+        "source": "Bing"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 40.8399405,
+      "lon": -74.029332,
+      "osm_type": "node",
+      "osm_id": 1776514998,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 40.7158665,
+      "lon": -81.6055125,
+      "osm_type": "node",
+      "osm_id": 2035843016,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 43.1413945,
+      "lon": -93.1992314,
+      "osm_type": "node",
+      "osm_id": 2621289405,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 37.0628904,
+      "lon": -122.2275008,
+      "osm_type": "node",
+      "osm_id": 3101281907,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 30.0315282,
+      "lon": -95.8140661,
+      "osm_type": "node",
+      "osm_id": 3656610426,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 32.7028301,
+      "lon": -117.1538139,
+      "osm_type": "node",
+      "osm_id": 3978572454,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 37.7948994,
+      "lon": -122.4121416,
+      "osm_type": "node",
+      "osm_id": 3984010672,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 43.1883896,
+      "lon": -71.5277291,
+      "osm_type": "node",
+      "osm_id": 4967325456,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 39.0105662,
+      "lon": -92.7504712,
+      "osm_type": "node",
+      "osm_id": 5052691984,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 44.06075,
+      "lon": -69.6239388,
+      "osm_type": "node",
+      "osm_id": 5156368198,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 43.0231633,
+      "lon": -76.9132139,
+      "osm_type": "node",
+      "osm_id": 5645199153,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "gauge": "121",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 40.7161333,
+      "lon": -74.1588383,
+      "osm_type": "node",
+      "osm_id": 6279710906,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 35.429286,
+      "lon": -83.4484989,
+      "osm_type": "node",
+      "osm_id": 6918495664,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 41.7807319,
+      "lon": -99.1417861,
+      "osm_type": "node",
+      "osm_id": 7796605370,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "description": "Preserved turntable (ex-CBQ). State historical marker. https://www.facebook.com/Burwell.NE/photos/d41d8cd9/10156697159767454/",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 44.1062881,
+      "lon": -69.6179269,
+      "osm_type": "node",
+      "osm_id": 9167533006,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 42.6375668,
+      "lon": -70.5753643,
+      "osm_type": "node",
+      "osm_id": 9533322643,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 31.8273156,
+      "lon": -110.9993631,
+      "osm_type": "node",
+      "osm_id": 10742673381,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 39.112179,
+      "lon": -94.5768889,
+      "osm_type": "node",
+      "osm_id": 11012943063,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 45.0101681,
+      "lon": -71.5074625,
+      "osm_type": "node",
+      "osm_id": 11687867019,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 44.806741,
+      "lon": -91.5206453,
+      "osm_type": "node",
+      "osm_id": 12055985070,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 42.0663369,
+      "lon": -93.8921658,
+      "osm_type": "node",
+      "osm_id": 12193955273,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 42.0664237,
+      "lon": -93.8928149,
+      "osm_type": "node",
+      "osm_id": 12193955284,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 45.0518939,
+      "lon": -122.9806012,
+      "osm_type": "node",
+      "osm_id": 12971553107,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 40.0065436,
+      "lon": -79.594352,
+      "osm_type": "way",
+      "osm_id": 11838882,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable",
+        "tiger:cfcc": "B11"
+      }
+    },
+    {
+      "name": "Redondo Junction Roundhouse Turntable",
+      "lat": 34.0192323,
+      "lon": -118.2259544,
+      "osm_type": "way",
+      "osm_id": 27925248,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "area": "yes",
+        "historic": "yes",
+        "name": "Redondo Junction Roundhouse Turntable",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Roundhouse",
+      "lat": 47.6531074,
+      "lon": -122.3813133,
+      "osm_type": "way",
+      "osm_id": 34681316,
+      "railway_tag": "roundhouse",
+      "state": "WA",
+      "address": "1809, West Emerson Street, Seattle, WA, 98119",
+      "raw_tags": {
+        "addr:city": "Seattle",
+        "addr:housenumber": "1809",
+        "addr:postcode": "98119",
+        "addr:state": "WA",
+        "addr:street": "West Emerson Street",
+        "building": "yes",
+        "name": "Roundhouse",
+        "railway": "roundhouse",
+        "source": "King County GIS;data.seattle.gov"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 47.2422437,
+      "lon": -122.428889,
+      "osm_type": "way",
+      "osm_id": 35144297,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "area": "yes",
+        "railway": "turntable",
+        "source": "yahoo aerial imagery"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 39.1249311,
+      "lon": -84.5416702,
+      "osm_type": "way",
+      "osm_id": 37504963,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "area": "yes",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Monorail and Train Roundhouse",
+      "lat": 28.4258066,
+      "lon": -81.5786657,
+      "osm_type": "way",
+      "osm_id": 43306379,
+      "railway_tag": "roundhouse",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "addr:housename": "Disney Transport Maintenance",
+        "building": "yes",
+        "name": "Monorail and Train Roundhouse",
+        "railway": "roundhouse"
+      }
+    },
+    {
+      "name": "Wildlife Express Trainshed",
+      "lat": 28.361373,
+      "lon": -81.5918374,
+      "osm_type": "way",
+      "osm_id": 43534601,
+      "railway_tag": "roundhouse",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "building": "yes",
+        "name": "Wildlife Express Trainshed",
+        "railway": "roundhouse"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 46.8249351,
+      "lon": -100.8891779,
+      "osm_type": "way",
+      "osm_id": 47972523,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "The Roundhouse",
+      "lat": 33.8156871,
+      "lon": -117.9168028,
+      "osm_type": "way",
+      "osm_id": 49737152,
+      "railway_tag": "roundhouse",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "building": "yes",
+        "building:levels": "2",
+        "name": "The Roundhouse",
+        "railway": "roundhouse"
+      }
+    },
+    {
+      "name": "Big Thunder Mountain Train Shed",
+      "lat": 33.8128824,
+      "lon": -117.9197728,
+      "osm_type": "way",
+      "osm_id": 49884638,
+      "railway_tag": "roundhouse",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "building": "yes",
+        "height": "6",
+        "name": "Big Thunder Mountain Train Shed",
+        "railway": "roundhouse"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 47.9274604,
+      "lon": -122.2825831,
+      "osm_type": "way",
+      "osm_id": 53864200,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable",
+        "source": "yahoo_wms"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 41.6678891,
+      "lon": -87.6730237,
+      "osm_type": "way",
+      "osm_id": 57823407,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "area": "yes",
+        "operator": "Metra",
+        "operator:wikidata": "Q1814208",
+        "railway": "turntable",
+        "service": "yard"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 39.7717491,
+      "lon": -105.1918436,
+      "osm_type": "way",
+      "osm_id": 64357538,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Baltimore & Ohio Railroad Museum - Roundhouse",
+      "lat": 39.2854045,
+      "lon": -76.6325838,
+      "osm_type": "way",
+      "osm_id": 71682826,
+      "railway_tag": "roundhouse",
+      "state": "MD",
+      "address": "901, West Pratt Street, Baltimore, MD, 21223",
+      "raw_tags": {
+        "addr:city": "Baltimore",
+        "addr:country": "US",
+        "addr:housenumber": "901",
+        "addr:postcode": "21223",
+        "addr:state": "MD",
+        "addr:street": "West Pratt Street",
+        "building": "roundhouse",
+        "name": "Baltimore & Ohio Railroad Museum - Roundhouse",
+        "railway": "roundhouse"
+      }
+    },
+    {
+      "name": "Unnamed Roundhouse",
+      "lat": 42.8489653,
+      "lon": -78.7650841,
+      "osm_type": "way",
+      "osm_id": 76792892,
+      "railway_tag": "roundhouse",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "building": "yes",
+        "railway": "roundhouse"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 47.673517,
+      "lon": -117.3271485,
+      "osm_type": "way",
+      "osm_id": 93356387,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "area": "yes",
+        "railway": "turntable",
+        "source": "bing"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 45.5459759,
+      "lon": -122.6841678,
+      "osm_type": "way",
+      "osm_id": 94842577,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable",
+        "source": "bing"
+      }
+    },
+    {
+      "name": "Unnamed Roundhouse",
+      "lat": 42.5894629,
+      "lon": -76.1862429,
+      "osm_type": "way",
+      "osm_id": 96952129,
+      "railway_tag": "roundhouse",
+      "state": "NY",
+      "address": "84, Owego Street, Cortland, NY, 13045",
+      "raw_tags": {
+        "addr:city": "Cortland",
+        "addr:housenumber": "84",
+        "addr:postcode": "13045",
+        "addr:state": "NY",
+        "addr:street": "Owego Street",
+        "building": "yes",
+        "layer": "1",
+        "nysgissam:nysaddresspointid": "CORT005736",
+        "railway": "roundhouse"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 39.0901174,
+      "lon": -94.6398442,
+      "osm_type": "way",
+      "osm_id": 98648884,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "area": "yes",
+        "railway": "turntable",
+        "source": "Bing"
+      }
+    },
+    {
+      "name": "Unnamed Roundhouse",
+      "lat": 39.0794118,
+      "lon": -94.600387,
+      "osm_type": "way",
+      "osm_id": 100291278,
+      "railway_tag": "roundhouse",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "building": "yes",
+        "old_railway_operator": "KCT",
+        "owner": "DST Output",
+        "railway": "roundhouse"
+      }
+    },
+    {
+      "name": "Unnamed Roundhouse",
+      "lat": 39.0800449,
+      "lon": -94.600857,
+      "osm_type": "way",
+      "osm_id": 100291283,
+      "railway_tag": "roundhouse",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "building": "yes",
+        "old_railway_operator": "KCT",
+        "owner": "DST Output",
+        "railway": "roundhouse"
+      }
+    },
+    {
+      "name": "Unnamed Roundhouse",
+      "lat": 42.8143635,
+      "lon": -78.8363299,
+      "osm_type": "way",
+      "osm_id": 100323216,
+      "railway_tag": "roundhouse",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "building": "yes",
+        "railway": "roundhouse"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 39.1205123,
+      "lon": -94.4999347,
+      "osm_type": "way",
+      "osm_id": 100578681,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Detroit,Toledo & Milwaukee Railroad Roundhouse",
+      "lat": 42.3069651,
+      "lon": -83.2302286,
+      "osm_type": "way",
+      "osm_id": 101241052,
+      "railway_tag": "roundhouse",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "building": "industrial",
+        "name": "Detroit,Toledo & Milwaukee Railroad Roundhouse",
+        "railway": "roundhouse"
+      }
+    },
+    {
+      "name": "Unnamed Roundhouse",
+      "lat": 41.4813712,
+      "lon": -82.6857254,
+      "osm_type": "way",
+      "osm_id": 107286602,
+      "railway_tag": "roundhouse",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "building": "yes",
+        "railway": "roundhouse",
+        "source": "Bing"
+      }
+    },
+    {
+      "name": "Roundhouse Railroad Museum",
+      "lat": 32.0753867,
+      "lon": -81.1011649,
+      "osm_type": "way",
+      "osm_id": 107372384,
+      "railway_tag": "roundhouse",
+      "state": "GA",
+      "address": "GA",
+      "raw_tags": {
+        "addr:state": "GA",
+        "building": "yes",
+        "ele": "10",
+        "gnis:feature_id": "2502426",
+        "museum": "railway",
+        "name": "Roundhouse Railroad Museum",
+        "railway": "roundhouse",
+        "source": "USGS Geonames",
+        "tourism": "museum"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 44.1012481,
+      "lon": -69.1226789,
+      "osm_type": "way",
+      "osm_id": 109495757,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 42.3701328,
+      "lon": -74.5115278,
+      "osm_type": "way",
+      "osm_id": 119393166,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "bridge": "yes",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 44.275711,
+      "lon": -73.9870102,
+      "osm_type": "way",
+      "osm_id": 124084441,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 44.9625107,
+      "lon": -93.0959701,
+      "osm_type": "way",
+      "osm_id": 124767174,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "area": "yes",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 44.955941,
+      "lon": -93.186543,
+      "osm_type": "way",
+      "osm_id": 125522815,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 44.9397437,
+      "lon": -93.0472716,
+      "osm_type": "way",
+      "osm_id": 125707811,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "landuse": "railway",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 36.8737564,
+      "lon": -76.3164682,
+      "osm_type": "way",
+      "osm_id": 126249440,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 40.6962564,
+      "lon": -73.823314,
+      "osm_type": "way",
+      "osm_id": 127808367,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 39.3109271,
+      "lon": -77.6238166,
+      "osm_type": "way",
+      "osm_id": 129806064,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "barrier": "wall",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Roundhouse",
+      "lat": 42.0964057,
+      "lon": -75.8539753,
+      "osm_type": "way",
+      "osm_id": 132385815,
+      "railway_tag": "roundhouse",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "building": "yes",
+        "railway": "roundhouse"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 45.0468486,
+      "lon": -93.2724927,
+      "osm_type": "way",
+      "osm_id": 132506326,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 41.2103354,
+      "lon": -122.2703724,
+      "osm_type": "way",
+      "osm_id": 133231156,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 43.7891842,
+      "lon": -75.4869375,
+      "osm_type": "way",
+      "osm_id": 136698291,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 45.6561385,
+      "lon": -95.3691745,
+      "osm_type": "way",
+      "osm_id": 138883404,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 39.928699,
+      "lon": -75.2080884,
+      "osm_type": "way",
+      "osm_id": 142865702,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "area": "yes",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 41.0724305,
+      "lon": -85.033446,
+      "osm_type": "way",
+      "osm_id": 142998299,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 44.0521394,
+      "lon": -71.1295186,
+      "osm_type": "way",
+      "osm_id": 155529577,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "barrier": "wall",
+        "historic": "railway",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 40.8708118,
+      "lon": -75.7407367,
+      "osm_type": "way",
+      "osm_id": 156887795,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 47.9176999,
+      "lon": -97.0460183,
+      "osm_type": "way",
+      "osm_id": 159629311,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 48.1304587,
+      "lon": -96.1756364,
+      "osm_type": "way",
+      "osm_id": 159763121,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 37.9660123,
+      "lon": -91.4767045,
+      "osm_type": "way",
+      "osm_id": 161566278,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable",
+        "source": "bing"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 32.3308548,
+      "lon": -90.1870806,
+      "osm_type": "way",
+      "osm_id": 165498290,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 36.4146588,
+      "lon": -93.7335638,
+      "osm_type": "way",
+      "osm_id": 166084037,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 37.9633541,
+      "lon": -87.607411,
+      "osm_type": "way",
+      "osm_id": 167922097,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 38.2687785,
+      "lon": -85.8023792,
+      "osm_type": "way",
+      "osm_id": 169152043,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 37.2744961,
+      "lon": -79.930683,
+      "osm_type": "way",
+      "osm_id": 169295567,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "area": "yes",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 36.091976,
+      "lon": -86.752437,
+      "osm_type": "way",
+      "osm_id": 169351742,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 37.2732084,
+      "lon": -79.9352485,
+      "osm_type": "way",
+      "osm_id": 169667481,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 39.982006,
+      "lon": -76.1623148,
+      "osm_type": "way",
+      "osm_id": 171865545,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "operator": "Railway Museum of Pennsylvania",
+        "railway": "turntable",
+        "source": "bing_imagery"
+      }
+    },
+    {
+      "name": "Unnamed Roundhouse",
+      "lat": 39.9093629,
+      "lon": -82.9842438,
+      "osm_type": "way",
+      "osm_id": 172093620,
+      "railway_tag": "roundhouse",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "building": "yes",
+        "operator": "CSX Transportation",
+        "operator:wikidata": "Q856783",
+        "railway": "roundhouse"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 42.0617661,
+      "lon": -93.8647023,
+      "osm_type": "way",
+      "osm_id": 172123327,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 47.4785758,
+      "lon": -92.900297,
+      "osm_type": "way",
+      "osm_id": 176041653,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 44.8106419,
+      "lon": -106.9511287,
+      "osm_type": "way",
+      "osm_id": 178872539,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 44.9240118,
+      "lon": -72.2034412,
+      "osm_type": "way",
+      "osm_id": 180959524,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Chicago, St. Paul, Minneapolis, and Omaha Turntable",
+      "lat": 44.0751723,
+      "lon": -95.6656744,
+      "osm_type": "way",
+      "osm_id": 182650262,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "heritage": "2",
+        "heritage:operator": "nrhp",
+        "historic": "yes",
+        "name": "Chicago, St. Paul, Minneapolis, and Omaha Turntable",
+        "railway": "turntable",
+        "ref:nrhp": "77000758"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 45.847839,
+      "lon": -87.0306108,
+      "osm_type": "way",
+      "osm_id": 185937178,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 42.5717482,
+      "lon": -72.566943,
+      "osm_type": "way",
+      "osm_id": 186809837,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "operator": "Berkshire and Eastern Railroad",
+        "railway": "turntable",
+        "service": "yard"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 48.2136618,
+      "lon": -97.7882381,
+      "osm_type": "way",
+      "osm_id": 188432139,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 44.8146332,
+      "lon": -73.0871549,
+      "osm_type": "way",
+      "osm_id": 188552171,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 46.7474435,
+      "lon": -96.2351783,
+      "osm_type": "way",
+      "osm_id": 189154550,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 40.2403716,
+      "lon": -77.9000544,
+      "osm_type": "way",
+      "osm_id": 189444290,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 39.1443983,
+      "lon": -94.5530284,
+      "osm_type": "way",
+      "osm_id": 191504713,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Roundhouse",
+      "lat": 39.1757627,
+      "lon": -94.4848889,
+      "osm_type": "way",
+      "osm_id": 195700840,
+      "railway_tag": "roundhouse",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "building": "yes",
+        "layer": "1",
+        "railway": "roundhouse",
+        "source": "bing"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 39.3400693,
+      "lon": -80.0221855,
+      "osm_type": "way",
+      "osm_id": 197606741,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "old_railway_operator": "B&O",
+        "operator": "CSX Transportation",
+        "operator:wikidata": "Q856783",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 41.4748625,
+      "lon": -81.6757932,
+      "osm_type": "way",
+      "osm_id": 197715736,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 37.7847122,
+      "lon": -122.4076979,
+      "osm_type": "way",
+      "osm_id": 197974389,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "electrified": "no",
+        "gauge": "1067",
+        "level": "0",
+        "operator": "San Francisco Municipal Railway",
+        "owner": "San Francisco Municipal Railway",
+        "railway": "turntable",
+        "wheelchair": "yes"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 37.8070417,
+      "lon": -122.4212374,
+      "osm_type": "way",
+      "osm_id": 197979144,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "electrified": "no",
+        "gauge": "1067",
+        "network": "Muni",
+        "operator": "San Francisco Municipal Railway",
+        "owner": "San Francisco Municipal Railway",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 34.3965759,
+      "lon": -103.2113176,
+      "osm_type": "way",
+      "osm_id": 199954997,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 33.7976015,
+      "lon": -84.4488346,
+      "osm_type": "way",
+      "osm_id": 200081634,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Oyster Bay Railroad Station Turntable",
+      "lat": 40.874952,
+      "lon": -73.5285862,
+      "osm_type": "way",
+      "osm_id": 203004926,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "heritage": "2;7",
+        "heritage:operator": "nrhp;Town of Oyster Bay",
+        "heritage:since": "2005-07-06;1999-03-02",
+        "heritage:website": "https://catalog.archives.gov/id/75319173;https://oysterbaytown.com/town-history/",
+        "historic": "railway",
+        "name": "Oyster Bay Railroad Station Turntable",
+        "operator": "Oyster Bay Railroad Museum",
+        "railway": "turntable",
+        "ref:nrhp": "05000667",
+        "tourism": "attraction",
+        "wheelchair": "no",
+        "wikidata": "Q7116318",
+        "wikipedia": "en:Oyster Bay Long Island Rail Road Turntable",
+        "year_of_construction": "1904"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 38.6767007,
+      "lon": -121.1792129,
+      "osm_type": "way",
+      "osm_id": 205519694,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable",
+        "service": "disused"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 44.513216,
+      "lon": -89.5678404,
+      "osm_type": "way",
+      "osm_id": 205967573,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Roundhouse",
+      "lat": 42.5063501,
+      "lon": -92.3317449,
+      "osm_type": "way",
+      "osm_id": 206168738,
+      "railway_tag": "roundhouse",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "building": "yes",
+        "layer": "1",
+        "railway": "roundhouse",
+        "source": "Bing"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 40.4346334,
+      "lon": -79.8028116,
+      "osm_type": "way",
+      "osm_id": 209700342,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Train Shed",
+      "lat": 33.8463586,
+      "lon": -118.0004603,
+      "osm_type": "way",
+      "osm_id": 210188775,
+      "railway_tag": "roundhouse",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "building": "yes",
+        "name": "Train Shed",
+        "railway": "roundhouse"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 43.570673,
+      "lon": -116.5471343,
+      "osm_type": "way",
+      "osm_id": 218276446,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 39.3160995,
+      "lon": -105.8908614,
+      "osm_type": "way",
+      "osm_id": 220229497,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "disused": "yes",
+        "historic": "ruins",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 41.8376638,
+      "lon": -87.7656123,
+      "osm_type": "way",
+      "osm_id": 220238522,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 37.2679607,
+      "lon": -107.8827507,
+      "osm_type": "way",
+      "osm_id": 220432961,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 41.272281,
+      "lon": -110.9710804,
+      "osm_type": "way",
+      "osm_id": 220440028,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 41.4072686,
+      "lon": -75.6712271,
+      "osm_type": "way",
+      "osm_id": 221521492,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 46.7580158,
+      "lon": -92.2404627,
+      "osm_type": "way",
+      "osm_id": 223614468,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 42.1119772,
+      "lon": -83.2625579,
+      "osm_type": "way",
+      "osm_id": 224033373,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 38.9997885,
+      "lon": -84.4672064,
+      "osm_type": "way",
+      "osm_id": 224459022,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Roundhouse",
+      "lat": 39.2597881,
+      "lon": -106.2889831,
+      "osm_type": "way",
+      "osm_id": 229340861,
+      "railway_tag": "roundhouse",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "building": "yes",
+        "layer": "1",
+        "railway": "roundhouse",
+        "source": "Bing"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 42.3583382,
+      "lon": -87.8279567,
+      "osm_type": "way",
+      "osm_id": 232281550,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "area": "yes",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 34.6544586,
+      "lon": -106.767387,
+      "osm_type": "way",
+      "osm_id": 235575817,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 40.8835071,
+      "lon": -98.3692389,
+      "osm_type": "way",
+      "osm_id": 236351942,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 42.5564687,
+      "lon": -121.886397,
+      "osm_type": "way",
+      "osm_id": 241014955,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 42.5594167,
+      "lon": -121.8851187,
+      "osm_type": "way",
+      "osm_id": 243014863,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 45.7954333,
+      "lon": -119.3004739,
+      "osm_type": "way",
+      "osm_id": 244645201,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "area": "yes",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 44.0665758,
+      "lon": -123.1278536,
+      "osm_type": "way",
+      "osm_id": 250359024,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 38.0455692,
+      "lon": -97.3480558,
+      "osm_type": "way",
+      "osm_id": 251576497,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "electrified": "no",
+        "gauge": "1435",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 41.7081973,
+      "lon": -83.5039029,
+      "osm_type": "way",
+      "osm_id": 251879983,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Roundhouse",
+      "lat": 41.2773417,
+      "lon": -82.8330075,
+      "osm_type": "way",
+      "osm_id": 253569707,
+      "railway_tag": "roundhouse",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "building": "yes",
+        "railway": "roundhouse"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 41.2769557,
+      "lon": -82.8326258,
+      "osm_type": "way",
+      "osm_id": 253569863,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 46.4217104,
+      "lon": -116.987126,
+      "osm_type": "way",
+      "osm_id": 254866386,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 42.9364209,
+      "lon": -85.6780648,
+      "osm_type": "way",
+      "osm_id": 255227057,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 44.415635,
+      "lon": -72.0145896,
+      "osm_type": "way",
+      "osm_id": 255358996,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 48.4130878,
+      "lon": -114.3467007,
+      "osm_type": "way",
+      "osm_id": 255630448,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 42.4986706,
+      "lon": -94.1880225,
+      "osm_type": "way",
+      "osm_id": 256762293,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 41.6133263,
+      "lon": -87.3530363,
+      "osm_type": "way",
+      "osm_id": 256798721,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "area": "yes",
+        "barrier": "retaining_wall",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 43.4409935,
+      "lon": -83.9182098,
+      "osm_type": "way",
+      "osm_id": 256984562,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 38.3996959,
+      "lon": -96.1956871,
+      "osm_type": "way",
+      "osm_id": 261796537,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "abandoned:railway": "turntable",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 46.875799,
+      "lon": -113.990281,
+      "osm_type": "way",
+      "osm_id": 262923787,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Roundhouse",
+      "lat": 41.7150807,
+      "lon": -72.2358576,
+      "osm_type": "way",
+      "osm_id": 267606230,
+      "railway_tag": "roundhouse",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "building": "roundhouse"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 42.9938851,
+      "lon": -84.1655899,
+      "osm_type": "way",
+      "osm_id": 269739642,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Roundhouse",
+      "lat": 45.6676691,
+      "lon": -68.7111272,
+      "osm_type": "way",
+      "osm_id": 271056723,
+      "railway_tag": "roundhouse",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "building": "yes",
+        "railway": "roundhouse"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 33.7622356,
+      "lon": -117.2322822,
+      "osm_type": "way",
+      "osm_id": 271550597,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 41.6493251,
+      "lon": -87.6260664,
+      "osm_type": "way",
+      "osm_id": 271663722,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "area": "yes",
+        "operator": "CSX Transportation",
+        "operator:wikidata": "Q856783",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 44.5662817,
+      "lon": -69.6193144,
+      "osm_type": "way",
+      "osm_id": 275440313,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 30.7241868,
+      "lon": -88.04991,
+      "osm_type": "way",
+      "osm_id": 277820340,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 48.5526883,
+      "lon": -109.6634768,
+      "osm_type": "way",
+      "osm_id": 280609819,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 40.5138914,
+      "lon": -78.4005455,
+      "osm_type": "way",
+      "osm_id": 283296622,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 40.5366114,
+      "lon": -78.3811463,
+      "osm_type": "way",
+      "osm_id": 283296623,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 44.3657773,
+      "lon": -98.2059706,
+      "osm_type": "way",
+      "osm_id": 284315968,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 39.1298318,
+      "lon": -94.5431541,
+      "osm_type": "way",
+      "osm_id": 285604389,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "area": "yes",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Ex Soo Line Roundhouse",
+      "lat": 39.127142,
+      "lon": -94.5169971,
+      "osm_type": "way",
+      "osm_id": 286206117,
+      "railway_tag": "roundhouse",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "building": "industrial",
+        "name": "Ex Soo Line Roundhouse",
+        "railway": "roundhouse"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 44.5803114,
+      "lon": -68.8074737,
+      "osm_type": "way",
+      "osm_id": 287805450,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Roundhouse",
+      "lat": 43.6530187,
+      "lon": -72.328957,
+      "osm_type": "way",
+      "osm_id": 287806343,
+      "railway_tag": "roundhouse",
+      "state": "VT",
+      "address": "127, Round House Road, VT",
+      "raw_tags": {
+        "addr:housenumber": "127",
+        "addr:state": "VT",
+        "addr:street": "Round House Road",
+        "building": "roundhouse",
+        "ref:vcgi:esiteid": "122740"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 43.1349313,
+      "lon": -72.4387023,
+      "osm_type": "way",
+      "osm_id": 288090231,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 35.1952857,
+      "lon": -101.828995,
+      "osm_type": "way",
+      "osm_id": 293342499,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 35.3766652,
+      "lon": -118.986135,
+      "osm_type": "way",
+      "osm_id": 300219315,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 44.5477111,
+      "lon": -70.5358706,
+      "osm_type": "way",
+      "osm_id": 300879016,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "bridge": "yes",
+        "electrified": "no",
+        "gauge": "1435",
+        "railway": "turntable",
+        "service": "yard"
+      }
+    },
+    {
+      "name": "The Prairie Village, Herman & Milwaukee Railroad Turntable",
+      "lat": 44.0067923,
+      "lon": -97.1708913,
+      "osm_type": "way",
+      "osm_id": 302128029,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "name": "The Prairie Village, Herman & Milwaukee Railroad Turntable",
+        "railway": "turntable",
+        "railway:historic": "yes",
+        "source": "Bing"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 45.6677543,
+      "lon": -110.5547027,
+      "osm_type": "way",
+      "osm_id": 302915260,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 42.6779354,
+      "lon": -89.0346708,
+      "osm_type": "way",
+      "osm_id": 307236907,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 41.6037695,
+      "lon": -87.4666316,
+      "osm_type": "way",
+      "osm_id": 307626956,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable",
+        "service": "yard"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 45.6676729,
+      "lon": -110.5568918,
+      "osm_type": "way",
+      "osm_id": 308646427,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 45.2313626,
+      "lon": -68.968377,
+      "osm_type": "way",
+      "osm_id": 318170829,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 47.9856854,
+      "lon": -121.3939401,
+      "osm_type": "way",
+      "osm_id": 318306031,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 38.5361794,
+      "lon": -82.6994933,
+      "osm_type": "way",
+      "osm_id": 318667738,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 38.2601967,
+      "lon": -104.6145024,
+      "osm_type": "way",
+      "osm_id": 319347084,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 46.2280607,
+      "lon": -119.084118,
+      "osm_type": "way",
+      "osm_id": 322524164,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 41.0992251,
+      "lon": -72.3639377,
+      "osm_type": "way",
+      "osm_id": 323368468,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "area": "yes",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 39.3410449,
+      "lon": -101.715181,
+      "osm_type": "way",
+      "osm_id": 323582810,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 47.1050494,
+      "lon": -104.7094489,
+      "osm_type": "way",
+      "osm_id": 323899262,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable",
+        "source": "Mapbox"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 38.8515656,
+      "lon": -97.6063987,
+      "osm_type": "way",
+      "osm_id": 325680460,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 37.7505628,
+      "lon": -100.0049701,
+      "osm_type": "way",
+      "osm_id": 326307301,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 31.7736129,
+      "lon": -106.4688601,
+      "osm_type": "way",
+      "osm_id": 326663983,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "operator": "Union Pacific Railroad",
+        "operator:wikidata": "Q725793",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 29.916158,
+      "lon": -90.1055106,
+      "osm_type": "way",
+      "osm_id": 327776972,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "operator": "New Orleans Public Belt Railroad",
+        "operator:wikidata": "Q1982804",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "New Haven Railroad Danbury Turntable",
+      "lat": 41.3971749,
+      "lon": -73.446285,
+      "osm_type": "way",
+      "osm_id": 327976150,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "area": "yes",
+        "historic": "yes",
+        "name": "New Haven Railroad Danbury Turntable",
+        "railway": "turntable",
+        "ref:nrhp": "05001048"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 43.7028201,
+      "lon": -73.9883398,
+      "osm_type": "way",
+      "osm_id": 329575442,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 38.5009961,
+      "lon": -89.1452525,
+      "osm_type": "way",
+      "osm_id": 329975616,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable",
+        "service": "yard"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 40.097602,
+      "lon": -87.6511475,
+      "osm_type": "way",
+      "osm_id": 332358743,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 40.1369999,
+      "lon": -87.5821471,
+      "osm_type": "way",
+      "osm_id": 332488095,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 39.8473689,
+      "lon": -88.9408536,
+      "osm_type": "way",
+      "osm_id": 332771688,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 32.3557202,
+      "lon": -97.3818341,
+      "osm_type": "way",
+      "osm_id": 334958466,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 44.4706357,
+      "lon": -73.2194044,
+      "osm_type": "way",
+      "osm_id": 340577161,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 29.7448876,
+      "lon": -95.3405169,
+      "osm_type": "way",
+      "osm_id": 345722855,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable",
+        "start_date": "1890"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 30.3525066,
+      "lon": -94.1838844,
+      "osm_type": "way",
+      "osm_id": 348591366,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 44.991768,
+      "lon": -73.3749761,
+      "osm_type": "way",
+      "osm_id": 350087785,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 41.1298578,
+      "lon": -104.8152357,
+      "osm_type": "way",
+      "osm_id": 355281061,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 43.8114366,
+      "lon": -88.4782681,
+      "osm_type": "way",
+      "osm_id": 356966131,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "area": "yes",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 43.8177697,
+      "lon": -88.4757456,
+      "osm_type": "way",
+      "osm_id": 356966132,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "area": "yes",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 37.9346819,
+      "lon": -122.3776859,
+      "osm_type": "way",
+      "osm_id": 357524008,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 42.5293854,
+      "lon": -96.4762807,
+      "osm_type": "way",
+      "osm_id": 360079803,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 42.8340685,
+      "lon": -103.0025507,
+      "osm_type": "way",
+      "osm_id": 362506409,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 45.6506861,
+      "lon": -122.687541,
+      "osm_type": "way",
+      "osm_id": 365924056,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 41.5038112,
+      "lon": -88.0842973,
+      "osm_type": "way",
+      "osm_id": 367036545,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 33.4558386,
+      "lon": -112.1013136,
+      "osm_type": "way",
+      "osm_id": 370129501,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 37.9499012,
+      "lon": -120.4170806,
+      "osm_type": "way",
+      "osm_id": 372224656,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable",
+        "source": "Bing"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 33.9776901,
+      "lon": -83.6659126,
+      "osm_type": "way",
+      "osm_id": 372805172,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 37.2800887,
+      "lon": -79.9765173,
+      "osm_type": "way",
+      "osm_id": 373838142,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 37.2803585,
+      "lon": -79.9708755,
+      "osm_type": "way",
+      "osm_id": 373843687,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 41.061686,
+      "lon": -82.7307229,
+      "osm_type": "way",
+      "osm_id": 380845092,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 36.0369067,
+      "lon": -83.8173592,
+      "osm_type": "way",
+      "osm_id": 384407835,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 39.0710238,
+      "lon": -94.6143107,
+      "osm_type": "way",
+      "osm_id": 384472165,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "area": "yes",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Roundhouse",
+      "lat": 43.2976338,
+      "lon": -93.2069455,
+      "osm_type": "way",
+      "osm_id": 388836615,
+      "railway_tag": "roundhouse",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "building": "yes",
+        "railway": "roundhouse"
+      }
+    },
+    {
+      "name": "Unnamed Roundhouse",
+      "lat": 43.2972294,
+      "lon": -93.2064481,
+      "osm_type": "way",
+      "osm_id": 388836630,
+      "railway_tag": "roundhouse",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "building": "yes",
+        "railway": "roundhouse"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 45.6703222,
+      "lon": -108.7516046,
+      "osm_type": "way",
+      "osm_id": 403213660,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 42.656102,
+      "lon": -83.3181077,
+      "osm_type": "way",
+      "osm_id": 407855445,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 35.7873945,
+      "lon": -78.6417733,
+      "osm_type": "way",
+      "osm_id": 407988572,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "description": "CSX turntable",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 40.2952366,
+      "lon": -76.9268178,
+      "osm_type": "way",
+      "osm_id": 421888966,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 41.4871881,
+      "lon": -90.6366484,
+      "osm_type": "way",
+      "osm_id": 426184801,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 40.5815915,
+      "lon": -76.0268844,
+      "osm_type": "way",
+      "osm_id": 430273139,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 32.8055568,
+      "lon": -96.7941014,
+      "osm_type": "way",
+      "osm_id": 430419688,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "electrified": "contact_line",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 39.1475825,
+      "lon": -119.7685527,
+      "osm_type": "way",
+      "osm_id": 432940618,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 47.663212,
+      "lon": -117.9372324,
+      "osm_type": "way",
+      "osm_id": 436503570,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 34.1550224,
+      "lon": -118.3022874,
+      "osm_type": "way",
+      "osm_id": 439092140,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable",
+        "usage": "tourism"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 34.1552868,
+      "lon": -118.3016262,
+      "osm_type": "way",
+      "osm_id": 439092141,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable",
+        "usage": "tourism"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 47.1985423,
+      "lon": -117.9171702,
+      "osm_type": "way",
+      "osm_id": 440676115,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "historic": "ruins",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 34.4788242,
+      "lon": -85.3465206,
+      "osm_type": "way",
+      "osm_id": 441506863,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "SR&RL Turntable",
+      "lat": 44.8281188,
+      "lon": -70.344618,
+      "osm_type": "way",
+      "osm_id": 451275857,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "name": "SR&RL Turntable",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 34.3994452,
+      "lon": -118.909804,
+      "osm_type": "way",
+      "osm_id": 460619227,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 35.0733208,
+      "lon": -106.6502664,
+      "osm_type": "way",
+      "osm_id": 473072335,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "area": "yes",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 39.6297827,
+      "lon": -78.7655113,
+      "osm_type": "way",
+      "osm_id": 481054323,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 37.8130817,
+      "lon": -79.8306827,
+      "osm_type": "way",
+      "osm_id": 482385124,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 32.3436156,
+      "lon": -90.8878074,
+      "osm_type": "way",
+      "osm_id": 488119546,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 32.7150775,
+      "lon": -97.677549,
+      "osm_type": "way",
+      "osm_id": 488699652,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 27.9139649,
+      "lon": -82.7866078,
+      "osm_type": "way",
+      "osm_id": 491212526,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 45.6675153,
+      "lon": -68.7118851,
+      "osm_type": "way",
+      "osm_id": 497892673,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "electrified": "no",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 34.8290046,
+      "lon": -82.2817741,
+      "osm_type": "way",
+      "osm_id": 503289865,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 38.5851165,
+      "lon": -121.5051916,
+      "osm_type": "way",
+      "osm_id": 504407092,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "area": "yes",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 35.060356,
+      "lon": -85.2503456,
+      "osm_type": "way",
+      "osm_id": 507646762,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Roundhouse",
+      "lat": 46.8220175,
+      "lon": -119.1770241,
+      "osm_type": "way",
+      "osm_id": 525821215,
+      "railway_tag": "roundhouse",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "historic": "ruins",
+        "railway": "roundhouse"
+      }
+    },
+    {
+      "name": "Unnamed Roundhouse",
+      "lat": 46.5900392,
+      "lon": -120.5031927,
+      "osm_type": "way",
+      "osm_id": 525827614,
+      "railway_tag": "roundhouse",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "historic": "ruins",
+        "railway": "roundhouse"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 39.9828847,
+      "lon": -76.1616482,
+      "osm_type": "way",
+      "osm_id": 526266885,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 38.7464717,
+      "lon": -121.2912074,
+      "osm_type": "way",
+      "osm_id": 542667438,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 32.9708993,
+      "lon": -117.0363477,
+      "osm_type": "way",
+      "osm_id": 544959246,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "area": "yes",
+        "railway": "turntable",
+        "surface": "gravel"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 39.2680365,
+      "lon": -84.418429,
+      "osm_type": "way",
+      "osm_id": 553141659,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Cordelia’s Train Barn",
+      "lat": 33.8453826,
+      "lon": -117.998969,
+      "osm_type": "way",
+      "osm_id": 556547918,
+      "railway_tag": "roundhouse",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "building": "roof",
+        "layer": "1",
+        "name": "Cordelia’s Train Barn",
+        "railway": "roundhouse"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 40.7895457,
+      "lon": -111.907992,
+      "osm_type": "way",
+      "osm_id": 559128238,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "layer": "1",
+        "railway": "turntable",
+        "service": "yard"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 40.6676357,
+      "lon": -80.2444463,
+      "osm_type": "way",
+      "osm_id": 567731553,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable",
+        "source": "digitalglobe"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 35.0297166,
+      "lon": -110.7155545,
+      "osm_type": "way",
+      "osm_id": 593121110,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 33.5475377,
+      "lon": -86.6960627,
+      "osm_type": "way",
+      "osm_id": 601345890,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "area": "yes",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 35.0251785,
+      "lon": -89.8956836,
+      "osm_type": "way",
+      "osm_id": 602707586,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 35.0703814,
+      "lon": -90.0708055,
+      "osm_type": "way",
+      "osm_id": 604011607,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 41.5696802,
+      "lon": -87.6602055,
+      "osm_type": "way",
+      "osm_id": 605958685,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 37.9503088,
+      "lon": -122.3589847,
+      "osm_type": "way",
+      "osm_id": 612054184,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "electrified": "rail",
+        "frequency": "0",
+        "gauge": "1676",
+        "network": "BART",
+        "railway": "turntable",
+        "voltage": "1000"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 37.9531398,
+      "lon": -122.0249621,
+      "osm_type": "way",
+      "osm_id": 612057628,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "electrified": "rail",
+        "frequency": "0",
+        "gauge": "1676",
+        "network": "BART",
+        "railway": "turntable",
+        "voltage": "1000"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 33.5291527,
+      "lon": -86.8406955,
+      "osm_type": "way",
+      "osm_id": 612348004,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "area": "yes",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 32.7894955,
+      "lon": -97.3455545,
+      "osm_type": "way",
+      "osm_id": 614818957,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 34.7647016,
+      "lon": -92.251207,
+      "osm_type": "way",
+      "osm_id": 617823558,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 40.810748,
+      "lon": -96.7333769,
+      "osm_type": "way",
+      "osm_id": 633421853,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 46.1250575,
+      "lon": -67.8494127,
+      "osm_type": "way",
+      "osm_id": 643823313,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 39.7433571,
+      "lon": -122.1786292,
+      "osm_type": "way",
+      "osm_id": 651917317,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 37.6162793,
+      "lon": -122.0453328,
+      "osm_type": "way",
+      "osm_id": 654364065,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "gauge": "1676",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 37.6839028,
+      "lon": -122.4655106,
+      "osm_type": "way",
+      "osm_id": 654563339,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "gauge": "1676",
+        "railway": "turntable",
+        "wikimedia_commons": "Category:Turntable at Daly City Yard"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 32.9331278,
+      "lon": -97.0799675,
+      "osm_type": "way",
+      "osm_id": 660081223,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "gauge": "1435",
+        "old_railway_operator": "SSW",
+        "operator": "Grapevine Vintage Railroad",
+        "operator:wikidata": "Q5597047",
+        "railway": "turntable",
+        "railway:preserved": "yes",
+        "service": "yard"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 37.8052318,
+      "lon": -122.4152381,
+      "osm_type": "way",
+      "osm_id": 667569434,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "electrified": "no",
+        "gauge": "1067",
+        "network": "Muni",
+        "operator": "San Francisco Municipal Railway",
+        "owner": "San Francisco Municipal Railway",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 33.6930547,
+      "lon": -112.1544467,
+      "osm_type": "way",
+      "osm_id": 681627342,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 33.6930597,
+      "lon": -112.1530543,
+      "osm_type": "way",
+      "osm_id": 681627343,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Roundhouse",
+      "lat": 43.1583469,
+      "lon": -89.05623,
+      "osm_type": "way",
+      "osm_id": 683398600,
+      "railway_tag": "roundhouse",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "building": "yes",
+        "railway": "roundhouse"
+      }
+    },
+    {
+      "name": "The Turntable",
+      "lat": 47.1819657,
+      "lon": -120.9550363,
+      "osm_type": "way",
+      "osm_id": 692207374,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "name": "The Turntable",
+        "railway": "turntable",
+        "ruins": "yes",
+        "start_date": "1909"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 41.8987542,
+      "lon": -87.8951574,
+      "osm_type": "way",
+      "osm_id": 734535399,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 32.5066372,
+      "lon": -93.7353418,
+      "osm_type": "way",
+      "osm_id": 736826873,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 43.209285,
+      "lon": -70.7890876,
+      "osm_type": "way",
+      "osm_id": 744372022,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Roundhouse",
+      "lat": 39.6029713,
+      "lon": -105.2234224,
+      "osm_type": "way",
+      "osm_id": 745154054,
+      "railway_tag": "roundhouse",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "building": "roundhouse",
+        "railway": "roundhouse"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 40.3044117,
+      "lon": -80.6163929,
+      "osm_type": "way",
+      "osm_id": 772043569,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "abandoned": "yes",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 46.863084,
+      "lon": -67.9979895,
+      "osm_type": "way",
+      "osm_id": 794432554,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Erie Railroad Turntable",
+      "lat": 41.3764545,
+      "lon": -74.6946436,
+      "osm_type": "way",
+      "osm_id": 794921309,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "area": "yes",
+        "name": "Erie Railroad Turntable",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 40.7458612,
+      "lon": -86.3473704,
+      "osm_type": "way",
+      "osm_id": 798554856,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 37.2299052,
+      "lon": -93.3093287,
+      "osm_type": "way",
+      "osm_id": 817355934,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Wabash Frisco and Pacific",
+      "lat": 38.5426586,
+      "lon": -90.6246232,
+      "osm_type": "way",
+      "osm_id": 818555149,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "gauge": "304.8",
+        "name": "Wabash Frisco and Pacific",
+        "railway": "turntable",
+        "service": "yard"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 39.6569899,
+      "lon": -78.9245698,
+      "osm_type": "way",
+      "osm_id": 825444899,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Bessemer & Lake Erie Roundhouse",
+      "lat": 41.3987698,
+      "lon": -80.3873338,
+      "osm_type": "way",
+      "osm_id": 830746710,
+      "railway_tag": "roundhouse",
+      "state": "PA",
+      "address": "Greenville, PA",
+      "raw_tags": {
+        "addr:city": "Greenville",
+        "addr:state": "PA",
+        "building": "yes",
+        "description": "Built in 1893 for the repair and maintenance of locomotives.",
+        "name": "Bessemer & Lake Erie Roundhouse",
+        "railway": "roundhouse"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 33.7161799,
+      "lon": -118.2763023,
+      "osm_type": "way",
+      "osm_id": 833109181,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "historic": "ruins",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 47.9784371,
+      "lon": -102.4958472,
+      "osm_type": "way",
+      "osm_id": 843264775,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 38.7116251,
+      "lon": -77.2190357,
+      "osm_type": "way",
+      "osm_id": 846527484,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 40.479281,
+      "lon": -81.6644704,
+      "osm_type": "way",
+      "osm_id": 846797559,
+      "railway_tag": "turntable",
+      "state": "OH",
+      "address": "213, Smokey Lane Road Southwest, Sugarcreek, OH, 44681",
+      "raw_tags": {
+        "addr:city": "Sugarcreek",
+        "addr:housenumber": "213",
+        "addr:postcode": "44681",
+        "addr:state": "OH",
+        "addr:street": "Smokey Lane Road Southwest",
+        "description": "Turntable to turn railroad cars and locomotives when entering or leaving the roundhouse.",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 40.5871145,
+      "lon": -77.5867767,
+      "osm_type": "way",
+      "osm_id": 852554445,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 38.2016299,
+      "lon": -84.2589703,
+      "osm_type": "way",
+      "osm_id": 863295201,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 39.829454,
+      "lon": -104.1903305,
+      "osm_type": "way",
+      "osm_id": 875345450,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 39.4924454,
+      "lon": -105.0854575,
+      "osm_type": "way",
+      "osm_id": 875347587,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 38.6912882,
+      "lon": -90.2149592,
+      "osm_type": "way",
+      "osm_id": 886843760,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Galveston, Harrisburg and San Antonio / Texas and New Orleans / Southern Pacific Turntable",
+      "lat": 29.4357337,
+      "lon": -98.4738782,
+      "osm_type": "way",
+      "osm_id": 917695614,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "area": "yes",
+        "name": "Galveston, Harrisburg and San Antonio / Texas and New Orleans / Southern Pacific Turntable",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 37.6743894,
+      "lon": -119.7861457,
+      "osm_type": "way",
+      "osm_id": 919983661,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 41.1511923,
+      "lon": -79.0655778,
+      "osm_type": "way",
+      "osm_id": 937291781,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 41.3733872,
+      "lon": -78.5617213,
+      "osm_type": "way",
+      "osm_id": 937297155,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 32.6870936,
+      "lon": -117.1391784,
+      "osm_type": "way",
+      "osm_id": 950214406,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable",
+        "turntable": "crane"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 31.1810834,
+      "lon": -82.3927009,
+      "osm_type": "way",
+      "osm_id": 952924518,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 44.9423871,
+      "lon": -95.7274767,
+      "osm_type": "way",
+      "osm_id": 993117308,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "area": "yes",
+        "railway": "turntable",
+        "turntable": "yes"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 41.6979037,
+      "lon": -87.568168,
+      "osm_type": "way",
+      "osm_id": 1014979911,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "operator": "Norfolk Southern Railway",
+        "operator:wikidata": "Q1321054",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 38.9176752,
+      "lon": -76.9829797,
+      "osm_type": "way",
+      "osm_id": 1037153370,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 37.8802221,
+      "lon": -122.2227865,
+      "osm_type": "way",
+      "osm_id": 1046354998,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "area": "yes",
+        "bridge": "yes",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 39.2497551,
+      "lon": -121.0187322,
+      "osm_type": "way",
+      "osm_id": 1046998450,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 44.2545838,
+      "lon": -72.5731689,
+      "osm_type": "way",
+      "osm_id": 1051835878,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "abandoned": "railway",
+        "area": "yes",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 43.6272043,
+      "lon": -72.508348,
+      "osm_type": "way",
+      "osm_id": 1056627870,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "abandoned": "rail",
+        "area": "yes",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 32.2799636,
+      "lon": -111.0105593,
+      "osm_type": "way",
+      "osm_id": 1085922117,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 42.0736108,
+      "lon": -72.7955033,
+      "osm_type": "way",
+      "osm_id": 1086823644,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "area": "yes",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 38.191063,
+      "lon": -121.3315063,
+      "osm_type": "way",
+      "osm_id": 1087040332,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "area": "yes",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 41.1746653,
+      "lon": -81.9407771,
+      "osm_type": "way",
+      "osm_id": 1087768568,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "area": "yes",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 41.6118157,
+      "lon": -81.3325536,
+      "osm_type": "way",
+      "osm_id": 1088488177,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "area": "yes",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 37.664057,
+      "lon": -82.2688645,
+      "osm_type": "way",
+      "osm_id": 1089749204,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "area": "yes",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 37.3977147,
+      "lon": -118.3456697,
+      "osm_type": "way",
+      "osm_id": 1103947414,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 41.1320353,
+      "lon": -80.6855019,
+      "osm_type": "way",
+      "osm_id": 1118393609,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 42.8555994,
+      "lon": -106.3231114,
+      "osm_type": "way",
+      "osm_id": 1124031034,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "area": "yes",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Roundhouse",
+      "lat": 46.4165599,
+      "lon": -105.8406455,
+      "osm_type": "way",
+      "osm_id": 1147164835,
+      "railway_tag": "roundhouse",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "building": "ruins",
+        "railway": "roundhouse"
+      }
+    },
+    {
+      "name": "Unnamed Roundhouse",
+      "lat": 47.1048278,
+      "lon": -104.7087871,
+      "osm_type": "way",
+      "osm_id": 1147177253,
+      "railway_tag": "roundhouse",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "building": "yes",
+        "railway": "roundhouse"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 32.7281159,
+      "lon": -97.3673017,
+      "osm_type": "way",
+      "osm_id": 1156116696,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "electrified": "no",
+        "gauge": "1435",
+        "operator": "Union Pacific Railroad",
+        "operator:wikidata": "Q725793",
+        "railway": "turntable",
+        "service": "yard"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 40.6333063,
+      "lon": -74.5921837,
+      "osm_type": "way",
+      "osm_id": 1159094118,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 40.4031073,
+      "lon": -75.8652276,
+      "osm_type": "way",
+      "osm_id": 1159156105,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "gauge": "120.65;184",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Roundhouse",
+      "lat": 40.4036915,
+      "lon": -75.8649055,
+      "osm_type": "way",
+      "osm_id": 1159156118,
+      "railway_tag": "roundhouse",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "building": "yes",
+        "railway": "roundhouse"
+      }
+    },
+    {
+      "name": "Unnamed Roundhouse",
+      "lat": 42.0336943,
+      "lon": -87.8784043,
+      "osm_type": "way",
+      "osm_id": 1162397317,
+      "railway_tag": "roundhouse",
+      "state": "IL",
+      "address": "1250, Campground Road, Des Plaines, IL, 60016",
+      "raw_tags": {
+        "addr:city": "Des Plaines",
+        "addr:housenumber": "1250",
+        "addr:postcode": "60016",
+        "addr:state": "IL",
+        "addr:street": "Campground Road",
+        "building": "roundhouse"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 45.5123956,
+      "lon": -122.4580375,
+      "osm_type": "way",
+      "osm_id": 1165978387,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "area": "yes",
+        "indoor": "yes",
+        "maxspeed": "0.5 mph",
+        "note": "Series of single-truck turntables connecting shop bay tracks to a transverse track for the movement of individual train car trucks.",
+        "railway": "turntable",
+        "service": "yard"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 45.5123985,
+      "lon": -122.4572884,
+      "osm_type": "way",
+      "osm_id": 1165978393,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "area": "yes",
+        "indoor": "yes",
+        "maxspeed": "0.5 mph",
+        "note": "Series of single-truck turntables connecting shop bay tracks to a transverse track for the movement of individual train car trucks.",
+        "railway": "turntable",
+        "service": "yard"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 35.3387624,
+      "lon": -85.4434084,
+      "osm_type": "way",
+      "osm_id": 1182388459,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 35.3357998,
+      "lon": -85.4490384,
+      "osm_type": "way",
+      "osm_id": 1182783977,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 45.2840918,
+      "lon": -122.6957096,
+      "osm_type": "way",
+      "osm_id": 1190074489,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "gauge": "381",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 37.8808236,
+      "lon": -122.2230425,
+      "osm_type": "way",
+      "osm_id": 1190153477,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "operator": "Golden Gate Live Steamers",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 37.8814885,
+      "lon": -122.2235208,
+      "osm_type": "way",
+      "osm_id": 1190153491,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "operator": "Golden Gate Live Steamers",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Salmon Falls Stoneware",
+      "lat": 43.2066489,
+      "lon": -70.8643139,
+      "osm_type": "way",
+      "osm_id": 1202603924,
+      "railway_tag": "roundhouse",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "building": "roundhouse",
+        "name": "Salmon Falls Stoneware",
+        "opening_hours": "Mo-Su 09:00-17:00",
+        "phone": "+1 800-621-2030",
+        "shop": "pottery",
+        "website": "https://www.salmonfalls.com"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 45.5068634,
+      "lon": -122.6613709,
+      "osm_type": "way",
+      "osm_id": 1225401983,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable",
+        "service": "yard"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 44.3158702,
+      "lon": -72.9417337,
+      "osm_type": "way",
+      "osm_id": 1242659043,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "operator": "Cold Creek and Northern",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 41.2755934,
+      "lon": -95.8643729,
+      "osm_type": "way",
+      "osm_id": 1244936140,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "abandoned:railway": "turntable",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 43.9107205,
+      "lon": -96.3714241,
+      "osm_type": "way",
+      "osm_id": 1253304213,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 47.5242619,
+      "lon": -122.6106822,
+      "osm_type": "way",
+      "osm_id": 1254788305,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "gauge": "190.5",
+        "operator": "Kitsap Live Steamers",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 35.6548371,
+      "lon": -105.9429676,
+      "osm_type": "way",
+      "osm_id": 1266566666,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 38.6433092,
+      "lon": -106.408195,
+      "osm_type": "way",
+      "osm_id": 1281348290,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Wabash Frisco and Pacific",
+      "lat": 38.5431981,
+      "lon": -90.6252171,
+      "osm_type": "way",
+      "osm_id": 1293334615,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "gauge": "304.8",
+        "name": "Wabash Frisco and Pacific",
+        "railway": "turntable",
+        "service": "yard"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 44.6456303,
+      "lon": -123.0687454,
+      "osm_type": "way",
+      "osm_id": 1295974035,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "gauge": "1435",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 42.2188247,
+      "lon": -121.7699017,
+      "osm_type": "way",
+      "osm_id": 1305640528,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 37.9341776,
+      "lon": -121.2721655,
+      "osm_type": "way",
+      "osm_id": 1307473482,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 36.0711779,
+      "lon": -102.5149055,
+      "osm_type": "way",
+      "osm_id": 1311402200,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 33.9298038,
+      "lon": -98.5025652,
+      "osm_type": "way",
+      "osm_id": 1312112674,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 43.4566683,
+      "lon": -72.4139666,
+      "osm_type": "way",
+      "osm_id": 1313636849,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 41.9442648,
+      "lon": -87.8916455,
+      "osm_type": "way",
+      "osm_id": 1321860915,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 36.1419825,
+      "lon": -82.4250757,
+      "osm_type": "way",
+      "osm_id": 1333308621,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "area": "yes",
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 34.7330146,
+      "lon": -87.7059054,
+      "osm_type": "way",
+      "osm_id": 1333866752,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 41.8570054,
+      "lon": -86.2214744,
+      "osm_type": "way",
+      "osm_id": 1336514153,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 40.7498551,
+      "lon": -88.4050079,
+      "osm_type": "way",
+      "osm_id": 1344746846,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 38.605649,
+      "lon": -122.8627562,
+      "osm_type": "way",
+      "osm_id": 1374621128,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 41.0630379,
+      "lon": -81.4572015,
+      "osm_type": "way",
+      "osm_id": 1381195794,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "John E. Schmidt Memorial Roundhouse",
+      "lat": 44.9065103,
+      "lon": -92.7392481,
+      "osm_type": "way",
+      "osm_id": 1429871265,
+      "railway_tag": "roundhouse",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "building": "roundhouse",
+        "name": "John E. Schmidt Memorial Roundhouse"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 44.9060937,
+      "lon": -92.7396127,
+      "osm_type": "way",
+      "osm_id": 1429871268,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 44.0450311,
+      "lon": -121.2484127,
+      "osm_type": "way",
+      "osm_id": 1431633199,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 35.4842281,
+      "lon": -93.8218586,
+      "osm_type": "way",
+      "osm_id": 1445837113,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 46.1706157,
+      "lon": -95.9139881,
+      "osm_type": "way",
+      "osm_id": 1450707413,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 36.6336492,
+      "lon": -119.4598563,
+      "osm_type": "way",
+      "osm_id": 1465724597,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 39.2155195,
+      "lon": -86.4763445,
+      "osm_type": "way",
+      "osm_id": 1468057542,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 33.500959,
+      "lon": -88.4117748,
+      "osm_type": "way",
+      "osm_id": 1469620387,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 37.4273973,
+      "lon": -82.4926051,
+      "osm_type": "way",
+      "osm_id": 1484417163,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "railway": "turntable"
+      }
+    },
+    {
+      "name": "Unnamed Turntable",
+      "lat": 33.536106,
+      "lon": -111.9233709,
+      "osm_type": "way",
+      "osm_id": 1486208710,
+      "railway_tag": "turntable",
+      "state": null,
+      "address": null,
+      "raw_tags": {
+        "electrified": "no",
+        "gauge": "381",
+        "railway": "turntable",
+        "tracks": "1"
+      }
+    }
+  ]
+}
