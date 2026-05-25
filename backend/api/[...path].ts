@@ -1,11 +1,27 @@
-// Vercel catch-all function: handles every /api/* request and lets the Express
-// app do the routing.
+// Vercel catch-all function: handles every /api/* request (at any depth) and
+// lets the Express app do the routing.
 //
-// Why a catch-all file instead of api/index.ts + a rewrite: Vercel `rewrites`
-// overwrite the request path with the destination, so `destination: "/api"` made
-// Express see req.url="/api" (not "/api/health") and 404 everything. A catch-all
-// file is auto-routed for all /api/* paths AND preserves the original req.url
-// (e.g. /api/health), which is exactly what the Express routes expect.
+// Why the wrapper instead of `export default app`: Vercel routes all /api/*
+// requests here and exposes the matched path segments as `req.query.path`, but it
+// does NOT reliably set `req.url` to the full original path for nested routes —
+// so `/api/health` worked while `/api/health/db` 404'd inside Express. We rebuild
+// `req.url` to the canonical `/api/<segments>` form (preserving any real query
+// string) so Express matches every route regardless of nesting depth.
 import app from '../dist/app.js';
 
-export default app;
+export default function handler(req: any, res: any) {
+    const segs = req.query?.path;
+    if (segs != null) {
+        const path = '/api/' + (Array.isArray(segs) ? segs.join('/') : segs);
+        let query = '';
+        const qIndex = typeof req.url === 'string' ? req.url.indexOf('?') : -1;
+        if (qIndex !== -1) {
+            const params = new URLSearchParams(req.url.slice(qIndex + 1));
+            params.delete('path'); // drop Vercel's injected catch-all param
+            const qs = params.toString();
+            query = qs ? `?${qs}` : '';
+        }
+        req.url = path + query;
+    }
+    return app(req, res);
+}
