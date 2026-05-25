@@ -800,6 +800,7 @@ document.getElementById('btn-drop-pin').addEventListener('click', () => {
 // Site submission form — photo upload
 // =============================================================================
 let sfPhotos = []; // [{url, thumb_url}]
+let sfRestore = null; // restore-fn for the submit button while a submit is in flight
 
 function setDropZoneIdle() {
     document.getElementById('sf-photo-preview').innerHTML =
@@ -924,7 +925,18 @@ function closeSiteForm() {
     document.getElementById('site-form').classList.add('hidden');
     document.getElementById('sf-status-msg').textContent = '';
     resetPhotoState();
+    resetSiteFields();
+    if (sfRestore) { sfRestore(); sfRestore = null; } // re-enable + relabel the submit button
     state.pendingPinLngLat = null;
+}
+
+// Clear the add-site form fields so each new pin starts blank.
+function resetSiteFields() {
+    ['sf-name', 'sf-city', 'sf-state', 'sf-built', 'sf-closed', 'sf-demo', 'sf-desc', 'sf-photo-url']
+        .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+    ['sf-type', 'sf-status']
+        .forEach(id => { const el = document.getElementById(id); if (el) el.selectedIndex = 0; });
+    document.getElementById('sf-photo-url-row')?.classList.add('hidden');
 }
 
 document.getElementById('sf-cancel').addEventListener('click', closeSiteForm);
@@ -947,14 +959,13 @@ document.getElementById('sf-submit').addEventListener('click', async () => {
     };
     msg.textContent = '';
     msg.className   = 'form-status';
-    const btn     = document.getElementById('sf-submit');
-    const restore = btnLoading(btn, 'Submitting…');
-    const cancel  = coldStartHint(msg);
+    const btn    = document.getElementById('sf-submit');
+    sfRestore    = btnLoading(btn, 'Submitting…');
+    const cancel = coldStartHint(msg);
     try {
         const res  = await authedFetch(`${API_BASE}/api/sites`, {
             method: 'POST', body: JSON.stringify(body),
         });
-        cancel();
         const data = await res.json();
         if (!res.ok) throw new Error(data.error);
         const live = data.mod_status === 'approved';
@@ -963,12 +974,15 @@ document.getElementById('sf-submit').addEventListener('click', async () => {
             : '✓ Submitted for review! It will appear once approved.';
         msg.className   = 'form-status ok';
         if (live) { loadData(); }
+        // closeSiteForm() restores the button + clears the fields after this delay;
+        // keep it disabled until then so a stray double-click can't submit twice.
         setTimeout(closeSiteForm, 2500);
     } catch (err) {
-        cancel();
-        restore();
+        if (sfRestore) { sfRestore(); sfRestore = null; } // re-enable so they can retry
         msg.textContent = '✕ ' + err.message;
         msg.className   = 'form-status err';
+    } finally {
+        cancel();
     }
 });
 
