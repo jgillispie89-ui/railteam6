@@ -1,21 +1,10 @@
 import { Router } from 'express';
-import multer from 'multer';
-import sharp from 'sharp';
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
-import { requireAuth } from '../middleware/auth.js';
 import crypto from 'crypto';
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { requireAuth } from '../middleware/auth.js';
 
 const router = Router();
-
-const ALLOWED_MIME = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif']);
-
-const upload = multer({
-    storage: multer.memoryStorage(),
-    limits: { fileSize: 20 * 1024 * 1024 },
-    fileFilter(_req, file, cb) {
-        cb(null, ALLOWED_MIME.has(file.mimetype));
-    },
-});
 
 const s3 = new S3Client({
     region: 'auto',
@@ -26,45 +15,42 @@ const s3 = new S3Client({
     },
 });
 
-async function uploadBuffer(buf: Buffer, key: string, contentType: string) {
-    await s3.send(new PutObjectCommand({
-        Bucket: process.env.R2_BUCKET_NAME!,
-        Key: key,
-        Body: buf,
-        ContentType: contentType,
-    }));
-    return `${process.env.R2_PUBLIC_URL}/${key}`;
+// Mint a presigned PUT URL for a single object. The browser uploads the (already
+// client-resized) WebP blob directly to R2 with Content-Type: image/webp.
+async function presign(key: string) {
+    const uploadUrl = await getSignedUrl(
+        s3,
+        new PutObjectCommand({
+            Bucket: process.env.R2_BUCKET_NAME!,
+            Key: key,
+            ContentType: 'image/webp',
+        }),
+        { expiresIn: 300 }
+    );
+    return { key, uploadUrl, publicUrl: `${process.env.R2_PUBLIC_URL}/${key}` };
 }
 
-router.post('/photo', requireAuth, upload.single('photo'), async (req, res) => {
-    const user = (req as any).user;
-    if (!user.verified)
-        return res.status(403).json({ error: 'Verify your email before uploading photos' });
-    if (!req.file)
-        return res.status(400).json({ error: 'No image file provided' });
+// =============================================================================
+// POST /api/upload/presign — returns presigned PUT URLs for full + thumb.
+// Replaces the old multipart /photo endpoint (server-side sharp resize). Resizing
+// now happens client-side; this keeps heavy native deps off the serverless function
+// and avoids Vercel's ~4.5 MB request-body limit.
+// =============================================================================
+router.post('/presign', requireAuth, async (req, res) => {
+    try {
+        const user = (req as any).user;
+        if (!user.verified)
+            return res.status(403).json({ error: 'Verify your email before uploading photos' });
 
-    const stem = crypto.randomUUID();
-    const ext = 'webp';
-
-    const [fullBuf, thumbBuf] = await Promise.all([
-        sharp(req.file.buffer)
-            .rotate()
-            .resize({ width: 1200, height: 1200, fit: 'inside', withoutEnlargement: true })
-            .webp({ quality: 82 })
-            .toBuffer(),
-        sharp(req.file.buffer)
-            .rotate()
-            .resize({ width: 400, height: 400, fit: 'inside', withoutEnlargement: true })
-            .webp({ quality: 75 })
-            .toBuffer(),
-    ]);
-
-    const [url, thumb_url] = await Promise.all([
-        uploadBuffer(fullBuf, `photos/${stem}.${ext}`, 'image/webp'),
-        uploadBuffer(thumbBuf, `thumbs/${stem}.${ext}`, 'image/webp'),
-    ]);
-
-    res.json({ url, thumb_url });
+        const stem = crypto.randomUUID();
+        const [full, thumb] = await Promise.all([
+            presign(`photos/${stem}.webp`),
+            presign(`thumbs/${stem}.webp`),
+        ]);
+        res.json({ full, thumb });
+    } catch (err) {
+        res.status(500).json({ error: (err as Error).message });
+    }
 });
 
 export default router;

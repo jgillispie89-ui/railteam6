@@ -57,6 +57,41 @@ function authedFetch(url, opts = {}) {
     return fetch(url, opts);
 }
 
+// Resize an image File to a WebP Blob, honoring EXIF orientation (replaces the
+// old server-side sharp().rotate().resize().webp() pipeline).
+async function resizeToWebp(file, maxDim, quality) {
+    const bmp = await createImageBitmap(file, { imageOrientation: 'from-image' });
+    const scale = Math.min(1, maxDim / Math.max(bmp.width, bmp.height));
+    const w = Math.max(1, Math.round(bmp.width  * scale));
+    const h = Math.max(1, Math.round(bmp.height * scale));
+    const canvas = Object.assign(document.createElement('canvas'), { width: w, height: h });
+    canvas.getContext('2d').drawImage(bmp, 0, 0, w, h);
+    bmp.close?.();
+    const blob = await new Promise(r => canvas.toBlob(r, 'image/webp', quality));
+    if (!blob) throw new Error('Could not process image');
+    return blob;
+}
+
+// Resize to full + thumb, request presigned PUT URLs, and upload directly to R2.
+// Returns { url, thumb_url } pointing at the public R2 objects.
+async function uploadPhotoViaPresign(file) {
+    const [fullBlob, thumbBlob] = await Promise.all([
+        resizeToWebp(file, 1200, 0.82),   // matches old sharp "full"
+        resizeToWebp(file, 400, 0.75),    // matches old sharp "thumb"
+    ]);
+    const res = await authedFetch(`${API_BASE}/api/upload/presign`, { method: 'POST', body: '{}' });
+    const p = await res.json();
+    if (!res.ok) throw new Error(p.error || 'Could not start upload');
+    const put = (slot, blob) =>
+        fetch(slot.uploadUrl, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'image/webp' },
+            body: blob,
+        }).then(r => { if (!r.ok) throw new Error('Upload to storage failed'); });
+    await Promise.all([put(p.full, fullBlob), put(p.thumb, thumbBlob)]);
+    return { url: p.full.publicUrl, thumb_url: p.thumb.publicUrl };
+}
+
 function renderNav() {
     const nav = document.getElementById('nav-auth');
     if (!nav) return;
@@ -817,17 +852,8 @@ async function handlePhotoFile(file) {
     bar.style.width = '15%';
     preview.innerHTML = `<span class="photo-uploading">⏳ Uploading…</span>`;
     try {
-        const form = new FormData();
-        form.append('photo', file);
         bar.style.width = '50%';
-        const res  = await fetch(`${API_BASE}/api/upload/photo`, {
-            method: 'POST',
-            headers: { Authorization: `Bearer ${auth.token}` },
-            body: form,
-        });
-        bar.style.width = '90%';
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error);
+        const data = await uploadPhotoViaPresign(file);
         bar.style.width = '100%';
         sfPhotos.push({ url: data.url, thumb_url: data.thumb_url });
         renderPhotoGrid();
@@ -1518,17 +1544,8 @@ async function handleEditPhotoFile(file) {
     bar.style.width = '15%';
     preview.innerHTML = `<span class="photo-uploading">⏳ Uploading…</span>`;
     try {
-        const form = new FormData();
-        form.append('photo', file);
         bar.style.width = '50%';
-        const res  = await fetch(`${API_BASE}/api/upload/photo`, {
-            method: 'POST',
-            headers: { Authorization: `Bearer ${auth.token}` },
-            body: form,
-        });
-        bar.style.width = '90%';
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error);
+        const data = await uploadPhotoViaPresign(file);
         bar.style.width = '100%';
         editPhotos.push({ url: data.url, thumb_url: data.thumb_url });
         renderEditPhotoGrid();

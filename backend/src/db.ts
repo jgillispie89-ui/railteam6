@@ -5,10 +5,13 @@ const { Pool } = pkg;
 
 const _pool = new Pool({
     connectionString: process.env.DATABASE_URL,
-    // Enable SSL for any remote host (Neon, Supabase, etc.); disable only for local dev.
+    // Enable SSL for any remote host (Supabase, Neon, etc.); disable only for local dev.
     ssl: /@(localhost|127\.0\.0\.1)/.test(process.env.DATABASE_URL || '') ? undefined : { rejectUnauthorized: false },
-    max: 3,
-    idleTimeoutMillis: 30000,
+    // Serverless: each function instance holds at most one client. Concurrency is
+    // handled by the Supabase transaction pooler (DATABASE_URL → port 6543), and a
+    // small pool avoids exhausting connections across many warm instances.
+    max: 1,
+    idleTimeoutMillis: 10000,
     connectionTimeoutMillis: 30000,
 });
 
