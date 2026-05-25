@@ -47,6 +47,49 @@ app.get('/api/health/db', async (_req, res) => {
     }
 });
 
+// TEMPORARY diagnostic — inspect the SHAPE of DATABASE_URL without exposing the
+// password. Only reports the segment AFTER the last '@' (host/port/db) plus a
+// password *length*, never the value. REMOVE once the connection string is fixed.
+app.get('/api/health/env', (_req, res) => {
+    const raw = process.env.DATABASE_URL;
+    if (!raw) return res.json({ set: false });
+
+    const [scheme, ...restParts] = raw.split('://');
+    const rest     = restParts.join('://');                          // user:pass@host:port/db?params
+    const lastAt   = rest.lastIndexOf('@');
+    const authPart = lastAt >= 0 ? rest.slice(0, lastAt) : '';       // user:pass
+    const hostPart = lastAt >= 0 ? rest.slice(lastAt + 1) : rest;    // host:port/db?params (no password)
+    const colon    = authPart.indexOf(':');
+    const username = colon >= 0 ? authPart.slice(0, colon) : authPart;
+    const passwordLength = colon >= 0 ? authPart.length - colon - 1 : 0;
+
+    const info: Record<string, unknown> = {
+        set: true,
+        length: raw.length,
+        scheme: scheme || null,                       // expect "postgres" or "postgresql"
+        atCount: (raw.match(/@/g) || []).length,      // should be 1; >1 => unescaped '@' in password
+        username,                                     // not secret (e.g. postgres.<project-ref>)
+        passwordLength,                               // count only — never the value
+        hostPart,                                     // host:port/db?params — safe
+        hasWhitespace: /\s/.test(raw),
+        hasLeadingOrTrailingSpace: raw !== raw.trim(),
+        hasNewline: /[\r\n]/.test(raw),
+        startsWithQuote: /^["']/.test(raw),
+        endsWithQuote: /["']$/.test(raw),
+        containsVarNamePrefix: raw.includes('DATABASE_URL='),
+    };
+
+    try {
+        new URL(raw);
+        info.urlParseOk = true;
+    } catch (err) {
+        info.urlParseOk = false;
+        info.urlParseError = (err as Error).message;
+    }
+
+    res.json(info);
+});
+
 app.use('/api/auth',     authRouter);
 app.use('/api/admin',   adminRouter);
 app.use('/api/upload',  uploadRouter);
