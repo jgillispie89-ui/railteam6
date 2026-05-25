@@ -72,24 +72,31 @@ async function resizeToWebp(file, maxDim, quality) {
     return blob;
 }
 
-// Resize to full + thumb, request presigned PUT URLs, and upload directly to R2.
-// Returns { url, thumb_url } pointing at the public R2 objects.
-async function uploadPhotoViaPresign(file) {
+// Encode a Blob as base64 (without the "data:…;base64," prefix).
+function blobToBase64(blob) {
+    return new Promise((resolve, reject) => {
+        const r = new FileReader();
+        r.onload  = () => resolve(String(r.result).split(',')[1]);
+        r.onerror = reject;
+        r.readAsDataURL(blob);
+    });
+}
+
+// Resize to full + thumb, then POST both (base64 WebP) to the API, which uploads
+// them to Supabase Storage and returns the public URLs.
+async function uploadPhoto(file) {
     const [fullBlob, thumbBlob] = await Promise.all([
         resizeToWebp(file, 1200, 0.82),   // matches old sharp "full"
         resizeToWebp(file, 400, 0.75),    // matches old sharp "thumb"
     ]);
-    const res = await authedFetch(`${API_BASE}/api/upload/presign`, { method: 'POST', body: '{}' });
-    const p = await res.json();
-    if (!res.ok) throw new Error(p.error || 'Could not start upload');
-    const put = (slot, blob) =>
-        fetch(slot.uploadUrl, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'image/webp' },
-            body: blob,
-        }).then(r => { if (!r.ok) throw new Error('Upload to storage failed'); });
-    await Promise.all([put(p.full, fullBlob), put(p.thumb, thumbBlob)]);
-    return { url: p.full.publicUrl, thumb_url: p.thumb.publicUrl };
+    const [full, thumb] = await Promise.all([blobToBase64(fullBlob), blobToBase64(thumbBlob)]);
+    const res  = await authedFetch(`${API_BASE}/api/upload/photo`, {
+        method: 'POST',
+        body: JSON.stringify({ full, thumb }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Upload failed');
+    return { url: data.url, thumb_url: data.thumb_url };
 }
 
 function renderNav() {
@@ -853,7 +860,7 @@ async function handlePhotoFile(file) {
     preview.innerHTML = `<span class="photo-uploading">⏳ Uploading…</span>`;
     try {
         bar.style.width = '50%';
-        const data = await uploadPhotoViaPresign(file);
+        const data = await uploadPhoto(file);
         bar.style.width = '100%';
         sfPhotos.push({ url: data.url, thumb_url: data.thumb_url });
         renderPhotoGrid();
@@ -1545,7 +1552,7 @@ async function handleEditPhotoFile(file) {
     preview.innerHTML = `<span class="photo-uploading">⏳ Uploading…</span>`;
     try {
         bar.style.width = '50%';
-        const data = await uploadPhotoViaPresign(file);
+        const data = await uploadPhoto(file);
         bar.style.width = '100%';
         editPhotos.push({ url: data.url, thumb_url: data.thumb_url });
         renderEditPhotoGrid();

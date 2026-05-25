@@ -1,8 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { S3Client, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { pool } from './db.js';
+import { removeByPublicUrls } from './storage.js';
 import authRouter from './routes/auth.js';
 import adminRouter from './routes/admin.js';
 import uploadRouter from './routes/upload.js';
@@ -11,20 +11,14 @@ import { requireAuth } from './middleware/auth.js';
 
 dotenv.config();
 
-const s3 = new S3Client({
-    region: 'auto',
-    endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
-    credentials: {
-        accessKeyId:     process.env.R2_ACCESS_KEY_ID!,
-        secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
-    },
-});
-
 const app = express();
 // CORS_ORIGIN may be a comma-separated list (e.g. prod domain + Netlify preview).
 const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:5173')
     .split(',').map(s => s.trim()).filter(Boolean);
 app.use(cors({ origin: allowedOrigins }));
+// Larger JSON limit for base64 image uploads — mounted before the default parser
+// so it applies only to /api/upload; every other route keeps the 100 KB default.
+app.use('/api/upload', express.json({ limit: '6mb' }));
 app.use(express.json());
 
 // =============================================================================
@@ -336,7 +330,7 @@ app.post('/api/sites', requireAuth, async (req, res) => {
 
 // =============================================================================
 // DELETE /api/sites/:siteId/photos/:photoId — admin or original submitter only
-// Deletes from R2 (best-effort) and removes the site_photos row immediately.
+// Deletes from Supabase Storage (best-effort) and removes the site_photos row.
 // =============================================================================
 app.delete('/api/sites/:siteId/photos/:photoId', requireAuth, async (req, res) => {
     try {
@@ -356,17 +350,11 @@ app.delete('/api/sites/:siteId/photos/:photoId', requireAuth, async (req, res) =
         if (!photoRows.length) return res.status(404).json({ error: 'Photo not found' });
 
         const photo = photoRows[0];
-        const base  = (process.env.R2_PUBLIC_URL || '').replace(/\/$/, '');
-        const toKey = (url: string) =>
-            base && url.startsWith(base + '/') ? url.slice(base.length + 1) : null;
 
-        // Delete full + thumb from R2 (best-effort — don't fail the request if R2 errors)
-        const keys = [toKey(photo.url), photo.thumb_url ? toKey(photo.thumb_url) : null]
-            .filter((k): k is string => Boolean(k));
-        await Promise.all(keys.map(k =>
-            s3.send(new DeleteObjectCommand({ Bucket: process.env.R2_BUCKET_NAME!, Key: k }))
-              .catch(() => {})
-        ));
+        // Delete full + thumb from Supabase Storage (best-effort — don't fail the request)
+        await removeByPublicUrls(
+            [photo.url, photo.thumb_url].filter((u): u is string => Boolean(u))
+        ).catch(() => {});
 
         // Remove the DB row
         await pool.query(`DELETE FROM site_photos WHERE id = $1`, [photo.id]);

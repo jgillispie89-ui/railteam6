@@ -48,7 +48,7 @@ Goal: get a working map running on your machine with real data for one region.
 | Frontend | **Vanilla JS + Vite** (v1) → **React + TypeScript** (v2) | Start simple, migrate when complexity demands |
 | Backend | **Node.js + Express + TypeScript** | Simple, fast, one language across stack |
 | Database | **PostgreSQL 16 + PostGIS** | The standard for geographic data |
-| Image storage | **Cloudflare R2** or **S3** | Cheap, CDN-backed |
+| Image storage | **Supabase Storage** | Public bucket; same stack as the DB |
 | Auth | **Lucia** or **Auth.js** | Modern, no vendor lock-in |
 | Hosting | **Fly.io** or **Railway** (app) + **Neon** (Postgres) | Affordable, Postgres-native |
 
