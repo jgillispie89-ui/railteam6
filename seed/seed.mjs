@@ -37,7 +37,11 @@ async function getJSON(url, tries = 9) {
             await sleep(Math.max(ra * 1000, Math.min(60000, 4000 * 2 ** i))); continue;
         }
         if (!r.ok) throw new Error(`${r.status} ${url.slice(0, 120)}`);
-        return r.json();
+        const body = await r.text();
+        try { return JSON.parse(body); }
+        catch { // Wikimedia sometimes answers "too many requests" as plain text: back off and retry
+            await sleep(Math.min(60000, 5000 * 2 ** i)); continue;
+        }
     }
     throw new Error('gave up ' + url.slice(0, 120));
 }
@@ -94,7 +98,7 @@ function placeFrom(locLabel) {
 
 // ---------- Commons photos ----------
 const OK_LICENSE = (l) => /public domain|^pd|cc0|cc[ -]by(-sa)?([ -]\d|$)|attribution/i.test(l || '') && !/nc|nd|fair|non-free|copyrighted/i.test(l || '');
-const BAD_TITLE = /\b(map|locator|seal|flag|logo|coat of arms|diagram|plan|sheet|drawing|elevation|section|svg|marker text|signature|portrait)\b/i;
+const BAD_TITLE = /\b(maps?|locator|seal|flag|logo|coat of arms|diagram|plan|sheet|drawing|elevation|section|svg|marker text|signature|portrait|census|enumeration|newspaper|obituary|clipping|article|document|letter|certificate|stamp|postmark|banknote|coin|advertisement|etching|engraving|lithograph|painting|sketch|page \d|scan of|chart|graph|grave|headstone|tombstone)\b/i;
 const IIPROPS = 'prop=imageinfo&iiprop=url|extmetadata|mime|size&iiurlwidth=1920&iiextmetadatafilter=DateTimeOriginal|LicenseShortName|Artist|Credit|ImageDescription|ObjectName';
 function fileInfo(p) {
     const ii = p.imageinfo?.[0];
@@ -110,7 +114,8 @@ function fileInfo(p) {
     const year = y ? +y : null;
     let artist = strip(md.Artist?.value).slice(0, 200);
     if (!artist || /^unknown/i.test(artist)) artist = strip(md.Credit?.value).slice(0, 200) || 'Unknown photographer';
-    const desc = strip(md.ImageDescription?.value).slice(0, 300);
+    const desc = strip(md.ImageDescription?.value).replace(/(^|[ (])en:/g, '$1').slice(0, 300);
+    if (BAD_TITLE.test(desc)) return null; // descriptions catch scans/clippings the file name hides
     return { title: p.title, thumb: ii.thumburl || ii.url, page: ii.descriptionurl, license: lic, credit: artist, year,
         caption: desc || p.title.replace(/^File:/, '').replace(/\.[a-z]+$/i, ''), w: ii.width, h: ii.height };
 }
@@ -145,9 +150,10 @@ async function findCommonsCategory(name) {
     }
     return null;
 }
-function pickPhotos(files, mainImage) {
+function pickPhotos(files, mainImage, name) {
+    const kw = (keyWord(name || '') || '').toLowerCase();
     const uniq = [...new Map(files.map(f => [f.title, f])).values()];
-    const then = uniq.filter(f => f.year && f.year <= 1965).sort((a, b) => a.year - b.year || (b.w * b.h) - (a.w * a.h)).slice(0, 2);
+    const then = uniq.filter(f => f.year && f.year <= 1965 && kw && (f.title + ' ' + f.caption).toLowerCase().includes(kw)).sort((a, b) => a.year - b.year || (b.w * b.h) - (a.w * a.h)).slice(0, 2);
     const main = uniq.find(f => f.title === mainImage);
     let now = null;
     if (main && (!main.year || main.year >= 1990)) now = main;
@@ -173,7 +179,10 @@ async function locPhotos(name, st) {
     const out = [];
     for (const r of j?.results || []) {
         const t = String(r.title || '');
-        if (!t.toLowerCase().includes(kw.toLowerCase()) || !stateNames.some(s => t.includes(s))) continue;
+        // Strict: the whole place name (e.g. "Laurel Furnace", "Thurmond") must be in the title, plus the state.
+        const phrase = name.replace(/\s*\(.*?\)\s*/g, ' ').replace(/^Mt\. /, 'Mount ').trim().toLowerCase();
+        const tl = t.toLowerCase().replace(/\bmt\. /g, 'mount ');
+        if (!tl.includes(phrase) || !stateNames.some(s => t.includes(s))) continue;
         const img = (r.image_url || []).slice(-1)[0];
         if (!img) continue;
         const coll = /\/pnp\/det\//.test(img) ? 'Detroit Publishing Co. collection'
@@ -381,7 +390,7 @@ function loadAshland() {
             let files = [];
             if (photoSource.cat) files.push(...await commonsCategory(photoSource.cat).catch(e => { report.errors.push(site.name + ' cat ' + e.message); return []; }));
             if (photoSource.image) files.push(...await commonsFiles([photoSource.image]).catch(() => []));
-            let picks = pickPhotos(files, photoSource.image);
+            let picks = pickPhotos(files, photoSource.image, site.name);
             if (!picks.some(p => p.era === 'then') || !picks.some(p => p.era === 'now')) {
                 const loc = await locPhotos(site.name, site.state);
                 const lthen = loc.filter(f => f.year && f.year <= 1950).sort((a, b) => a.year - b.year).slice(0, 2).map(f => ({ ...f, era: 'then' }));

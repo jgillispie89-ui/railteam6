@@ -350,7 +350,7 @@ function eraCol(era, photos) {
     if (!photos.length) return `<div class="era-col ${era}"><h4>${label}</h4><div class="empty">No ${label.toLowerCase()} photo yet</div></div>`;
     const [first, ...rest] = photos;
     return `<div class="era-col ${era}"><h4>${label}</h4>
-        <button class="ph" data-ph="${first.id}"><img loading="lazy" src="${esc(first.thumb_url || first.url)}" alt="${esc(first.caption || label)}">
+        <button class="ph" data-ph="${first.id}"><img loading="eager" decoding="async" src="${esc(first.thumb_url || first.url)}" alt="${esc(first.caption || label)}">
             ${first.year ? `<span class="yr">${first.year}</span>` : ''}</button>
         <div class="photo-credit">${esc(first.caption || '')}${first.caption ? '<br>' : ''}${photoCredit(first)}</div>
         ${rest.length ? `<div class="more">${rest.map(p => `<button class="ph" data-ph="${p.id}"><img loading="lazy" src="${esc(p.thumb_url || p.url)}" alt=""></button>`).join('')}</div>` : ''}
