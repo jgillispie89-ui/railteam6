@@ -14,7 +14,8 @@ const args = process.argv.slice(2);
 const LIMIT = args.includes('--limit') ? +args[args.indexOf('--limit') + 1] : Infinity;
 const ONLY = args.includes('--only') ? args[args.indexOf('--only') + 1] : null;
 const DRY = args.includes('--dry');
-const UA = 'LostPlacesMapSeeder/1.0 (private, non-commercial history map)';
+const FROM = args.includes('--from') ? +args[args.indexOf('--from') + 1] : 0;
+const UA = 'LostPlacesMapSeeder/1.0 (https://www.railteam6.com; private non-commercial history map)';
 const SUPA = 'https://icvommgyfhdioiofeftd.supabase.co';
 const BUCKET = 'railteam6-photos';
 const MAX_TOTAL_BYTES = 400 * 1024 * 1024;
@@ -45,10 +46,14 @@ async function getJSON(url, tries = 9) {
     }
     throw new Error('gave up ' + url.slice(0, 120));
 }
-async function getBuf(url, tries = 5) {
+async function getBuf(url, tries = 8) {
     for (let i = 0; i < tries; i++) {
+        await sleep(1500); // be gentle with upload.wikimedia.org / tile.loc.gov
         const r = await fetch(url, { headers: { 'User-Agent': UA } });
-        if (r.status === 429 || r.status >= 500) { await sleep(4000 * (i + 1)); continue; }
+        if (r.status === 429 || r.status >= 500) {
+            const ra = +(r.headers.get('retry-after') || 0);
+            await sleep(Math.max(ra * 1000, Math.min(60000, 5000 * 2 ** i))); continue;
+        }
         if (!r.ok) throw new Error(`${r.status} image`);
         return Buffer.from(await r.arrayBuffer());
     }
@@ -171,11 +176,20 @@ function keyWord(name) {
     const words = name.replace(/\(.*?\)/g, '').split(/[^A-Za-z']+/).filter(w => w.length >= 4 && !GENERIC.has(w.toLowerCase()));
     return words.sort((a, b) => b.length - a.length)[0] || null;
 }
+const LOC = { down: false, last: 0 };
 async function locPhotos(name, st) {
     const kw = keyWord(name);
     if (!kw || !STATE_FULL[st]) return [];
     const stateNames = [STATE_FULL[st], ...(STATE_OLD[st] || [])];
-    const j = await getJSON('https://www.loc.gov/photos/?fo=json&c=40&fa=online-format:image&q=' + encodeURIComponent(kw + ' ' + STATE_FULL[st])).catch(() => null);
+    // LOC blocks for ~1 hour after a burst (HTTP 429): one try per pin, and switch LOC off for the run on 429.
+    if (LOC.down || args.includes('--no-loc')) return [];
+    await sleep(Math.max(0, LOC.last + 4000 - Date.now())); LOC.last = Date.now();
+    let j = null;
+    try {
+        const r = await fetch('https://www.loc.gov/photos/?fo=json&c=40&fa=online-format:image&q=' + encodeURIComponent(kw + ' ' + STATE_FULL[st]), { headers: { 'User-Agent': UA } });
+        if (r.status === 429) { LOC.down = true; log('LOC rate limit hit: LOC off for the rest of this run'); return []; }
+        if (r.ok) j = await r.json();
+    } catch { }
     const out = [];
     for (const r of j?.results || []) {
         const t = String(r.title || '');
@@ -358,7 +372,7 @@ function loadAshland() {
     if (ONLY !== 'nationwide') for (const a of loadAshland()) jobs.push({ kind: 'ashland', a });
     if (ONLY !== 'ashland') for (const c of JSON.parse(fs.readFileSync(new URL('./nationwide-candidates.json', import.meta.url), 'utf8'))) jobs.push({ kind: 'wiki', c });
     let n = 0;
-    for (const j of jobs) {
+    for (const j of jobs.slice(FROM)) {
         if (n >= LIMIT) break;
         n++;
         try {
