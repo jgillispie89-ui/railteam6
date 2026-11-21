@@ -1,0 +1,1262 @@
+[
+ {
+  "wiki": "Thurmond, West Virginia",
+  "type": "coal_town",
+  "state": "WV",
+  "condition": "standing_ruin",
+  "qid": "Q3313681",
+  "lat": 37.96111111,
+  "lon": -81.08166667
+ },
+ {
+  "wiki": "Kay Moor, West Virginia",
+  "type": "coal_town",
+  "state": "WV",
+  "condition": "remains",
+  "qid": "Q6380250",
+  "lat": 38.04777778,
+  "lon": -81.06472222
+ },
+ {
+  "wiki": "Nuttallburg, West Virginia",
+  "type": "coal_town",
+  "state": "WV",
+  "condition": "standing_ruin",
+  "qid": "Q7070565",
+  "lat": 38.05,
+  "lon": -81.04027778
+ },
+ {
+  "wiki": "Sewell, West Virginia",
+  "type": "coal_town",
+  "state": "WV",
+  "condition": "remains",
+  "qid": "Q7458214",
+  "lat": 37.99722222,
+  "lon": -81.02083333
+ },
+ {
+  "wiki": "Winona, West Virginia",
+  "type": "coal_town",
+  "state": "WV",
+  "condition": "remains",
+  "qid": "Q8025877",
+  "lat": 38.04638889,
+  "lon": -80.99222222
+ },
+ {
+  "wiki": "Lynch, Kentucky",
+  "type": "coal_town",
+  "state": "KY",
+  "condition": "unknown",
+  "qid": "Q2012501",
+  "lat": 36.965,
+  "lon": -82.91666667
+ },
+ {
+  "wiki": "Benham, Kentucky",
+  "type": "coal_town",
+  "state": "KY",
+  "condition": "unknown",
+  "qid": "Q3180793",
+  "lat": 36.96472222,
+  "lon": -82.95361111
+ },
+ {
+  "wiki": "Barthell, Kentucky",
+  "type": "coal_town",
+  "state": "KY",
+  "condition": "remains",
+  "qid": "Q4865187",
+  "lat": 36.68638889,
+  "lon": -84.52527778
+ },
+ {
+  "wiki": "Centralia, Pennsylvania",
+  "type": "coal_town",
+  "state": "PA",
+  "condition": "remains",
+  "qid": "Q492386",
+  "lat": 40.80333333,
+  "lon": -76.34166667
+ },
+ {
+  "wiki": "Eckley Miners' Village",
+  "type": "coal_town",
+  "state": "PA",
+  "condition": "preserved",
+  "qid": "Q5332919",
+  "lat": 40.99333333,
+  "lon": -75.86277778
+ },
+ {
+  "wiki": "Cokedale, Colorado",
+  "type": "coal_town",
+  "state": "CO",
+  "condition": "remains",
+  "qid": "Q2303291",
+  "lat": 37.14416667,
+  "lon": -104.62416667
+ },
+ {
+  "wiki": "Sopris, Colorado",
+  "type": "coal_town",
+  "state": "CO",
+  "condition": "gone",
+  "qid": "Q3475604",
+  "lat": 37.16916667,
+  "lon": -104.49388889
+ },
+ {
+  "wiki": "Redstone, Colorado",
+  "type": "coal_town",
+  "state": "CO",
+  "condition": "preserved",
+  "qid": "Q3473147",
+  "lat": 39.18611111,
+  "lon": -107.24583333
+ },
+ {
+  "wiki": "Dawson, New Mexico",
+  "type": "coal_town",
+  "state": "NM",
+  "condition": "remains",
+  "qid": "Q2201125",
+  "lat": 36.66416667,
+  "lon": -104.77472222
+ },
+ {
+  "wiki": "Sego, Utah",
+  "type": "coal_town",
+  "state": "UT",
+  "condition": "remains",
+  "qid": "Q547848",
+  "lat": 39.03305556,
+  "lon": -109.70305556
+ },
+ {
+  "wiki": "Castle Gate, Utah",
+  "type": "coal_town",
+  "state": "UT",
+  "condition": "gone",
+  "qid": "Q5050086",
+  "lat": 39.72777778,
+  "lon": -110.8675
+ },
+ {
+  "wiki": "Hiawatha, Utah",
+  "type": "coal_town",
+  "state": "UT",
+  "condition": "remains",
+  "qid": "Q3708949",
+  "lat": 39.48433611,
+  "lon": -111.01306944
+ },
+ {
+  "wiki": "Latuda, Utah",
+  "type": "coal_town",
+  "state": "UT",
+  "condition": "gone",
+  "qid": "Q122598067",
+  "lat": 39.70385278,
+  "lon": -110.94599722
+ },
+ {
+  "wiki": "Spring Canyon, Utah",
+  "type": "coal_town",
+  "state": "UT",
+  "condition": "remains",
+  "qid": "Q7580409",
+  "lat": 39.70388889,
+  "lon": -110.91972222
+ },
+ {
+  "wiki": "Ludlow, Colorado",
+  "type": "coal_town",
+  "state": "CO",
+  "condition": "remains",
+  "qid": "Q1003486",
+  "lat": 37.33333333,
+  "lon": -104.58305556
+ },
+ {
+  "wiki": "Franklin, Washington",
+  "type": "coal_town",
+  "state": "WA",
+  "condition": "gone",
+  "qid": "Q5491183",
+  "lat": 47.30305556,
+  "lon": -121.97111111
+ },
+ {
+  "wiki": "Thurber, Texas",
+  "type": "coal_town",
+  "state": "TX",
+  "condition": "remains",
+  "qid": "Q7799256",
+  "lat": 32.50722222,
+  "lon": -98.41722222
+ },
+ {
+  "wiki": "Gilman, Colorado",
+  "type": "coal_town",
+  "state": "CO",
+  "condition": "standing_ruin",
+  "qid": "Q5562458",
+  "lat": 39.53277778,
+  "lon": -106.39388889
+ },
+ {
+  "wiki": "Bodie, California",
+  "type": "ghost_town",
+  "state": "CA",
+  "condition": "preserved",
+  "qid": "Q832945",
+  "lat": 38.21222222,
+  "lon": -119.01222222
+ },
+ {
+  "wiki": "Rhyolite, Nevada",
+  "type": "ghost_town",
+  "state": "NV",
+  "condition": "standing_ruin",
+  "qid": "Q1889901",
+  "lat": 36.90388889,
+  "lon": -116.82916667
+ },
+ {
+  "wiki": "Garnet, Montana",
+  "type": "ghost_town",
+  "state": "MT",
+  "condition": "preserved",
+  "qid": "Q5523635",
+  "lat": 46.82527778,
+  "lon": -113.33888889
+ },
+ {
+  "wiki": "Bannack, Montana",
+  "type": "ghost_town",
+  "state": "MT",
+  "condition": "preserved",
+  "qid": "Q806862",
+  "lat": 45.16111111,
+  "lon": -112.99555556
+ },
+ {
+  "wiki": "Calico, California",
+  "type": "ghost_town",
+  "state": "CA",
+  "condition": "preserved",
+  "qid": "Q526354",
+  "lat": 34.94888889,
+  "lon": -116.86416667
+ },
+ {
+  "wiki": "Animas Forks, Colorado",
+  "type": "ghost_town",
+  "state": "CO",
+  "condition": "standing_ruin",
+  "qid": "Q4765059",
+  "lat": 37.93111111,
+  "lon": -107.57138889
+ },
+ {
+  "wiki": "Elkhorn, Montana",
+  "type": "ghost_town",
+  "state": "MT",
+  "condition": "standing_ruin",
+  "qid": "Q389288",
+  "lat": 46.27472222,
+  "lon": -111.94583333
+ },
+ {
+  "wiki": "Terlingua, Texas",
+  "type": "ghost_town",
+  "state": "TX",
+  "condition": "unknown",
+  "qid": "Q982241",
+  "lat": 29.29916667,
+  "lon": -103.57944444
+ },
+ {
+  "wiki": "Glenrio, New Mexico and Texas",
+  "type": "ghost_town",
+  "state": "TX",
+  "condition": "standing_ruin",
+  "qid": "Q1531151",
+  "lat": 35.17888889,
+  "lon": -103.04222222
+ },
+ {
+  "wiki": "Picher, Oklahoma",
+  "type": "ghost_town",
+  "state": "OK",
+  "condition": "remains",
+  "qid": "Q2844779",
+  "lat": 36.98277778,
+  "lon": -94.83277778
+ },
+ {
+  "wiki": "Treece, Kansas",
+  "type": "ghost_town",
+  "state": "KS",
+  "condition": "remains",
+  "qid": "Q2384288",
+  "lat": 37.00083333,
+  "lon": -94.84333333
+ },
+ {
+  "wiki": "Saint Elmo, Colorado",
+  "type": "ghost_town",
+  "state": "CO",
+  "condition": "preserved",
+  "qid": "Q2740896",
+  "lat": 38.70472222,
+  "lon": -106.345
+ },
+ {
+  "wiki": "Virginia City, Montana",
+  "type": "ghost_town",
+  "state": "MT",
+  "condition": "preserved",
+  "qid": "Q955580",
+  "lat": 45.29611111,
+  "lon": -111.93694444
+ },
+ {
+  "wiki": "Belmont, Nevada",
+  "type": "ghost_town",
+  "state": "NV",
+  "condition": "standing_ruin",
+  "qid": "Q3493166",
+  "lat": 38.595,
+  "lon": -116.87611111
+ },
+ {
+  "wiki": "Berlin Historic District (Berlin, Nevada)",
+  "type": "ghost_town",
+  "state": "NV",
+  "condition": "preserved",
+  "qid": "Q384286",
+  "lat": 38.88222222,
+  "lon": -117.60722222
+ },
+ {
+  "wiki": "Cerro Gordo, California",
+  "type": "ghost_town",
+  "state": "CA",
+  "condition": "preserved",
+  "qid": "Q111937258",
+  "lat": 36.53777778,
+  "lon": -117.795
+ },
+ {
+  "wiki": "Panamint City, California",
+  "type": "ghost_town",
+  "state": "CA",
+  "condition": "remains",
+  "qid": "Q3361881",
+  "lat": 36.11833333,
+  "lon": -117.09527778
+ },
+ {
+  "wiki": "Silver City, Idaho",
+  "type": "ghost_town",
+  "state": "ID",
+  "condition": "standing_ruin",
+  "qid": "Q7515893",
+  "lat": 43.01694444,
+  "lon": -116.73305556
+ },
+ {
+  "wiki": "Shakespeare, New Mexico",
+  "type": "ghost_town",
+  "state": "NM",
+  "condition": "preserved",
+  "qid": "Q7462781",
+  "lat": 32.32555556,
+  "lon": -108.73833333
+ },
+ {
+  "wiki": "Mogollon, New Mexico",
+  "type": "ghost_town",
+  "state": "NM",
+  "condition": "standing_ruin",
+  "qid": "Q1942538",
+  "lat": 33.39666667,
+  "lon": -108.79416667
+ },
+ {
+  "wiki": "White Oaks, New Mexico",
+  "type": "ghost_town",
+  "state": "NM",
+  "condition": "standing_ruin",
+  "qid": "Q7995155",
+  "lat": 33.74975,
+  "lon": -105.73730556
+ },
+ {
+  "wiki": "Vulture City, Arizona",
+  "type": "ghost_town",
+  "state": "AZ",
+  "condition": "preserved",
+  "qid": "Q22058689",
+  "lat": 33.81722222,
+  "lon": -112.83305556
+ },
+ {
+  "wiki": "Gleeson, Arizona",
+  "type": "ghost_town",
+  "state": "AZ",
+  "condition": "standing_ruin",
+  "qid": "Q2743408",
+  "lat": 31.73388889,
+  "lon": -109.82972222
+ },
+ {
+  "wiki": "Ruby, Arizona",
+  "type": "ghost_town",
+  "state": "AZ",
+  "condition": "standing_ruin",
+  "qid": "Q7376229",
+  "lat": 31.46111111,
+  "lon": -111.2375
+ },
+ {
+  "wiki": "South Pass City, Wyoming",
+  "type": "ghost_town",
+  "state": "WY",
+  "condition": "preserved",
+  "qid": "Q499629",
+  "lat": 42.46833333,
+  "lon": -108.79972222
+ },
+ {
+  "wiki": "Independence, Pitkin County, Colorado",
+  "type": "ghost_town",
+  "state": "CO",
+  "condition": "remains",
+  "qid": "Q6015894",
+  "lat": 39.1072,
+  "lon": -106.6059
+ },
+ {
+  "wiki": "Dyea, Alaska",
+  "type": "ghost_town",
+  "state": "AK",
+  "condition": "remains",
+  "qid": "Q1014914",
+  "lat": 59.50444444,
+  "lon": -135.36
+ },
+ {
+  "wiki": "Silver Reef, Utah",
+  "type": "ghost_town",
+  "state": "UT",
+  "condition": "remains",
+  "qid": "Q1290302",
+  "lat": 37.25277778,
+  "lon": -113.36777778
+ },
+ {
+  "wiki": "Grafton, Utah",
+  "type": "ghost_town",
+  "state": "UT",
+  "condition": "preserved",
+  "qid": "Q2229353",
+  "lat": 37.16722222,
+  "lon": -113.08
+ },
+ {
+  "wiki": "Monte Cristo, Washington",
+  "type": "ghost_town",
+  "state": "WA",
+  "condition": "remains",
+  "qid": "Q3322523",
+  "lat": 47.98555556,
+  "lon": -121.39388889
+ },
+ {
+  "wiki": "Kennecott, Alaska",
+  "type": "mine",
+  "state": "AK",
+  "condition": "preserved",
+  "qid": "Q995915",
+  "lat": 61.51909,
+  "lon": -142.84149
+ },
+ {
+  "wiki": "Independence Mines, Alaska",
+  "type": "mine",
+  "state": "AK",
+  "condition": "preserved",
+  "qid": "Q19462474",
+  "lat": 61.7903,
+  "lon": -149.28467
+ },
+ {
+  "wiki": "Quincy Mine",
+  "type": "mine",
+  "state": "MI",
+  "condition": "preserved",
+  "qid": "Q7272158",
+  "lat": 47.13833333,
+  "lon": -88.56972222
+ },
+ {
+  "wiki": "Lake Vermilion-Soudan Underground Mine State Park",
+  "type": "mine",
+  "state": "MN",
+  "condition": "preserved",
+  "qid": "Q1519540",
+  "lat": 47.82333333,
+  "lon": -92.23722222
+ },
+ {
+  "wiki": "Hull–Rust–Mahoning Open Pit Iron Mine",
+  "type": "mine",
+  "state": "MN",
+  "condition": "preserved",
+  "qid": "Q1472316",
+  "lat": 47.45833333,
+  "lon": -92.95
+ },
+ {
+  "wiki": "Homestake Mine (South Dakota)",
+  "type": "mine",
+  "state": "SD",
+  "condition": "standing_ruin",
+  "qid": "Q2351504",
+  "lat": 44.3561,
+  "lon": -103.7647
+ },
+ {
+  "wiki": "Empire Mine State Historic Park",
+  "type": "mine",
+  "state": "CA",
+  "condition": "preserved",
+  "qid": "Q5374101",
+  "lat": 39.20361111,
+  "lon": -121.04277778
+ },
+ {
+  "wiki": "Malakoff Diggins State Historic Park",
+  "type": "mine",
+  "state": "CA",
+  "condition": "preserved",
+  "qid": "Q6741178",
+  "lat": 39.36277778,
+  "lon": -120.92444444
+ },
+ {
+  "wiki": "Keane Wonder Mine",
+  "type": "mine",
+  "state": "CA",
+  "condition": "standing_ruin",
+  "qid": "Q6382161",
+  "lat": 36.66916667,
+  "lon": -116.90944444
+ },
+ {
+  "wiki": "Harmony Borax Works",
+  "type": "mine",
+  "state": "CA",
+  "condition": "remains",
+  "qid": "Q129335",
+  "lat": 36.48,
+  "lon": -116.87347222
+ },
+ {
+  "wiki": "Anaconda Smelter Stack",
+  "type": "mine",
+  "state": "MT",
+  "condition": "standing_ruin",
+  "qid": "Q483555",
+  "lat": 46.11016111,
+  "lon": -112.91358889
+ },
+ {
+  "wiki": "Reed Gold Mine",
+  "type": "mine",
+  "state": "NC",
+  "condition": "preserved",
+  "qid": "Q7306649",
+  "lat": 35.28542,
+  "lon": -80.46996
+ },
+ {
+  "wiki": "Sterling Hill Mining Museum",
+  "type": "mine",
+  "state": "NJ",
+  "condition": "preserved",
+  "qid": "Q7611425",
+  "lat": 41.08305556,
+  "lon": -74.60666667
+ },
+ {
+  "wiki": "Copper Queen Mine",
+  "type": "mine",
+  "state": "AZ",
+  "condition": "preserved",
+  "qid": "Q5168764",
+  "lat": 31.440655,
+  "lon": -109.914797
+ },
+ {
+  "wiki": "Bunker Hill Mine and Smelting Complex",
+  "type": "mine",
+  "state": "ID",
+  "condition": "standing_ruin",
+  "qid": "Q4997766",
+  "lat": 47.541111,
+  "lon": -116.148056
+ },
+ {
+  "wiki": "Sunshine Mine",
+  "type": "mine",
+  "state": "ID",
+  "condition": "standing_ruin",
+  "qid": "Q7641530",
+  "lat": 47.50184,
+  "lon": -116.070759
+ },
+ {
+  "wiki": "Pilot Knob, Missouri",
+  "type": "mine",
+  "state": "MO",
+  "condition": "remains",
+  "qid": "Q953926",
+  "lat": 37.62361111,
+  "lon": -90.64555556
+ },
+ {
+  "wiki": "Iron Mountain Mine",
+  "type": "mine",
+  "state": "CA",
+  "condition": "remains",
+  "qid": "Q6072749",
+  "lat": 40.67222222,
+  "lon": -122.52777778
+ },
+ {
+  "wiki": "Hopewell Furnace National Historic Site",
+  "type": "iron_furnace",
+  "state": "PA",
+  "condition": "preserved",
+  "qid": "Q5900359",
+  "lat": 40.19861111,
+  "lon": -75.77555556
+ },
+ {
+  "wiki": "Cornwall Iron Furnace",
+  "type": "iron_furnace",
+  "state": "PA",
+  "condition": "preserved",
+  "qid": "Q15211708",
+  "lat": 40.27055556,
+  "lon": -76.40611111
+ },
+ {
+  "wiki": "Tannehill Ironworks",
+  "type": "iron_furnace",
+  "state": "AL",
+  "condition": "preserved",
+  "qid": "Q7683618",
+  "lat": 33.25,
+  "lon": -87.06777778
+ },
+ {
+  "wiki": "Fitchburg Furnace",
+  "type": "iron_furnace",
+  "state": "KY",
+  "condition": "standing_ruin",
+  "qid": "Q97355146",
+  "lat": 37.7327,
+  "lon": -83.8524
+ },
+ {
+  "wiki": "Pine Grove Furnace State Park",
+  "type": "iron_furnace",
+  "state": "PA",
+  "condition": "preserved",
+  "qid": "Q7195171",
+  "lat": 40.03295,
+  "lon": -77.30467
+ },
+ {
+  "wiki": "Principio Furnace",
+  "type": "iron_furnace",
+  "state": "MD",
+  "condition": "remains",
+  "qid": "Q7245139",
+  "lat": 39.57722222,
+  "lon": -76.03638889
+ },
+ {
+  "wiki": "Saugus Iron Works National Historic Site",
+  "type": "iron_furnace",
+  "state": "MA",
+  "condition": "preserved",
+  "qid": "Q7427233",
+  "lat": 42.46861111,
+  "lon": -71.00888889
+ },
+ {
+  "wiki": "Batsto Village, New Jersey",
+  "type": "iron_furnace",
+  "state": "NJ",
+  "condition": "preserved",
+  "qid": "Q4869652",
+  "lat": 39.64166667,
+  "lon": -74.64777778
+ },
+ {
+  "wiki": "Allaire Village",
+  "type": "iron_furnace",
+  "state": "NJ",
+  "condition": "preserved",
+  "qid": "Q4730379",
+  "lat": 40.15861111,
+  "lon": -74.12888889
+ },
+ {
+  "wiki": "Brierfield Furnace",
+  "type": "iron_furnace",
+  "state": "AL",
+  "condition": "preserved",
+  "qid": "Q4967076",
+  "lat": 33.03944444,
+  "lon": -86.94888889
+ },
+ {
+  "wiki": "Oxford Furnace",
+  "type": "iron_furnace",
+  "state": "NJ",
+  "condition": "standing_ruin",
+  "qid": "Q7115334",
+  "lat": 40.80388889,
+  "lon": -74.99777778
+ },
+ {
+  "wiki": "Greenwood Furnace State Park",
+  "type": "iron_furnace",
+  "state": "PA",
+  "condition": "preserved",
+  "qid": "Q5605022",
+  "lat": 40.65047,
+  "lon": -77.75439
+ },
+ {
+  "wiki": "Sloss Furnaces",
+  "type": "iron_furnace",
+  "state": "AL",
+  "condition": "preserved",
+  "qid": "Q7541393",
+  "lat": 33.52065556,
+  "lon": -86.79130556
+ },
+ {
+  "wiki": "Buckeye Furnace",
+  "type": "iron_furnace",
+  "state": "OH",
+  "condition": "preserved",
+  "qid": "Q116467684",
+  "lat": 39.05638889,
+  "lon": -82.45722222
+ },
+ {
+  "wiki": "Maramec Spring",
+  "type": "iron_furnace",
+  "state": "MO",
+  "condition": "preserved",
+  "qid": "Q6754747",
+  "lat": 37.95555556,
+  "lon": -91.5325
+ },
+ {
+  "wiki": "Catherine Furnace",
+  "type": "iron_furnace",
+  "state": "VA",
+  "condition": "standing_ruin",
+  "qid": "Q15208020",
+  "lat": 38.55777778,
+  "lon": -78.63583333
+ },
+ {
+  "wiki": "Furnace Town Living Heritage Museum",
+  "type": "iron_furnace",
+  "state": "MD",
+  "condition": "preserved",
+  "qid": "Q5509626",
+  "lat": 38.20472222,
+  "lon": -75.47055556
+ },
+ {
+  "wiki": "Tredegar Iron Works",
+  "type": "iron_furnace",
+  "state": "VA",
+  "condition": "preserved",
+  "qid": "Q7837469",
+  "lat": 37.53555556,
+  "lon": -77.44527778
+ },
+ {
+  "wiki": "Paw Paw Tunnel",
+  "type": "tunnel",
+  "state": "WV",
+  "condition": "preserved",
+  "qid": "Q11813891",
+  "lat": 39.555556,
+  "lon": -78.462778
+ },
+ {
+  "wiki": "Big Savage Tunnel",
+  "type": "tunnel",
+  "state": "MD",
+  "condition": "preserved",
+  "qid": "Q4906295",
+  "lat": 39.74083333,
+  "lon": -78.89361111
+ },
+ {
+  "wiki": "Staple Bend Tunnel",
+  "type": "tunnel",
+  "state": "PA",
+  "condition": "preserved",
+  "qid": "Q7482493",
+  "lat": 40.35916667,
+  "lon": -78.85527778
+ },
+ {
+  "wiki": "Blue Ridge Tunnel",
+  "type": "tunnel",
+  "state": "VA",
+  "condition": "preserved",
+  "qid": "Q4929749",
+  "lat": 38.0383,
+  "lon": -78.8625
+ },
+ {
+  "wiki": "Sideling Hill Tunnel",
+  "type": "tunnel",
+  "state": "PA",
+  "condition": "standing_ruin",
+  "qid": "Q7508392",
+  "lat": 40.048056,
+  "lon": -78.129167
+ },
+ {
+  "wiki": "Rays Hill Tunnel",
+  "type": "tunnel",
+  "state": "PA",
+  "condition": "standing_ruin",
+  "qid": "Q7299374",
+  "lat": 40.01805556,
+  "lon": -78.20388889
+ },
+ {
+  "wiki": "Snoqualmie Tunnel",
+  "type": "tunnel",
+  "state": "WA",
+  "condition": "preserved",
+  "qid": "Q7548051",
+  "lat": 47.3947,
+  "lon": -121.3963
+ },
+ {
+  "wiki": "Alpine Tunnel",
+  "type": "tunnel",
+  "state": "CO",
+  "condition": "standing_ruin",
+  "qid": "Q4735525",
+  "lat": 38.64583333,
+  "lon": -106.40888889
+ },
+ {
+  "wiki": "Hagerman Tunnel",
+  "type": "tunnel",
+  "state": "CO",
+  "condition": "remains",
+  "qid": "Q5638630",
+  "lat": 39.25388889,
+  "lon": -106.48694444
+ },
+ {
+  "wiki": "Kinzua Bridge",
+  "type": "bridge",
+  "state": "PA",
+  "condition": "remains",
+  "qid": "Q1470389",
+  "lat": 41.76111111,
+  "lon": -78.58861111
+ },
+ {
+  "wiki": "Kelso Depot",
+  "type": "depot",
+  "state": "CA",
+  "condition": "preserved",
+  "qid": "Q6386536",
+  "lat": 35.01222222,
+  "lon": -115.6525
+ },
+ {
+  "wiki": "Michigan Central Station",
+  "type": "depot",
+  "state": "MI",
+  "condition": "preserved",
+  "qid": "Q1764199",
+  "lat": 42.32880278,
+  "lon": -83.07773056
+ },
+ {
+  "wiki": "Buffalo Central Terminal",
+  "type": "depot",
+  "state": "NY",
+  "condition": "standing_ruin",
+  "qid": "Q1318379",
+  "lat": 42.88972222,
+  "lon": -78.83027778
+ },
+ {
+  "wiki": "Central Railroad of New Jersey Terminal",
+  "type": "depot",
+  "state": "NJ",
+  "condition": "standing_ruin",
+  "qid": "Q5061747",
+  "lat": 40.70722222,
+  "lon": -74.03527778
+ },
+ {
+  "wiki": "New York Penn Station",
+  "type": "depot",
+  "state": "NY",
+  "condition": "gone",
+  "qid": "Q54451",
+  "lat": 40.750638,
+  "lon": -73.993899
+ },
+ {
+  "wiki": "Pennhurst State School and Hospital",
+  "type": "lost_building",
+  "state": "PA",
+  "condition": "standing_ruin",
+  "qid": "Q2370612",
+  "lat": 40.193717,
+  "lon": -75.560162
+ },
+ {
+  "wiki": "Hudson River State Hospital",
+  "type": "lost_building",
+  "state": "NY",
+  "condition": "standing_ruin",
+  "qid": "Q5928866",
+  "lat": 41.73305556,
+  "lon": -73.92833333
+ },
+ {
+  "wiki": "Danvers State Hospital",
+  "type": "lost_building",
+  "state": "MA",
+  "condition": "gone",
+  "qid": "Q3015764",
+  "lat": 42.581234,
+  "lon": -70.974394
+ },
+ {
+  "wiki": "Central State Hospital (Milledgeville, Georgia)",
+  "type": "lost_building",
+  "state": "GA",
+  "condition": "standing_ruin",
+  "qid": "Q5061848",
+  "lat": 33.051,
+  "lon": -83.222
+ },
+ {
+  "wiki": "Trans-Allegheny Lunatic Asylum",
+  "type": "lost_building",
+  "state": "WV",
+  "condition": "preserved",
+  "qid": "Q7833486",
+  "lat": 39.03861111,
+  "lon": -80.47138889
+ },
+ {
+  "wiki": "Waverly Hills Sanatorium",
+  "type": "lost_building",
+  "state": "KY",
+  "condition": "preserved",
+  "qid": "Q657238",
+  "lat": 38.13014722,
+  "lon": -85.84172778
+ },
+ {
+  "wiki": "Eastern State Penitentiary",
+  "type": "lost_building",
+  "state": "PA",
+  "condition": "preserved",
+  "qid": "Q489417",
+  "lat": 39.9683,
+  "lon": -75.1725
+ },
+ {
+  "wiki": "Joliet Correctional Center",
+  "type": "lost_building",
+  "state": "IL",
+  "condition": "standing_ruin",
+  "qid": "Q1702652",
+  "lat": 41.54694444,
+  "lon": -88.07416667
+ },
+ {
+  "wiki": "Kings Park Psychiatric Center",
+  "type": "lost_building",
+  "state": "NY",
+  "condition": "standing_ruin",
+  "qid": "Q6412987",
+  "lat": 40.89388889,
+  "lon": -73.24166667
+ },
+ {
+  "wiki": "Letchworth Village",
+  "type": "lost_building",
+  "state": "NY",
+  "condition": "standing_ruin",
+  "qid": "Q6533195",
+  "lat": 41.214793,
+  "lon": -74.023676
+ },
+ {
+  "wiki": "Willard Asylum for the Chronic Insane",
+  "type": "lost_building",
+  "state": "NY",
+  "condition": "standing_ruin",
+  "qid": "Q8003369",
+  "lat": 42.67916667,
+  "lon": -76.87944444
+ },
+ {
+  "wiki": "Pollepel Island",
+  "type": "lost_building",
+  "state": "NY",
+  "condition": "standing_ruin",
+  "qid": "Q7225604",
+  "lat": 41.455314,
+  "lon": -73.98887
+ },
+ {
+  "wiki": "Grossinger's Resort",
+  "type": "lost_building",
+  "state": "NY",
+  "condition": "standing_ruin",
+  "qid": "Q5610590",
+  "lat": 41.7898,
+  "lon": -74.723
+ },
+ {
+  "wiki": "Packard Automotive Plant",
+  "type": "lost_building",
+  "state": "MI",
+  "condition": "standing_ruin",
+  "qid": "Q7122912",
+  "lat": 42.37961667,
+  "lon": -83.02892778
+ },
+ {
+  "wiki": "Pruitt–Igoe",
+  "type": "lost_building",
+  "state": "MO",
+  "condition": "gone",
+  "qid": "Q165316",
+  "lat": 38.64228889,
+  "lon": -90.20943056
+ },
+ {
+  "wiki": "Sutro Baths",
+  "type": "lost_building",
+  "state": "CA",
+  "condition": "remains",
+  "qid": "Q3505806",
+  "lat": 37.78,
+  "lon": -122.51361111
+ },
+ {
+  "wiki": "Roanoke Colony",
+  "type": "lost_town",
+  "state": "NC",
+  "condition": "gone",
+  "qid": "Q59222",
+  "lat": 35.93694444,
+  "lon": -75.70888889
+ },
+ {
+  "wiki": "Popham Colony",
+  "type": "lost_town",
+  "state": "ME",
+  "condition": "gone",
+  "qid": "Q4003171",
+  "lat": 43.7532,
+  "lon": -69.7884
+ },
+ {
+  "wiki": "Cahaba, Alabama",
+  "type": "lost_town",
+  "state": "AL",
+  "condition": "standing_ruin",
+  "qid": "Q2933087",
+  "lat": 32.31694444,
+  "lon": -87.10138889
+ },
+ {
+  "wiki": "Napoleon, Arkansas",
+  "type": "lost_town",
+  "state": "AR",
+  "condition": "gone",
+  "qid": "Q6964999",
+  "lat": 33.79555556,
+  "lon": -91.10722222
+ },
+ {
+  "wiki": "Rodney, Mississippi",
+  "type": "lost_town",
+  "state": "MS",
+  "condition": "standing_ruin",
+  "qid": "Q7356825",
+  "lat": 31.86127778,
+  "lon": -91.19983333
+ },
+ {
+  "wiki": "Grand Gulf, Mississippi",
+  "type": "lost_town",
+  "state": "MS",
+  "condition": "remains",
+  "qid": "Q96418495",
+  "lat": 32.03333333,
+  "lon": -91.0525
+ },
+ {
+  "wiki": "Times Beach, Missouri",
+  "type": "lost_town",
+  "state": "MO",
+  "condition": "gone",
+  "qid": "Q2434664",
+  "lat": 38.50861111,
+  "lon": -90.6025
+ },
+ {
+  "wiki": "Vanport, Oregon",
+  "type": "lost_town",
+  "state": "OR",
+  "condition": "gone",
+  "qid": "Q596232",
+  "lat": 45.60194444,
+  "lon": -122.7
+ },
+ {
+  "wiki": "St. Thomas, Nevada",
+  "type": "lost_town",
+  "state": "NV",
+  "condition": "gone",
+  "qid": "Q2906795",
+  "lat": 36.46583333,
+  "lon": -114.37027778
+ },
+ {
+  "wiki": "Dana, Massachusetts",
+  "type": "lost_town",
+  "state": "MA",
+  "condition": "gone",
+  "qid": "Q5214645",
+  "lat": 42.42194444,
+  "lon": -72.2275
+ },
+ {
+  "wiki": "Enfield, Massachusetts",
+  "type": "lost_town",
+  "state": "MA",
+  "condition": "gone",
+  "qid": "Q5377276",
+  "lat": 42.31666667,
+  "lon": -72.33277778
+ },
+ {
+  "wiki": "Loyston, Tennessee",
+  "type": "lost_town",
+  "state": "TN",
+  "condition": "gone",
+  "qid": "Q12061392",
+  "lat": 36.26527778,
+  "lon": -83.95
+ },
+ {
+  "wiki": "Proctor, North Carolina",
+  "type": "lost_town",
+  "state": "NC",
+  "condition": "gone",
+  "qid": "Q7247512",
+  "lat": 35.47333333,
+  "lon": -83.72638889
+ },
+ {
+  "wiki": "Hite, Utah",
+  "type": "lost_town",
+  "state": "UT",
+  "condition": "gone",
+  "qid": "Q5871880",
+  "lat": 37.8075,
+  "lon": -110.43972222
+ },
+ {
+  "wiki": "New Philadelphia National Historic Site",
+  "type": "lost_town",
+  "state": "IL",
+  "condition": "gone",
+  "qid": "Q14687954",
+  "lat": 39.69583333,
+  "lon": -90.95972222
+ },
+ {
+  "wiki": "Old Mobile Site",
+  "type": "lost_town",
+  "state": "AL",
+  "condition": "gone",
+  "qid": "Q3077929",
+  "lat": 30.96861111,
+  "lon": -87.99388889
+ },
+ {
+  "wiki": "Indianola, Texas",
+  "type": "lost_town",
+  "state": "TX",
+  "condition": "gone",
+  "qid": "Q972308",
+  "lat": 28.51194444,
+  "lon": -96.4875
+ },
+ {
+  "wiki": "Jericho, Utah",
+  "type": "lost_town",
+  "state": "UT",
+  "condition": "gone",
+  "qid": "Q14711620",
+  "lat": 39.75,
+  "lon": -112.20555556
+ },
+ {
+  "wiki": "Elkmont, Tennessee",
+  "type": "lost_town",
+  "state": "TN",
+  "condition": "standing_ruin",
+  "qid": "Q5364351",
+  "lat": 35.65555556,
+  "lon": -83.58444444
+ },
+ {
+  "wiki": "Cades Cove",
+  "type": "lost_town",
+  "state": "TN",
+  "condition": "preserved",
+  "qid": "Q5016395",
+  "lat": 35.59416667,
+  "lon": -83.84194444
+ }
+]

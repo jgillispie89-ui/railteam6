@@ -1,0 +1,1 @@
+{ "name": "lost-places-seed", "private": true, "type": "module", "dependencies": { "pg": "^8.12.0", "sharp": "^0.33.5" } }

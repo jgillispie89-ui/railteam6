@@ -1,0 +1,672 @@
+[
+  {
+    "name": "Buffalo Furnace",
+    "type": "iron_furnace",
+    "condition": "remains",
+    "lat": 38.4797,
+    "lon": -82.8878,
+    "coords_approx": true,
+    "coord_source": "https://www.hmdb.org/m.asp?m=73782",
+    "county": "Greenup",
+    "state": "KY",
+    "built_year": 1851,
+    "closed_year": 1875,
+    "history": "Buffalo Furnace was built by H. Hollister and Ross in the Hanging Rock Iron Region and ran from 1851 to 1875. The Kentucky marker calls it a major iron producer and an important Union Army supplier during the Civil War.\n\nIts stone stack was originally about 36.5 feet tall with a steam-powered air blast. About 150 men worked there, and it could make 15 tons of pig iron in 24 hours, which was shipped by steamboat on the Ohio River.\n\nThe remains are in Greenbo Lake State Resort Park. The coordinate is the park-entrance historical marker, not a surveyed stack position. Sources disagree on condition: Abandoned Online lists ruins/collapsed, while its summary table says intact in a park.",
+    "sources": [
+      {
+        "title": "HMDB: Buffalo Furnace marker",
+        "url": "https://www.hmdb.org/m.asp?m=73782"
+      },
+      {
+        "title": "Buffalo Furnace (Kentucky Historical Society marker)",
+        "url": "https://history.ky.gov/markers/buffalo-furnance"
+      },
+      {
+        "title": "Abandoned Online: Buffalo Furnace",
+        "url": "https://abandonedonline.net/location/buffalo-furnace/"
+      }
+    ],
+    "wiki": null
+  },
+  {
+    "name": "Laurel Furnace",
+    "type": "iron_furnace",
+    "condition": "standing_ruin",
+    "lat": 38.440358,
+    "lon": -82.898224,
+    "coords_approx": true,
+    "coord_source": "https://www.wikidata.org/wiki/Q48834746",
+    "county": "Greenup",
+    "state": "KY",
+    "built_year": 1849,
+    "closed_year": 1874,
+    "history": "George and Samuel Wurts built Laurel Furnace in 1849 in the Hanging Rock Iron Region. The bottom half of the 39-foot stack is carved from a single block of stone cliff. In 1855 it made 2,150 tons of iron in 31 weeks, burning 376,250 bushels of charcoal. Its last blast was in 1874.\n\nAbandoned Online says the stack still stands and can be seen from the public road along Cooper Road, Greenup County. The state marker at KY 1 and Laurel Road (38 26.436 N, 82 53.894 W) says the furnace was built 4 miles west of the marker.\n\nNo source I found gives the stack's own coordinates, so the pin is the town-level point for Oldtown and the real site is a few miles away.",
+    "sources": [
+      {
+        "title": "HMDB: Laurel Furnace marker",
+        "url": "https://www.hmdb.org/m.asp?m=126328"
+      },
+      {
+        "title": "Abandoned Online: Laurel Furnace",
+        "url": "https://abandonedonline.net/location/laurel-furnace/"
+      }
+    ],
+    "wiki": null
+  },
+  {
+    "name": "Hunnewell Furnace (Greenup Furnace)",
+    "type": "iron_furnace",
+    "condition": "standing_ruin",
+    "lat": 38.4148,
+    "lon": -82.8455,
+    "coords_approx": true,
+    "coord_source": "https://www.hmdb.org/m.asp?m=126269",
+    "county": "Greenup",
+    "state": "KY",
+    "built_year": 1845,
+    "closed_year": 1889,
+    "history": "Built in 1845 by John Campbell, John Peters and John Culbertson, this furnace first served oxcarts hauling iron to Ohio River boats at Greenupsburg. The community around it was later renamed Hunnewell for businessman Walter Hunnewell. Sources differ on closing: the state marker says 1889, Abandoned Online says 1885 or 1889.\n\nThe Eastern Kentucky Railway reached the furnace and its owners bought the works. In 1870 the furnace was rebuilt to 47 feet tall with an estimated output of 6,000 tons a year.\n\nThe stack stands on private property at the crossroads of KY 207 and KY 3306 and can be seen from the road. The pin is the E.K. Railway marker at that crossroads (38 24.888 N, 82 50.732 W).",
+    "sources": [
+      {
+        "title": "HMDB: E.K. Railway, Hunnewell marker",
+        "url": "https://www.hmdb.org/m.asp?m=126269"
+      },
+      {
+        "title": "Abandoned Online: Hunnewell Furnace",
+        "url": "https://abandonedonline.net/location/hunnewell-furnace/"
+      },
+      {
+        "title": "Wikipedia: Hunnewell, Kentucky",
+        "url": "https://en.wikipedia.org/wiki/Hunnewell,_Kentucky"
+      }
+    ],
+    "wiki": "Hunnewell, Kentucky"
+  },
+  {
+    "name": "Pennsylvania Furnace",
+    "type": "iron_furnace",
+    "condition": "gone",
+    "lat": 38.49015,
+    "lon": -82.8288,
+    "coords_approx": true,
+    "coord_source": "https://waymarking.com/waymarks/WM2A4Y",
+    "county": "Greenup",
+    "state": "KY",
+    "built_year": 1845,
+    "closed_year": 1881,
+    "history": "George and Samuel Wurts built Pennsylvania Furnace in 1845. It was later owned by the Eastern Kentucky Railroad, which shipped its production to the Ohio River. It operated until 1881 and produced 2,213 tons of iron in 1873. The stone stack was 38 feet high and about 10 1/4 feet across inside, burning charcoal.\n\nThe state marker (No. 1016) stands on KY 1 in Argillite and says the furnace stood 3 1/4 miles west of the marker. Abandoned Online's table lists it as demolished.\n\nThe pin is the marker, so the actual furnace site is about 3 miles west of it and unlocated.",
+    "sources": [
+      {
+        "title": "Waymarking: Pennsylvania Furnace marker",
+        "url": "https://waymarking.com/waymarks/WM2A4Y"
+      },
+      {
+        "title": "Abandoned Online pig iron furnaces table",
+        "url": "https://abandonedonline.net/location/pig-iron-furnaces"
+      }
+    ],
+    "wiki": null
+  },
+  {
+    "name": "Mt. Savage Furnace",
+    "type": "iron_furnace",
+    "condition": "standing_ruin",
+    "lat": 38.2671806,
+    "lon": -82.8943278,
+    "coords_approx": false,
+    "coord_source": "https://www.topozone.com/?p=1049394",
+    "county": "Carter",
+    "state": "KY",
+    "built_year": 1848,
+    "closed_year": 1885,
+    "history": "R. M. Biggs and stonemason John Fauson built Mt. Savage Furnace in 1848 in the Hanging Rock Iron Region. The state marker says it operated 37 years, averaging 15 tons of pig iron a day hauled by ox team to the Ohio River, and that the last blast was in 1885. Abandoned Online instead says it stopped when the Civil War began and was reopened 1877 to 1880, so closing dates differ by source.\n\nAbandoned Online adds that the Lexington & Carter County Mining Company ran it 1870 to 1874, and that the stack still stands along KY 773 near Hitchins.\n\nThe coordinate is TopoZone's listing for the historical furnace feature (GNIS-derived). The marker for the furnace is in Grayson, six miles away.",
+    "sources": [
+      {
+        "title": "HMDB: Mount Savage Furnace marker",
+        "url": "https://www.hmdb.org/m.asp?m=144955"
+      },
+      {
+        "title": "Abandoned Online: Mt. Savage Furnace",
+        "url": "https://abandonedonline.net/location/mt-savage-furnace/"
+      },
+      {
+        "title": "TopoZone: Mount Savage Furnace (historical)",
+        "url": "https://www.topozone.com/?p=1049394"
+      }
+    ],
+    "wiki": null
+  },
+  {
+    "name": "Sandy Furnace",
+    "type": "iron_furnace",
+    "condition": "remains",
+    "lat": 38.2481389,
+    "lon": -82.7537731,
+    "coords_approx": true,
+    "coord_source": "https://www.wikidata.org/wiki/Q122542628",
+    "county": "Boyd",
+    "state": "KY",
+    "built_year": 1853,
+    "closed_year": 1854,
+    "history": "Young, Foster & Company (Dan and John Young, William Foster, Irwin Gilruth) built Sandy Furnace in 1853 on a 19,000-acre tract along Bolts Fork. The stone stack was 32 feet tall. In 1854, its last year, it made 1,000 tons of iron, hauled by oxcart to the Big Sandy River.\n\nAbandoned Online lists it as ruins on private property along KY 773, visible from the road, though its own sourcing is weak.\n\nThe pin is the GNIS-derived hamlet 'Sandy Furnace' (via Wikidata/OpenStreetMap), a place point and not a stack survey. The state marker is at KY 3 and KY 773 and says the furnace is about four miles west.",
+    "sources": [
+      {
+        "title": "Sandy Furnace (Kentucky Historical Society marker)",
+        "url": "https://history.ky.gov/markers/sandy-furnace"
+      },
+      {
+        "title": "Abandoned Online: Sandy Furnace",
+        "url": "https://abandonedonline.net/location/sandy-furnace/"
+      },
+      {
+        "title": "Wikidata: Sandy Furnace (hamlet)",
+        "url": "https://www.wikidata.org/wiki/Q122542628"
+      }
+    ],
+    "wiki": null
+  },
+  {
+    "name": "Boone Furnace",
+    "type": "iron_furnace",
+    "condition": "unknown",
+    "lat": 38.4667,
+    "lon": -83.1233,
+    "coords_approx": true,
+    "coord_source": "https://www.wikidata.org/wiki/Q19600562",
+    "county": "Carter",
+    "state": "KY",
+    "built_year": 1856,
+    "closed_year": 1871,
+    "history": "Sebastian Eifort and others built Boone Furnace in 1856, a stone blast furnace originally 44 feet 7 inches tall with up to 10.5 feet inside diameter, using a single tuyere and a steam-powered blast. Its last blast was in 1871, when it produced 1,400 tons of iron.\n\nThe state marker (KY 2 at KY 1773) says the furnace stands 3.5 miles west of the marker. Abandoned Online's table lists it as intact, but I found no page confirming the current state.\n\nThe pin is the Boone Furnace settlement point from Wikidata, so treat it as the area, not the stack.",
+    "sources": [
+      {
+        "title": "Boone Furnace (Kentucky Historical Society marker)",
+        "url": "https://history.ky.gov/markers/boone-furnace"
+      },
+      {
+        "title": "Abandoned Online pig iron furnaces table",
+        "url": "https://abandonedonline.net/location/pig-iron-furnaces"
+      }
+    ],
+    "wiki": null
+  },
+  {
+    "name": "Hopewell Furnace (Camp Branch Furnace)",
+    "type": "iron_furnace",
+    "condition": "gone",
+    "lat": 38.41463,
+    "lon": -82.8999,
+    "coords_approx": true,
+    "coord_source": "https://www.hmdb.org/m.asp?m=126324",
+    "county": "Greenup",
+    "state": "KY",
+    "built_year": 1832,
+    "closed_year": 1844,
+    "history": "William Ward built a bloomery forge here in 1824 and converted it to a blast furnace in 1832-33; it was also known as Camp Branch Furnace. Its air blast was water-powered. The stone stack made 600 tons in 1838, burning 165,000 bushels of charcoal. Operations ceased in 1844.\n\nAbandoned Online's table lists it as demolished. The pin is the marker on KY 1 near Hopewell, which says the furnace was built here.",
+    "sources": [
+      {
+        "title": "HMDB: Hopewell Furnace marker",
+        "url": "https://www.hmdb.org/m.asp?m=126324"
+      },
+      {
+        "title": "Abandoned Online pig iron furnaces table",
+        "url": "https://abandonedonline.net/location/pig-iron-furnaces"
+      }
+    ],
+    "wiki": null
+  },
+  {
+    "name": "Princess Furnace",
+    "type": "iron_furnace",
+    "condition": "unknown",
+    "lat": 38.38772,
+    "lon": -82.74565,
+    "coords_approx": true,
+    "coord_source": "https://www.hmdb.org/m.asp?m=126230",
+    "county": "Boyd",
+    "state": "KY",
+    "built_year": 1876,
+    "closed_year": 1878,
+    "history": "Thomas W. Means built Princess Furnace in 1876-77, the marker says, naming him the leading figure in the area's iron industry for 50 years. The iron-jacketed stack burned stone coal because nearby Buena Vista Furnace had used up the charcoal timber on 6,000 acres. The last blast was in 1878.\n\nThe pin is the marker in Princess on KY 5 (the marker says built here). Abandoned Online's table lists the furnace as demolished.",
+    "sources": [
+      {
+        "title": "HMDB: Princess Furnace marker",
+        "url": "https://www.hmdb.org/m.asp?m=126230"
+      },
+      {
+        "title": "Abandoned Online pig iron furnaces table",
+        "url": "https://abandonedonline.net/location/pig-iron-furnaces"
+      }
+    ],
+    "wiki": null
+  },
+  {
+    "name": "Amanda Furnace (first)",
+    "type": "iron_furnace",
+    "condition": "gone",
+    "lat": 38.525833,
+    "lon": -82.689722,
+    "coords_approx": true,
+    "coord_source": "https://www.wikidata.org/wiki/Q49472403",
+    "county": "Greenup",
+    "state": "KY",
+    "built_year": 1829,
+    "closed_year": 1854,
+    "history": "A group including James E. McDowell, John Culver and the Poage family built Amanda Furnace in 1829, a 35-foot stone stack about 10 feet across inside. The Paull family later owned it and is buried on the hillside above. In 1838 it made 100 tons in 196 days; in 1854, its last year, 200 tons.\n\nThe marker is on US 23 about a mile west of the Boyd County line, and the pin is that marker's Wikidata point. Abandoned Online lists this first Amanda Furnace as demolished (a second 20th-century Amanda furnace is a different structure).",
+    "sources": [
+      {
+        "title": "Amanda Furnace (Kentucky Historical Society marker)",
+        "url": "https://history.ky.gov/markers/amanda-furnace"
+      },
+      {
+        "title": "Abandoned Online pig iron furnaces table",
+        "url": "https://abandonedonline.net/location/pig-iron-furnaces"
+      }
+    ],
+    "wiki": null
+  },
+  {
+    "name": "Bellefonte Furnace (first)",
+    "type": "iron_furnace",
+    "condition": "gone",
+    "lat": 38.4936,
+    "lon": -82.6883,
+    "coords_approx": true,
+    "coord_source": "https://www.wikidata.org/wiki/Q2506527",
+    "county": "Greenup",
+    "state": "KY",
+    "built_year": 1826,
+    "closed_year": 1893,
+    "history": "Archibald Paull, George Poague and others built Bellefonte Furnace in 1826. The state marker calls it the most successful of the pioneer Kentucky charcoal furnaces in the Hanging Rock Iron Region. The stone stack was 34 feet high; in 1874 it made 3,600 tons of iron. It ran until 1893 and left a slag heap of about 300,000 tons.\n\nAbandoned Online lists the first furnace as demolished. The pin is the Bellefonte settlement point (Wikidata), not the furnace site.",
+    "sources": [
+      {
+        "title": "Bellefonte Furnace (Kentucky Historical Society marker)",
+        "url": "https://history.ky.gov/markers/bellefonte-furnace"
+      },
+      {
+        "title": "Abandoned Online pig iron furnaces table",
+        "url": "https://abandonedonline.net/location/pig-iron-furnaces"
+      }
+    ],
+    "wiki": null
+  },
+  {
+    "name": "Argillite Tunnel (Tunnel No. 3)",
+    "type": "tunnel",
+    "condition": "remains",
+    "lat": 38.48645,
+    "lon": -82.830283,
+    "coords_approx": false,
+    "coord_source": "https://www.waymarking.com/waymarks/WM4A4R_Argillite_Tunnel_Argillite_KY",
+    "county": "Greenup",
+    "state": "KY",
+    "built_year": null,
+    "closed_year": 1933,
+    "history": "The Argillite Tunnel is the first tunnel along the abandoned Eastern Kentucky Railway, visible from KY 207 near its junction with KY 1. The Waymarking entry lists it as unlined, in fair condition, abandoned.\n\nOnly the north end is easily reached; the south end is filled in and dangerous. Wikipedia says it is the only one of the line's eight tunnels not flooded, and that its north entrance was buried for safety in 2017. The railway opened in 1867 and ran until 1933.",
+    "sources": [
+      {
+        "title": "Waymarking: Argillite Tunnel",
+        "url": "https://www.waymarking.com/waymarks/WM4A4R_Argillite_Tunnel_Argillite_KY"
+      },
+      {
+        "title": "Wikipedia: Eastern Kentucky Railway",
+        "url": "https://en.wikipedia.org/wiki/Eastern_Kentucky_Railway"
+      }
+    ],
+    "wiki": "Eastern Kentucky Railway"
+  },
+  {
+    "name": "Callahan Tunnel (Tunnel No. 4)",
+    "type": "tunnel",
+    "condition": "remains",
+    "lat": 38.44719,
+    "lon": -82.84478,
+    "coords_approx": false,
+    "coord_source": "https://bridgestunnels.com/?p=23468",
+    "county": "Greenup",
+    "state": "KY",
+    "built_year": 1870,
+    "closed_year": 1933,
+    "history": "A bored, unlined, naturally ventilated tunnel on the Eastern Kentucky Railway extension from Argillite to Hunnewell, which opened in 1870. BridgesTunnels lists it as Tunnel No. 4; Wikipedia and Abandoned Online call it Callahan.\n\nThe line was abandoned in 1933. Wikipedia says all of the line's tunnels except Argillite are flooded. County is inferred from the Hunnewell-Argillite route, since BridgesTunnels lists only the state.",
+    "sources": [
+      {
+        "title": "BridgesTunnels: Tunnel No. 4",
+        "url": "https://bridgestunnels.com/?p=23468"
+      },
+      {
+        "title": "Wikipedia: Eastern Kentucky Railway",
+        "url": "https://en.wikipedia.org/wiki/Eastern_Kentucky_Railway"
+      }
+    ],
+    "wiki": "Eastern Kentucky Railway"
+  },
+  {
+    "name": "Ramey Tunnel (Tunnel No. 5)",
+    "type": "tunnel",
+    "condition": "remains",
+    "lat": 38.44562,
+    "lon": -82.84523,
+    "coords_approx": false,
+    "coord_source": "https://bridgestunnels.com/location/tunnel-no-5",
+    "county": "Greenup",
+    "state": "KY",
+    "built_year": 1870,
+    "closed_year": 1933,
+    "history": "Tunnel No. 5, also called the Ramey Tunnel, is a bored, unlined, naturally ventilated railroad tunnel built as part of the Eastern Kentucky Railway extension from Argillite south to Hunnewell, finished in 1870. The page includes several photographs.\n\nThe line was abandoned in 1933. Wikipedia lists Ramey among the line's eight tunnels, all but Argillite flooded. County is inferred from the route.",
+    "sources": [
+      {
+        "title": "BridgesTunnels: Tunnel No. 5",
+        "url": "https://bridgestunnels.com/location/tunnel-no-5"
+      },
+      {
+        "title": "Wikipedia: Eastern Kentucky Railway",
+        "url": "https://en.wikipedia.org/wiki/Eastern_Kentucky_Railway"
+      }
+    ],
+    "wiki": "Eastern Kentucky Railway"
+  },
+  {
+    "name": "Hopewell Bridge (Eastern Kentucky Railway area)",
+    "type": "bridge",
+    "condition": "unknown",
+    "lat": 38.4081445,
+    "lon": -82.9056461,
+    "coords_approx": true,
+    "coord_source": "https://www.wikidata.org/wiki/Q112174013",
+    "county": "Greenup",
+    "state": "KY",
+    "built_year": null,
+    "closed_year": null,
+    "history": "Abandoned Online's Eastern Kentucky Railway article photographs a Hopewell Bridge extensively but gives no description, date or condition. Hopewell was a station on the line, about milepost 17, and the line tunneled beneath a ridge between Hunnewell and Hopewell.\n\nThe pin is a Wikidata item for Hopewell Bridge. I could not confirm from sources that it is the same structure as the railway photographs, so treat this as a lead to check.",
+    "sources": [
+      {
+        "title": "Abandoned Online: Eastern Kentucky Railway",
+        "url": "https://abandonedonline.net/eastern-kentucky-railway/"
+      },
+      {
+        "title": "Wikipedia: Eastern Kentucky Railway",
+        "url": "https://en.wikipedia.org/wiki/Eastern_Kentucky_Railway"
+      }
+    ],
+    "wiki": "Eastern Kentucky Railway"
+  },
+  {
+    "name": "Hunnewell railroad shop",
+    "type": "lost_building",
+    "condition": "unknown",
+    "lat": 38.4148,
+    "lon": -82.8455,
+    "coords_approx": true,
+    "coord_source": "https://www.hmdb.org/m.asp?m=126269",
+    "county": "Greenup",
+    "state": "KY",
+    "built_year": null,
+    "closed_year": null,
+    "history": "Abandoned Online says the Eastern Kentucky Railway shop at Hunnewell stood across the tracks from the Hunnewell Furnace. It gives no date, condition or coordinates.\n\nThe pin is the Hunnewell crossroads marker; Hunnewell is now just a crossroads. The 1922 tornado almost completely destroyed the community, per Wikipedia.",
+    "sources": [
+      {
+        "title": "Abandoned Online: Eastern Kentucky Railway",
+        "url": "https://abandonedonline.net/eastern-kentucky-railway/"
+      },
+      {
+        "title": "Wikipedia: Hunnewell, Kentucky",
+        "url": "https://en.wikipedia.org/wiki/Hunnewell,_Kentucky"
+      }
+    ],
+    "wiki": null
+  },
+  {
+    "name": "Riverton (Eastern Kentucky Railway northern terminus)",
+    "type": "lost_town",
+    "condition": "unknown",
+    "lat": 38.566944,
+    "lon": -82.821111,
+    "coords_approx": true,
+    "coord_source": "https://www.wikidata.org/wiki/Q126684120",
+    "county": "Greenup",
+    "state": "KY",
+    "built_year": 1867,
+    "closed_year": null,
+    "history": "Riverton, now part of Greenup, was where the Eastern Kentucky Railway met the C&O Railway and the Ohio River. The first section of the line opened in 1867 from Riverton south to Argillite. Wikidata classes Riverton as a former town in Greenup County.\n\nThe pin is the Wikidata point; I found no source on what remains of the depot or town.",
+    "sources": [
+      {
+        "title": "Wikipedia: Eastern Kentucky Railway",
+        "url": "https://en.wikipedia.org/wiki/Eastern_Kentucky_Railway"
+      },
+      {
+        "title": "Wikidata: Riverton",
+        "url": "https://www.wikidata.org/wiki/Q126684120"
+      }
+    ],
+    "wiki": "Eastern Kentucky Railway"
+  },
+  {
+    "name": "Willard (coal town on the Eastern Kentucky Railway)",
+    "type": "coal_town",
+    "condition": "unknown",
+    "lat": 38.21167,
+    "lon": -82.89722,
+    "coords_approx": true,
+    "coord_source": "https://en.wikipedia.org/wiki/Willard,_Kentucky",
+    "county": "Carter",
+    "state": "KY",
+    "built_year": null,
+    "closed_year": null,
+    "history": "Willard is an unincorporated community and coal town in Carter County. The Eastern Kentucky Railway reached Willard by 1874 (milepost 34), and the line was later extended to Webbville in 1889.\n\nWikipedia gives no further founding or mining history, so no mine details are claimed. The pin is Wikipedia's town point.",
+    "sources": [
+      {
+        "title": "Wikipedia: Willard, Kentucky",
+        "url": "https://en.wikipedia.org/wiki/Willard,_Kentucky"
+      },
+      {
+        "title": "Wikipedia: Eastern Kentucky Railway",
+        "url": "https://en.wikipedia.org/wiki/Eastern_Kentucky_Railway"
+      }
+    ],
+    "wiki": "Willard, Kentucky"
+  },
+  {
+    "name": "Vesuvius Furnace",
+    "type": "iron_furnace",
+    "condition": "standing_ruin",
+    "lat": 38.605278,
+    "lon": -82.630278,
+    "coords_approx": false,
+    "coord_source": "https://en.wikipedia.org/wiki/National_Register_of_Historic_Places_listings_in_Lawrence_County,_Ohio",
+    "county": "Lawrence",
+    "state": "OH",
+    "built_year": 1833,
+    "closed_year": 1905,
+    "history": "Samuel Gould, John Hurd and Joseph Smith (Gould, Hurd & Co.) built Vesuvius Furnace in 1833 on Storms Creek in Elizabeth Township, per the Lawrence County history site; some sources say 1836. It ran hot blast from 1837 to 1868 and was sold to the Aetna Iron Works Co. in 1872. An Ohio marker says it adopted the hot blast method in 1863, which conflicts with the county history, so that detail is uncertain.\n\nBy 1885 a local paper called it dilapidated with only the stack left; it was back in blast by 1897 and was being leased in 1899. Abandoned Online's table gives 1905 as the last blast.\n\nIt is on the National Register (listed 14 June 1990) and sits in the Lake Vesuvius Recreation Area, Wayne National Forest.",
+    "sources": [
+      {
+        "title": "Lawrence County Ohio: Vesuvius Furnace",
+        "url": "https://lawrencecountyohio.com/furnaces/vesuvius-furnace/"
+      },
+      {
+        "title": "NRHP listings in Lawrence County, Ohio",
+        "url": "https://en.wikipedia.org/wiki/National_Register_of_Historic_Places_listings_in_Lawrence_County,_Ohio"
+      },
+      {
+        "title": "US Forest Service: Vesuvius Furnace",
+        "url": "https://www.fs.usda.gov/r09/wayne/recreation/underground-railroad-vesuvius-furnace"
+      },
+      {
+        "title": "Abandoned Online pig iron furnaces table",
+        "url": "https://abandonedonline.net/location/pig-iron-furnaces"
+      }
+    ],
+    "wiki": null
+  },
+  {
+    "name": "Vesuvius (Royersville) Tunnel",
+    "type": "tunnel",
+    "condition": "remains",
+    "lat": 38.60279,
+    "lon": -82.6716,
+    "coords_approx": false,
+    "coord_source": "https://bridgestunnels.com/location/vesuvius-tunnel/",
+    "county": "Lawrence",
+    "state": "OH",
+    "built_year": 1851,
+    "closed_year": 1982,
+    "history": "The Iron Railroad was incorporated in 1849 to haul coal, charcoal and timber to the Ohio River at Ironton. By 1850 it had six miles of track to the south portal of the unfinished tunnel, and the 956-foot bore opened in December 1851. It is unlined and later carried the Detroit, Toledo & Ironton Railroad.\n\nAfter a rockfall, the Grand Trunk Western filed in August 1981 to abandon the 29.35-mile Ironton Branch, and track removal began in November 1982. Abandoned Online calls it Tunnel #4, Royersville.\n\nCondition today is described only as abandoned.",
+    "sources": [
+      {
+        "title": "BridgesTunnels: Vesuvius Tunnel",
+        "url": "https://bridgestunnels.com/location/vesuvius-tunnel/"
+      },
+      {
+        "title": "Abandoned Online: CH&D tunnels in southern Ohio",
+        "url": "https://abandonedonline.net/chd-tunnels-in-southern-ohio"
+      }
+    ],
+    "wiki": null
+  },
+  {
+    "name": "Olive Furnace (Mount Olive Furnace)",
+    "type": "iron_furnace",
+    "condition": "standing_ruin",
+    "lat": 38.7625,
+    "lon": -82.630556,
+    "coords_approx": false,
+    "coord_source": "https://en.wikipedia.org/wiki/Olive_Furnace",
+    "county": "Lawrence",
+    "state": "OH",
+    "built_year": 1846,
+    "closed_year": 1915,
+    "history": "Olive Furnace was built in 1846 and sits on SR 93 north of Pedro in Washington Township. It was added to the National Register on 12 April 2007, covering a 6.3-acre site.\n\nThe Mt. Olive Furnace Park Corporation owns the site and plans to restore the buildings around the old stack and arch. Abandoned Online's table lists last blast as 1915 and condition as intact (park).",
+    "sources": [
+      {
+        "title": "Wikipedia: Olive Furnace",
+        "url": "https://en.wikipedia.org/wiki/Olive_Furnace"
+      },
+      {
+        "title": "Abandoned Online pig iron furnaces table",
+        "url": "https://abandonedonline.net/location/pig-iron-furnaces"
+      }
+    ],
+    "wiki": "Olive Furnace"
+  },
+  {
+    "name": "Buckhorn Furnace",
+    "type": "iron_furnace",
+    "condition": "standing_ruin",
+    "lat": 38.7364669,
+    "lon": -82.6521078,
+    "coords_approx": true,
+    "coord_source": "https://www.wikidata.org/wiki/Q122550365",
+    "county": "Lawrence",
+    "state": "OH",
+    "built_year": 1833,
+    "closed_year": 1899,
+    "history": "Abandoned Online's furnace table lists Buckhorn Furnace as blasting from 1833 or 1836 to about 1899, in the Hanging Rock region, and intact. It has its own page on that site, which I did not retrieve in full.\n\nThe pin is the Buckhorn Furnace hamlet from Wikidata and OpenStreetMap, not a surveyed stack position.",
+    "sources": [
+      {
+        "title": "Abandoned Online pig iron furnaces table",
+        "url": "https://abandonedonline.net/location/pig-iron-furnaces"
+      },
+      {
+        "title": "Abandoned Online: Buckhorn Furnace",
+        "url": "https://abandonedonline.net/location/buckhorn-furnace/"
+      }
+    ],
+    "wiki": null
+  },
+  {
+    "name": "Etna Furnace",
+    "type": "iron_furnace",
+    "condition": "standing_ruin",
+    "lat": 38.62258,
+    "lon": -82.65572,
+    "coords_approx": true,
+    "coord_source": "https://www.wikidata.org/wiki/Q117588218",
+    "county": "Lawrence",
+    "state": "OH",
+    "built_year": 1832,
+    "closed_year": 1887,
+    "history": "Abandoned Online's furnace table lists Etna Furnace as blasting from 1832 to 1887 and intact. The Lawrence County history site also carries a story about the Etna Iron Works Co.\n\nThe pin is Etna Furnace Cemetery (Wikidata), a nearby point, not the stack itself.",
+    "sources": [
+      {
+        "title": "Abandoned Online pig iron furnaces table",
+        "url": "https://abandonedonline.net/location/pig-iron-furnaces"
+      },
+      {
+        "title": "Abandoned Online: Etna Furnace",
+        "url": "https://abandonedonline.net/location/etna-furnace/"
+      },
+      {
+        "title": "Lawrence County Ohio: Story of old iron works",
+        "url": "http://lawrencecountyohio.com/furnaces/story-of-old-iron-works/"
+      }
+    ],
+    "wiki": null
+  },
+  {
+    "name": "Center Furnace (Ohio)",
+    "type": "iron_furnace",
+    "condition": "gone",
+    "lat": 38.67591,
+    "lon": -82.69725,
+    "coords_approx": true,
+    "coord_source": "https://www.wikidata.org/wiki/Q117510167",
+    "county": "Lawrence",
+    "state": "OH",
+    "built_year": 1836,
+    "closed_year": null,
+    "history": "Abandoned Online's table lists Center Furnace in Ohio as first blasting in 1836, with no last year, and demolished.\n\nThe pin is Center Furnace-Superior Cemetery (Wikidata), a nearby point, not the furnace site.",
+    "sources": [
+      {
+        "title": "Abandoned Online pig iron furnaces table",
+        "url": "https://abandonedonline.net/location/pig-iron-furnaces"
+      },
+      {
+        "title": "Abandoned Online: Center Furnace",
+        "url": "https://abandonedonline.net/location/center-furnace/"
+      }
+    ],
+    "wiki": null
+  },
+  {
+    "name": "Hecla Furnace",
+    "type": "iron_furnace",
+    "condition": "gone",
+    "lat": 38.54927,
+    "lon": -82.64334,
+    "coords_approx": true,
+    "coord_source": "https://www.wikidata.org/wiki/Q117692391",
+    "county": "Lawrence",
+    "state": "OH",
+    "built_year": 1833,
+    "closed_year": 1915,
+    "history": "Abandoned Online's table lists Hecla Furnace as blasting from 1833 to 1915 and demolished.\n\nThe pin is Hecla Cemetery (Wikidata), a nearby point only; the furnace site itself is not located by my sources.",
+    "sources": [
+      {
+        "title": "Abandoned Online pig iron furnaces table",
+        "url": "https://abandonedonline.net/location/pig-iron-furnaces"
+      }
+    ],
+    "wiki": null
+  },
+  {
+    "name": "Ironton Norfolk and Western Depot",
+    "type": "depot",
+    "condition": "preserved",
+    "lat": 38.534167,
+    "lon": -82.686389,
+    "coords_approx": false,
+    "coord_source": "https://en.wikipedia.org/wiki/Ironton_Norfolk_and_Western_Depot",
+    "county": "Lawrence",
+    "state": "OH",
+    "built_year": 1907,
+    "closed_year": 1969,
+    "history": "The Norfolk and Western reached the area in 1881 by buying the Scioto Valley Railroad. This neoclassical brick depot, designed by Edward G. Frye, was built 1906-07 as industry shifted from iron smelting to steel.\n\nTrains stopped using it when it closed in 1969. Ironton later bought it and leases it commercially, and restaurants have operated in it. It was listed on the National Register on 13 September 1978.",
+    "sources": [
+      {
+        "title": "Wikipedia: Ironton Norfolk and Western Depot",
+        "url": "https://en.wikipedia.org/wiki/Ironton_Norfolk_and_Western_Depot"
+      }
+    ],
+    "wiki": "Ironton Norfolk and Western Depot"
+  }
+]
