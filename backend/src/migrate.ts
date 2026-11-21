@@ -104,9 +104,47 @@ export async function migrate() {
     `);
 }
 
+// =============================================================================
+// 2026-11-20: private nationwide "lost places" map
+// =============================================================================
+export async function migrateLostPlaces() {
+    for (const v of ['mine', 'coal_town', 'ghost_town', 'iron_furnace', 'lost_building', 'lost_town']) {
+        await pool.query(`ALTER TYPE site_type ADD VALUE IF NOT EXISTS '${v}'`);
+    }
+    await pool.query(`
+        ALTER TABLE sites
+            ADD COLUMN IF NOT EXISTS county          TEXT,
+            ADD COLUMN IF NOT EXISTS condition       TEXT,
+            ADD COLUMN IF NOT EXISTS is_private_land BOOLEAN NOT NULL DEFAULT false,
+            ADD COLUMN IF NOT EXISTS is_dangerous    BOOLEAN NOT NULL DEFAULT false,
+            ADD COLUMN IF NOT EXISTS coords_approx   BOOLEAN NOT NULL DEFAULT false,
+            ADD COLUMN IF NOT EXISTS coords_note     TEXT,
+            ADD COLUMN IF NOT EXISTS history_credit  TEXT,
+            ADD COLUMN IF NOT EXISTS seed_key        TEXT,
+            ADD COLUMN IF NOT EXISTS deleted_at      TIMESTAMPTZ
+    `);
+    await pool.query(`CREATE UNIQUE INDEX IF NOT EXISTS idx_sites_seed_key ON sites(seed_key) WHERE seed_key IS NOT NULL`);
+    await pool.query(`ALTER TABLE photos ALTER COLUMN url DROP NOT NULL`);
+    await pool.query(`
+        ALTER TABLE photos
+            ADD COLUMN IF NOT EXISTS era          TEXT,
+            ADD COLUMN IF NOT EXISTS storage_path TEXT,
+            ADD COLUMN IF NOT EXISTS thumb_path   TEXT,
+            ADD COLUMN IF NOT EXISTS credit       TEXT,
+            ADD COLUMN IF NOT EXISTS width        INT,
+            ADD COLUMN IF NOT EXISTS height       INT,
+            ADD COLUMN IF NOT EXISTS bytes        INT,
+            ADD COLUMN IF NOT EXISTS sort_order   INT NOT NULL DEFAULT 0,
+            ADD COLUMN IF NOT EXISTS deleted_at   TIMESTAMPTZ
+    `);
+    await pool.query(`ALTER TABLE sources ADD COLUMN IF NOT EXISTS sort_order INT NOT NULL DEFAULT 0`);
+}
+
 // Run directly with `npm run migrate` (tsx src/migrate.ts)
-if (import.meta.url === `file://${process.argv[1]}`) {
-    migrate()
+const isMain = process.argv[1] && import.meta.url.toLowerCase().endsWith(
+    process.argv[1].replace(/\\/g, '/').toLowerCase().replace(/^.*?src\//, 'src/'));
+if (isMain) {
+    migrate().then(() => migrateLostPlaces())
         .then(() => { console.log('[migrate] complete'); process.exit(0); })
         .catch(err => { console.error('[migrate] failed:', err); process.exit(1); });
 }

@@ -2,36 +2,30 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { pool } from './db.js';
-import { removeByPublicUrls } from './storage.js';
+import { removeByPublicUrls, signPaths } from './storage.js';
 import authRouter from './routes/auth.js';
 import adminRouter from './routes/admin.js';
 import uploadRouter from './routes/upload.js';
 import feedbackRouter from './routes/feedback.js';
-import { requireAuth } from './middleware/auth.js';
+import { requireAdmin } from './middleware/auth.js';
 
 dotenv.config();
 
+// =============================================================================
+// RailTeam6 "lost places" API. PRIVATE (2026-11-20): every data route requires
+// the owner's admin token. Only /api/health* and /api/auth/* are open.
+// =============================================================================
 const app = express();
-// CORS_ORIGIN may be a comma-separated list (e.g. prod domain + Netlify preview).
 const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:5173')
     .split(',').map(s => s.trim()).filter(Boolean);
 app.use(cors({ origin: allowedOrigins }));
-// Larger JSON limit for base64 image uploads — mounted before the default parser
-// so it applies only to /api/upload; every other route keeps the 100 KB default.
 app.use('/api/upload', express.json({ limit: '6mb' }));
-app.use(express.json());
+app.use(express.json({ limit: '1mb' }));
 
-// =============================================================================
-// Routes
-// =============================================================================
+app.get('/api/health', (_req, res) => { res.json({ ok: true }); });
 
-// Lightweight health — no DB hit. (Schema migration now runs out-of-band via
-// `npm run migrate`; there is no per-request boot/readiness state on serverless.)
-app.get('/api/health', (_req, res) => {
-    res.json({ ok: true });
-});
-
-// DB health check (separate so /api/health stays cheap)
+// Also the daily Vercel cron target: one tiny query keeps the free Supabase
+// project from being paused for inactivity (the old project was deleted that way).
 app.get('/api/health/db', async (_req, res) => {
     try {
         const { rows } = await pool.query('SELECT postgis_version()');
@@ -41,83 +35,64 @@ app.get('/api/health/db', async (_req, res) => {
     }
 });
 
-app.use('/api/auth',     authRouter);
-app.use('/api/admin',   adminRouter);
-app.use('/api/upload',  uploadRouter);
-app.use('/api/feedback', feedbackRouter);
+app.use('/api/auth', authRouter);
+app.use('/api/admin', adminRouter);
+app.use('/api/upload', uploadRouter);
+app.use('/api/feedback', requireAdmin, feedbackRouter);
+
+// Everything below is owner-only.
+for (const p of ['/api/sites', '/api/lines', '/api/railroads', '/api/historic-maps', '/api/stats'])
+    app.use(p, requireAdmin);
+
+const CONDITIONS = ['preserved', 'standing_ruin', 'remains', 'gone', 'unknown'];
+// Legacy NOT NULL site_status, derived from the new condition field.
+const STATUS_FOR: Record<string, string> = {
+    preserved: 'preserved', standing_ruin: 'abandoned', remains: 'ruins', gone: 'destroyed', unknown: 'unknown',
+};
+
+const int = (v: any) => {
+    if (v === '' || v == null) return null;
+    const n = parseInt(String(v), 10);
+    return Number.isFinite(n) ? n : null;
+};
+const txt = (v: any, max = 20000) => {
+    if (v == null) return null;
+    const s = String(v).trim();
+    return s ? s.slice(0, max) : null;
+};
+const bool = (v: any) => v === true || v === 'true' || v === 1 || v === 'on';
+const isHttp = (u: any) => typeof u === 'string' && /^https?:\/\//i.test(u.trim());
 
 // =============================================================================
-// GET /api/sites — public; only approved sites visible
+// GET /api/sites — all live pins as GeoJSON (lean properties for the map)
 // =============================================================================
 app.get('/api/sites', async (req, res) => {
     try {
-        const conditions: string[] = ["s.mod_status = 'approved'"];
+        const conditions: string[] = ["s.mod_status = 'approved'", 's.deleted_at IS NULL'];
         const params: any[] = [];
-        let idx = 1;
-
-        if (typeof req.query.bbox === 'string') {
-            const parts = req.query.bbox.split(',').map(Number);
-            if (parts.length === 4 && parts.every(n => Number.isFinite(n))) {
-                const [minLng, minLat, maxLng, maxLat] = parts;
-                conditions.push(`s.geom && ST_MakeEnvelope($${idx}, $${idx+1}, $${idx+2}, $${idx+3}, 4326)`);
-                params.push(minLng, minLat, maxLng, maxLat);
-                idx += 4;
-            }
+        if (typeof req.query.types === 'string' && req.query.types) {
+            params.push(req.query.types.split(','));
+            conditions.push(`s.site_type::text = ANY($${params.length})`);
         }
-        if (typeof req.query.types === 'string') {
-            const types = req.query.types.split(',');
-            conditions.push(`s.site_type = ANY($${idx}::site_type[])`);
-            params.push(types); idx++;
-        }
-        if (typeof req.query.statuses === 'string') {
-            const statuses = req.query.statuses.split(',');
-            conditions.push(`s.status = ANY($${idx}::site_status[])`);
-            params.push(statuses); idx++;
-        }
-        if (typeof req.query.year === 'string') {
-            const year = parseInt(req.query.year, 10);
-            if (Number.isFinite(year)) {
-                conditions.push(`s.built_year <= $${idx}`);
-                conditions.push(`(s.demolished_year IS NULL OR s.demolished_year > $${idx})`);
-                params.push(year); idx++;
-            }
-        }
-        if (typeof req.query.railroad === 'string') {
-            conditions.push(`EXISTS (
-                SELECT 1 FROM site_railroads sr
-                JOIN railroads r ON r.id = sr.railroad_id
-                WHERE sr.site_id = s.id
-                AND (r.name ILIKE $${idx} OR r.abbreviation ILIKE $${idx})
-            )`);
-            params.push(`%${req.query.railroad}%`); idx++;
-        }
-
-        const sql = `
-            SELECT s.id, s.name, s.site_type, s.status,
-                   s.built_year, s.closed_year, s.demolished_year,
-                   s.city, s.state_province, s.country, s.description, s.photo_url,
-                   s.submitted_by,
-                   ST_AsGeoJSON(s.geom)::json AS geometry,
-                   COALESCE(array_agg(DISTINCT r.name) FILTER (WHERE r.name IS NOT NULL), '{}') AS railroads
+        const { rows } = await pool.query(`
+            SELECT s.id, s.name, s.site_type, s.condition, s.status, s.city, s.county, s.state_province,
+                   s.built_year, s.closed_year, s.coords_approx,
+                   ST_X(s.geom) AS lng, ST_Y(s.geom) AS lat,
+                   (SELECT COUNT(*)::int FROM photos p WHERE p.site_id = s.id AND p.deleted_at IS NULL AND p.storage_path IS NOT NULL) AS photo_count
             FROM sites s
-            LEFT JOIN site_railroads sr ON sr.site_id = s.id
-            LEFT JOIN railroads r ON r.id = sr.railroad_id
             WHERE ${conditions.join(' AND ')}
-            GROUP BY s.id
-            LIMIT 5000
-        `;
-        const { rows } = await pool.query(sql, params);
+            LIMIT 20000`, params);
         res.json({
             type: 'FeatureCollection',
             features: rows.map(r => ({
-                type: 'Feature', geometry: r.geometry,
+                type: 'Feature',
+                geometry: { type: 'Point', coordinates: [r.lng, r.lat] },
                 properties: {
-                    id: r.id, name: r.name, site_type: r.site_type, status: r.status,
+                    id: r.id, name: r.name, site_type: r.site_type,
+                    condition: r.condition || null, status: r.status,
+                    city: r.city, county: r.county, state: r.state_province,
                     built_year: r.built_year, closed_year: r.closed_year,
-                    demolished_year: r.demolished_year, city: r.city,
-                    state: r.state_province, country: r.country,
-                    description: r.description, railroads: r.railroads,
-                    photo_url: r.photo_url, submitted_by: r.submitted_by,
+                    approx: r.coords_approx, photos: r.photo_count,
                 },
             })),
         });
@@ -128,84 +103,217 @@ app.get('/api/sites', async (req, res) => {
 });
 
 // =============================================================================
-// GET /api/sites/:id
+// GET /api/sites/:id — full pin page data, photos with signed URLs
 // =============================================================================
+async function loadSite(id: string) {
+    const { rows } = await pool.query(
+        `SELECT s.*, ST_X(s.geom) AS lng, ST_Y(s.geom) AS lat FROM sites s
+         WHERE s.id = $1 AND s.deleted_at IS NULL`, [id]);
+    if (!rows.length) return null;
+    const site = rows[0];
+    delete site.geom;
+    const [{ rows: photos }, { rows: sources }, { rows: railroads }] = await Promise.all([
+        pool.query(`SELECT id, era, storage_path, thumb_path, url, thumbnail_url, caption, taken_year,
+                           credit, photographer, license, source_url, is_historic, sort_order, width, height
+                    FROM photos WHERE site_id = $1 AND deleted_at IS NULL
+                    ORDER BY sort_order, taken_year NULLS LAST, created_at`, [id]),
+        pool.query(`SELECT id, kind, citation, url FROM sources WHERE site_id = $1 ORDER BY sort_order, created_at`, [id]),
+        pool.query(`SELECT r.name FROM railroads r JOIN site_railroads sr ON sr.railroad_id = r.id WHERE sr.site_id = $1`, [id]),
+    ]);
+    const signed = await signPaths(photos.flatMap((p: any) => [p.storage_path, p.thumb_path]));
+    site.photos = photos
+        .map((p: any) => ({
+            id: p.id,
+            era: p.era || (p.is_historic ? 'then' : 'now'),
+            url: p.storage_path ? signed[p.storage_path] : p.url,
+            thumb_url: p.thumb_path ? signed[p.thumb_path] : (p.thumbnail_url || p.url),
+            caption: p.caption, year: p.taken_year, credit: p.credit || p.photographer,
+            license: p.license, source_url: p.source_url, width: p.width, height: p.height,
+        }))
+        .filter((p: any) => p.url && !/r2\.dev/.test(p.url)); // old R2 bucket is gone
+    site.sources = sources;
+    site.railroads = railroads.map((r: any) => r.name);
+    return site;
+}
+
 app.get('/api/sites/:id', async (req, res) => {
     try {
-        const { rows: siteRows } = await pool.query(
-            `SELECT s.*, ST_AsGeoJSON(s.geom)::json AS geometry FROM sites s WHERE s.id = $1`,
-            [req.params.id]
-        );
-        if (!siteRows.length) return res.status(404).json({ error: 'Not found' });
-        const site = siteRows[0];
-        const { rows: railroads } = await pool.query(
-            `SELECT r.* FROM railroads r JOIN site_railroads sr ON sr.railroad_id = r.id WHERE sr.site_id = $1`,
-            [req.params.id]
-        );
-        const { rows: photos } = await pool.query(
-            `SELECT * FROM photos WHERE site_id = $1 ORDER BY taken_year NULLS LAST`, [req.params.id]
-        );
-        const { rows: sitePhotos } = await pool.query(
-            `SELECT id, url, thumb_url, sort_order FROM site_photos WHERE site_id = $1 ORDER BY sort_order`,
-            [req.params.id]
-        );
-        const { rows: sources } = await pool.query(
-            `SELECT * FROM sources WHERE site_id = $1`, [req.params.id]
-        );
-        res.json({ ...site, railroads, photos, site_photos: sitePhotos, sources });
+        const site = await loadSite(req.params.id);
+        if (!site) return res.status(404).json({ error: 'Not found' });
+        res.json(site);
     } catch (err) {
         res.status(500).json({ error: (err as Error).message });
     }
 });
 
 // =============================================================================
-// GET /api/lines
+// Shared writers for photos + sources
 // =============================================================================
-app.get('/api/lines', async (req, res) => {
+async function insertPhotos(siteId: string, photos: any[], userId: string) {
+    if (!Array.isArray(photos)) return;
+    const { rows } = await pool.query(
+        `SELECT COALESCE(MAX(sort_order), -1) AS mx FROM photos WHERE site_id = $1`, [siteId]);
+    let order = (rows[0]?.mx ?? -1) + 1;
+    for (const p of photos) {
+        if (typeof p?.storage_path !== 'string' || !p.storage_path.startsWith('photos/')) continue;
+        const era = p.era === 'then' ? 'then' : 'now';
+        await pool.query(
+            `INSERT INTO photos (site_id, era, storage_path, thumb_path, caption, taken_year, credit,
+                                 license, source_url, is_historic, uploaded_by, sort_order, width, height, bytes)
+             VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)`,
+            [siteId, era, p.storage_path, txt(p.thumb_path, 300), txt(p.caption, 1000), int(p.year),
+             txt(p.credit, 300), txt(p.license, 200), isHttp(p.source_url) ? p.source_url.trim() : null,
+             era === 'then', userId, order++, int(p.width), int(p.height), int(p.bytes)]);
+    }
+}
+
+async function replaceSources(siteId: string, sources: any) {
+    if (!Array.isArray(sources)) return;
+    await pool.query(`DELETE FROM sources WHERE site_id = $1`, [siteId]);
+    let i = 0;
+    for (const s of sources) {
+        const citation = txt(s?.citation ?? s?.title, 1000);
+        const url = isHttp(s?.url) ? s.url.trim() : null;
+        if (!citation && !url) continue;
+        await pool.query(
+            `INSERT INTO sources (site_id, kind, citation, url, sort_order) VALUES ($1,$2,$3,$4,$5)`,
+            [siteId, txt(s?.kind, 50) || 'website', citation || url, url, i++]);
+    }
+}
+
+function pinFields(b: any) {
+    const condition = CONDITIONS.includes(b.condition) ? b.condition : 'unknown';
+    return {
+        name: txt(b.name, 300), site_type: txt(b.site_type, 50), condition,
+        status: STATUS_FOR[condition],
+        built_year: int(b.built_year), closed_year: int(b.closed_year), demolished_year: int(b.demolished_year),
+        city: txt(b.city, 200), county: txt(b.county, 200), state_province: txt(b.state, 50) || txt(b.state_province, 50),
+        description: txt(b.description ?? b.history, 50000),
+        is_private_land: bool(b.is_private_land), is_dangerous: bool(b.is_dangerous),
+        coords_approx: bool(b.coords_approx), coords_note: txt(b.coords_note, 1000),
+    };
+}
+
+// =============================================================================
+// POST /api/sites — drop a new pin
+// =============================================================================
+app.post('/api/sites', async (req, res) => {
     try {
-        const conditions: string[] = [];
-        const params: any[] = [];
-        let idx = 1;
+        const user = (req as any).user;
+        const f = pinFields(req.body || {});
+        const lng = Number(req.body?.lng), lat = Number(req.body?.lat);
+        if (!f.name || !f.site_type || !Number.isFinite(lng) || !Number.isFinite(lat))
+            return res.status(400).json({ error: 'name, type and a map location are required' });
+        const { rows } = await pool.query(
+            `INSERT INTO sites (name, site_type, status, condition, geom, built_year, closed_year, demolished_year,
+                                city, county, state_province, description, is_private_land, is_dangerous,
+                                coords_approx, coords_note, mod_status, submitted_by, verified)
+             VALUES ($1,$2::site_type,$3::site_status,$4, ST_SetSRID(ST_MakePoint($5,$6),4326), $7,$8,$9,
+                     $10,$11,$12,$13,$14,$15,$16,$17,'approved',$18,true)
+             RETURNING id`,
+            [f.name, f.site_type, f.status, f.condition, lng, lat, f.built_year, f.closed_year, f.demolished_year,
+             f.city, f.county, f.state_province, f.description, f.is_private_land, f.is_dangerous,
+             f.coords_approx, f.coords_note, user.id]);
+        const id = rows[0].id;
+        await insertPhotos(id, req.body.photos, user.id);
+        await replaceSources(id, req.body.sources);
+        res.status(201).json(await loadSite(id));
+    } catch (err) {
+        res.status(500).json({ error: (err as Error).message });
+    }
+});
 
-        if (typeof req.query.bbox === 'string') {
-            const parts = req.query.bbox.split(',').map(Number);
-            if (parts.length === 4 && parts.every(n => Number.isFinite(n))) {
-                conditions.push(`l.geom && ST_MakeEnvelope($${idx}, $${idx+1}, $${idx+2}, $${idx+3}, 4326)`);
-                params.push(...parts); idx += 4;
-            }
-        }
-        if (typeof req.query.statuses === 'string') {
-            conditions.push(`l.status = ANY($${idx}::line_status[])`);
-            params.push(req.query.statuses.split(',')); idx++;
-        }
-        if (typeof req.query.year === 'string') {
-            const year = parseInt(req.query.year, 10);
-            if (Number.isFinite(year)) {
-                conditions.push(`l.built_year <= $${idx}`);
-                conditions.push(`(l.removed_year IS NULL OR l.removed_year > $${idx})`);
-                params.push(year); idx++;
-            }
-        }
+// =============================================================================
+// PATCH /api/sites/:id — edit a pin (fields, location, add/remove photos, sources)
+// =============================================================================
+app.patch('/api/sites/:id', async (req, res) => {
+    try {
+        const user = (req as any).user;
+        const b = req.body || {};
+        const f = pinFields(b);
+        if (!f.name || !f.site_type) return res.status(400).json({ error: 'name and type are required' });
+        const lng = Number(b.lng), lat = Number(b.lat);
+        const hasCoords = b.lng != null && b.lat != null && Number.isFinite(lng) && Number.isFinite(lat);
+        const params: any[] = [f.name, f.site_type, f.status, f.condition, f.built_year, f.closed_year,
+            f.demolished_year, f.city, f.county, f.state_province, f.description, f.is_private_land,
+            f.is_dangerous, f.coords_approx, f.coords_note, req.params.id];
+        if (hasCoords) params.push(lng, lat);
+        const { rowCount } = await pool.query(
+            `UPDATE sites SET name=$1, site_type=$2::site_type, status=$3::site_status, condition=$4,
+                built_year=$5, closed_year=$6, demolished_year=$7, city=$8, county=$9, state_province=$10,
+                description=$11, is_private_land=$12, is_dangerous=$13, coords_approx=$14, coords_note=$15,
+                updated_at=NOW() ${hasCoords ? ', geom=ST_SetSRID(ST_MakePoint($17,$18),4326)' : ''}
+             WHERE id=$16 AND deleted_at IS NULL`, params);
+        if (!rowCount) return res.status(404).json({ error: 'Not found' });
+        if (Array.isArray(b.remove_photo_ids) && b.remove_photo_ids.length)
+            await pool.query(`UPDATE photos SET deleted_at = NOW() WHERE site_id = $1 AND id = ANY($2::uuid[])`,
+                [req.params.id, b.remove_photo_ids.filter((x: any) => typeof x === 'string')]);
+        await insertPhotos(req.params.id, b.photos, user.id);
+        await replaceSources(req.params.id, b.sources);
+        res.json(await loadSite(req.params.id));
+    } catch (err) {
+        res.status(500).json({ error: (err as Error).message });
+    }
+});
 
-        const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
+// DELETE /api/sites/:id — SOFT delete (row and photos stay in the database)
+app.delete('/api/sites/:id', async (req, res) => {
+    try {
+        const { rows } = await pool.query(
+            `UPDATE sites SET deleted_at = NOW() WHERE id = $1 AND deleted_at IS NULL RETURNING id`, [req.params.id]);
+        if (!rows.length) return res.status(404).json({ error: 'Not found' });
+        res.json({ ok: true });
+    } catch (err) {
+        res.status(500).json({ error: (err as Error).message });
+    }
+});
+
+// DELETE /api/sites/:siteId/photos/:photoId — soft delete one photo
+app.delete('/api/sites/:siteId/photos/:photoId', async (req, res) => {
+    try {
+        const { rows } = await pool.query(
+            `UPDATE photos SET deleted_at = NOW() WHERE id = $1 AND site_id = $2 AND deleted_at IS NULL RETURNING id`,
+            [req.params.photoId, req.params.siteId]);
+        if (rows.length) return res.json({ ok: true });
+        // legacy site_photos table (old public bucket)
+        const { rows: legacy } = await pool.query(
+            `DELETE FROM site_photos WHERE id::text = $1 AND site_id = $2 RETURNING url, thumb_url`,
+            [req.params.photoId, req.params.siteId]);
+        if (!legacy.length) return res.status(404).json({ error: 'Photo not found' });
+        await removeByPublicUrls([legacy[0].url, legacy[0].thumb_url].filter(Boolean)).catch(() => {});
+        res.json({ ok: true });
+    } catch (err) {
+        res.status(500).json({ error: (err as Error).message });
+    }
+});
+
+// GET /api/stats — pin counts by type
+app.get('/api/stats', async (_req, res) => {
+    try {
+        const { rows } = await pool.query(
+            `SELECT site_type, COUNT(*)::int AS n FROM sites
+             WHERE deleted_at IS NULL AND mod_status = 'approved' GROUP BY 1 ORDER BY 2 DESC`);
+        res.json(rows);
+    } catch (err) {
+        res.status(500).json({ error: (err as Error).message });
+    }
+});
+
+// =============================================================================
+// Railroad lines / railroads / historic maps (owner-only, read)
+// =============================================================================
+app.get('/api/lines', async (_req, res) => {
+    try {
         const { rows } = await pool.query(`
             SELECT l.id, l.name, l.status, l.built_year, l.abandoned_year, l.removed_year,
-                   r.name AS railroad_name, r.abbreviation AS railroad_abbr,
-                   ST_AsGeoJSON(l.geom)::json AS geometry
-            FROM lines l LEFT JOIN railroads r ON r.id = l.railroad_id
-            ${where} LIMIT 2000
-        `, params);
-
+                   r.name AS railroad_name, ST_AsGeoJSON(l.geom)::json AS geometry
+            FROM lines l LEFT JOIN railroads r ON r.id = l.railroad_id LIMIT 5000`);
         res.json({
             type: 'FeatureCollection',
             features: rows.map(r => ({
                 type: 'Feature', geometry: r.geometry,
-                properties: {
-                    id: r.id, name: r.name, status: r.status,
-                    built_year: r.built_year, abandoned_year: r.abandoned_year,
-                    removed_year: r.removed_year,
-                    railroad: r.railroad_name, railroad_abbr: r.railroad_abbr,
-                },
+                properties: { id: r.id, name: r.name, status: r.status, built_year: r.built_year,
+                    abandoned_year: r.abandoned_year, removed_year: r.removed_year, railroad: r.railroad_name },
             })),
         });
     } catch (err) {
@@ -213,238 +321,22 @@ app.get('/api/lines', async (req, res) => {
     }
 });
 
-// =============================================================================
-// GET /api/railroads
-// =============================================================================
 app.get('/api/railroads', async (_req, res) => {
     try {
         const { rows } = await pool.query(
-            `SELECT id, name, abbreviation, founded_year, dissolved_year, country FROM railroads ORDER BY name`
-        );
+            `SELECT id, name, abbreviation, founded_year, dissolved_year, country FROM railroads ORDER BY name`);
         res.json(rows);
     } catch (err) {
         res.status(500).json({ error: (err as Error).message });
     }
 });
 
-// =============================================================================
-// GET /api/historic-maps
-// =============================================================================
 app.get('/api/historic-maps', async (_req, res) => {
     try {
         const { rows } = await pool.query(
-            `SELECT id, title, publisher, published_year, tile_url, thumbnail_url, source, license, bounds FROM historic_maps ORDER BY published_year`
-        );
+            `SELECT id, title, publisher, published_year, tile_url, thumbnail_url, source, license, bounds
+             FROM historic_maps ORDER BY published_year`);
         res.json(rows);
-    } catch (err) {
-        res.status(500).json({ error: (err as Error).message });
-    }
-});
-
-// =============================================================================
-// POST /api/historic-maps — requires auth
-// =============================================================================
-app.post('/api/historic-maps', requireAuth, async (req, res) => {
-    try {
-        const { title, publisher, published_year, tile_url, thumbnail_url, source, source_url, license, bounds } = req.body;
-        if (!title || !published_year || !tile_url)
-            return res.status(400).json({ error: 'title, published_year, and tile_url are required' });
-        const { rows } = await pool.query(
-            `INSERT INTO historic_maps (title, publisher, published_year, tile_url, thumbnail_url, source, source_url, license, bbox, bounds)
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, ST_GeomFromText('POLYGON((-180 -90, 180 -90, 180 90, -180 90, -180 -90))', 4326), $9)
-             RETURNING id, title, published_year, tile_url, bounds`,
-            [title, publisher || null, published_year, tile_url, thumbnail_url || null, source || null, source_url || null, license || 'public domain', bounds ? JSON.stringify(bounds) : null]
-        );
-        res.status(201).json(rows[0]);
-    } catch (err) {
-        res.status(500).json({ error: (err as Error).message });
-    }
-});
-
-// =============================================================================
-// POST /api/lines — requires auth
-// =============================================================================
-app.post('/api/lines', requireAuth, async (req, res) => {
-    try {
-        const { name, railroad_id, status, built_year, abandoned_year, removed_year, description, coordinates } = req.body;
-        if (!status || !coordinates || coordinates.length < 2)
-            return res.status(400).json({ error: 'status and coordinates (2+ points) are required' });
-        const wkt = `LINESTRING(${coordinates.map((c: number[]) => `${c[0]} ${c[1]}`).join(', ')})`;
-        const { rows } = await pool.query(
-            `INSERT INTO lines (name, railroad_id, status, built_year, abandoned_year, removed_year, description, geom)
-             VALUES ($1, $2, $3, $4, $5, $6, $7, ST_GeomFromText($8, 4326)) RETURNING id, name, status`,
-            [name || null, railroad_id || null, status, built_year || null, abandoned_year || null, removed_year || null, description || null, wkt]
-        );
-        res.status(201).json(rows[0]);
-    } catch (err) {
-        res.status(500).json({ error: (err as Error).message });
-    }
-});
-
-// =============================================================================
-// POST /api/sites — requires verified auth
-// trusted/admin → live immediately; contributor → pending queue
-// =============================================================================
-app.post('/api/sites', requireAuth, async (req, res) => {
-    try {
-        const user = (req as any).user;
-        if (!user.verified)
-            return res.status(403).json({ error: 'Verify your email before submitting sites' });
-
-        const { name, site_type, status, lng, lat, built_year, closed_year, demolished_year, city, state_province, description, photo_url, photos } = req.body;
-        if (!name || !site_type || !status || lng == null || lat == null)
-            return res.status(400).json({ error: 'name, site_type, status, lng, lat are required' });
-
-        // Normalise to a list of {url, thumb_url} — support both the new photos[] array and the legacy single photo_url
-        const photoList: { url: string; thumb_url?: string }[] =
-            Array.isArray(photos) && photos.length > 0
-                ? photos.filter((p: any) => typeof p?.url === 'string')
-                : photo_url ? [{ url: photo_url }] : [];
-        const primaryPhotoUrl = photoList[0]?.url || null;
-
-        const mod_status = (user.role === 'admin' || user.role === 'trusted') ? 'approved' : 'pending';
-        const { rows } = await pool.query(
-            `INSERT INTO sites (name, site_type, status, geom, built_year, closed_year, demolished_year,
-                                city, state_province, description, photo_url, mod_status, submitted_by)
-             VALUES ($1, $2, $3, ST_SetSRID(ST_MakePoint($4, $5), 4326), $6, $7, $8, $9, $10, $11, $12, $13, $14)
-             RETURNING id, name, site_type, status, mod_status`,
-            [name, site_type, status, lng, lat, built_year || null, closed_year || null,
-             demolished_year || null, city || null, state_province || null, description || null,
-             primaryPhotoUrl, mod_status, user.id]
-        );
-
-        if (photoList.length > 0) {
-            await Promise.all(photoList.map((p, i) =>
-                pool.query(
-                    `INSERT INTO site_photos (site_id, url, thumb_url, sort_order) VALUES ($1, $2, $3, $4)`,
-                    [rows[0].id, p.url, p.thumb_url || null, i]
-                )
-            ));
-        }
-
-        res.status(201).json(rows[0]);
-    } catch (err) {
-        res.status(500).json({ error: (err as Error).message });
-    }
-});
-
-// =============================================================================
-// DELETE /api/sites/:siteId/photos/:photoId — admin or original submitter only
-// Deletes from Supabase Storage (best-effort) and removes the site_photos row.
-// =============================================================================
-app.delete('/api/sites/:siteId/photos/:photoId', requireAuth, async (req, res) => {
-    try {
-        const user = (req as any).user;
-
-        const { rows: siteRows } = await pool.query(
-            `SELECT submitted_by FROM sites WHERE id = $1`, [req.params.siteId]
-        );
-        if (!siteRows.length) return res.status(404).json({ error: 'Site not found' });
-        if (user.role !== 'admin' && siteRows[0].submitted_by !== user.id)
-            return res.status(403).json({ error: 'Not authorized' });
-
-        const { rows: photoRows } = await pool.query(
-            `SELECT id, url, thumb_url FROM site_photos WHERE id = $1 AND site_id = $2`,
-            [req.params.photoId, req.params.siteId]
-        );
-        if (!photoRows.length) return res.status(404).json({ error: 'Photo not found' });
-
-        const photo = photoRows[0];
-
-        // Delete full + thumb from Supabase Storage (best-effort — don't fail the request)
-        await removeByPublicUrls(
-            [photo.url, photo.thumb_url].filter((u): u is string => Boolean(u))
-        ).catch(() => {});
-
-        // Remove the DB row
-        await pool.query(`DELETE FROM site_photos WHERE id = $1`, [photo.id]);
-
-        // Clear sites.photo_url if it pointed to this photo
-        await pool.query(
-            `UPDATE sites SET photo_url = NULL WHERE id = $1 AND photo_url = $2`,
-            [req.params.siteId, photo.url]
-        );
-
-        res.json({ ok: true });
-    } catch (err) {
-        res.status(500).json({ error: (err as Error).message });
-    }
-});
-
-// =============================================================================
-// PATCH /api/sites/:id — admin or original submitter only; goes live immediately
-// =============================================================================
-app.patch('/api/sites/:id', requireAuth, async (req, res) => {
-    try {
-        const user = (req as any).user;
-        const { rows: existing } = await pool.query(
-            `SELECT submitted_by FROM sites WHERE id = $1`, [req.params.id]
-        );
-        if (!existing.length) return res.status(404).json({ error: 'Not found' });
-        if (user.role !== 'admin' && existing[0].submitted_by !== user.id)
-            return res.status(403).json({ error: 'Not authorized to edit this site' });
-
-        const { name, site_type, status, lng, lat, built_year, closed_year, demolished_year, city, state_province, description, photos } = req.body;
-        if (!name || !site_type || !status)
-            return res.status(400).json({ error: 'name, site_type, and status are required' });
-
-        const hasCoords = lng != null && lat != null && Number.isFinite(+lng) && Number.isFinite(+lat);
-        const params: any[] = [
-            name, site_type, status,
-            built_year || null, closed_year || null, demolished_year || null,
-            city || null, state_province || null, description || null,
-        ];
-        if (hasCoords) { params.push(+lng, +lat); }
-        params.push(req.params.id);
-        const idIdx = params.length;
-
-        const { rows } = await pool.query(
-            `UPDATE sites SET
-                name=$1, site_type=$2, status=$3,
-                built_year=$4, closed_year=$5, demolished_year=$6,
-                city=$7, state_province=$8, description=$9,
-                updated_at=NOW()
-                ${hasCoords ? `, geom=ST_SetSRID(ST_MakePoint($10,$11),4326)` : ''}
-             WHERE id=$${idIdx}
-             RETURNING id, name, site_type, status, built_year, closed_year, demolished_year,
-                       city, state_province, description, updated_at`,
-            params
-        );
-
-        if (Array.isArray(photos) && photos.length > 0) {
-            const { rows: ex } = await pool.query(
-                `SELECT COALESCE(MAX(sort_order), -1) AS mx FROM site_photos WHERE site_id=$1`,
-                [req.params.id]
-            );
-            const start = (ex[0]?.mx ?? -1) + 1;
-            await Promise.all(
-                photos.filter((p: any) => typeof p?.url === 'string').map((p: any, i: number) =>
-                    pool.query(
-                        `INSERT INTO site_photos (site_id, url, thumb_url, sort_order) VALUES ($1,$2,$3,$4)`,
-                        [req.params.id, p.url, p.thumb_url || null, start + i]
-                    )
-                )
-            );
-        }
-
-        res.json(rows[0]);
-    } catch (err) {
-        res.status(500).json({ error: (err as Error).message });
-    }
-});
-
-// =============================================================================
-// DELETE /api/sites/:id — admin or original submitter only
-// =============================================================================
-app.delete('/api/sites/:id', requireAuth, async (req, res) => {
-    try {
-        const user = (req as any).user;
-        const { rows } = await pool.query(
-            `DELETE FROM sites WHERE id = $1 AND (submitted_by = $2 OR $3 = true) RETURNING id`,
-            [req.params.id, user.id, user.role === 'admin']
-        );
-        if (!rows.length) return res.status(404).json({ error: 'Not found or not authorized' });
-        res.json({ ok: true });
     } catch (err) {
         res.status(500).json({ error: (err as Error).message });
     }

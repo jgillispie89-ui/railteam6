@@ -13,6 +13,9 @@ const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || '').toLowerCase();
 // POST /api/auth/register
 // =============================================================================
 router.post('/register', async (req, res) => {
+    // The map is private (2026-11-20): public sign-up is closed.
+    if (process.env.ALLOW_SIGNUP !== 'true')
+        return res.status(403).json({ error: 'Sign-up is closed. This map is private.' });
     try {
         const { email, password } = req.body;
         if (!email || !password) return res.status(400).json({ error: 'email and password required' });
@@ -70,6 +73,9 @@ router.post('/login', async (req, res) => {
         const u = rows[0];
         if (!u || !u.password_hash || !(await bcrypt.compare(password, u.password_hash)))
             return res.status(401).json({ error: 'Invalid email or password' });
+        // Private map: only the owner's admin account may sign in.
+        if (u.role !== 'admin')
+            return res.status(403).json({ error: 'This map is private.' });
 
         const token = signToken({ id: u.id, email: u.email, role: u.role, verified: u.verified });
         res.json({ token, user: { id: u.id, email: u.email, role: u.role, verified: u.verified } });
