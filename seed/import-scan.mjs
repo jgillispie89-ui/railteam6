@@ -70,7 +70,8 @@ for (const t of rows) {
     if (!DRY) {
       const desc = hit.description || '';
       const probe = String(remains[0] || t.history || '').slice(0, 50);
-      const add = probe && desc.includes(probe) ? desc : (desc ? desc + '\n\nScan notes: ' + text : text);
+      // a row with no text (e.g. only new coordinates or links) leaves the description alone
+      const add = !text || (probe && desc.includes(probe)) ? desc : (desc ? desc + '\n\nScan notes: ' + text : text);
       await db.query(`UPDATE sites SET description=$2, is_dangerous = is_dangerous OR $3, is_private_land = is_private_land OR $4,
           built_year=COALESCE(built_year,$5), closed_year=COALESCE(closed_year,$6), county=COALESCE(county,$7), updated_at=now() WHERE id=$1`,
         // the danger badge only carries over to a pin of the same kind (a portal's danger should not flag a whole town)
