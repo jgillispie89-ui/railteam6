@@ -9,6 +9,8 @@
 // Usage: node import-scan.mjs <file.json> <keyPrefix> [--default-type t] [--dry]
 import fs from 'fs'; import pg from 'pg';
 const [FILE, PREFIX] = process.argv.slice(2); const DRY = process.argv.includes('--dry');
+// --new "a,b": rows whose name contains one of these always become their own pin (never merged)
+const newIdx = process.argv.indexOf('--new'); const NEW = newIdx > 0 ? process.argv[newIdx + 1].toLowerCase().split(',').map(s => s.trim()).filter(Boolean) : [];
 const defIdx = process.argv.indexOf('--default-type'); const DEFAULT_TYPE = defIdx > 0 ? process.argv[defIdx + 1] : 'other';
 const env = fs.readFileSync('C:/Users/User/credentials/.env', 'utf8');
 const pw = env.split(/\r?\n/).find(l => l.startsWith('RAILTEAM6_SUPABASE_DB_PASSWORD=')).split('=').slice(1).join('=').trim();
@@ -46,7 +48,8 @@ for (const t of rows) {
   const fromThisFile = r => (r.seed_key || '').startsWith(PREFIX + ':') && r.seed_key !== key;
   const myWords = words(t.name), myCore = core(t.name);
   const sameCore = r => { const c = core(r.name); return myCore.length >= 4 && c.length >= 4 && (c === myCore || c.startsWith(myCore + ' ') || myCore.startsWith(c + ' ')); };
-  const hit = near.find(r => r.seed_key === key)
+  const forceNew = NEW.some(s => t.name.toLowerCase().includes(s));
+  const hit = forceNew ? near.find(r => r.seed_key === key) : near.find(r => r.seed_key === key)
     || near.find(r => !fromThisFile(r) && r.d <= 300 && (FAMILY[r.t] || 'other') === fam)
     || near.find(r => !fromThisFile(r) && r.d <= 300 && words(r.name).some(w => myWords.includes(w)))
     || near.find(r => !fromThisFile(r) && (FAMILY[r.t] || 'other') === fam && sameCore(r));
@@ -69,7 +72,8 @@ for (const t of rows) {
       const add = probe && desc.includes(probe) ? desc : (desc ? desc + '\n\nScan notes: ' + text : text);
       await db.query(`UPDATE sites SET description=$2, is_dangerous = is_dangerous OR $3, is_private_land = is_private_land OR $4,
           built_year=COALESCE(built_year,$5), closed_year=COALESCE(closed_year,$6), county=COALESCE(county,$7), updated_at=now() WHERE id=$1`,
-        [hit.id, add, danger, priv, t.built_year || null, t.closed_year || t.abandoned_year || null, county]);
+        // the danger badge only carries over to a pin of the same kind (a portal's danger should not flag a whole town)
+        [hit.id, add, danger && (FAMILY[hit.t] || 'other') === fam, priv, t.built_year || null, t.closed_year || t.abandoned_year || null, county]);
       if (!approx && hit.coords_approx && hit.d <= 1500)
         await db.query(`UPDATE sites SET geom=ST_SetSRID(ST_MakePoint($2,$3),4326), coords_approx=false, coords_note=NULL WHERE id=$1`, [hit.id, lon, lat]);
     }
