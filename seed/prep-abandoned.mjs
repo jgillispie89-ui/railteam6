@@ -15,7 +15,8 @@ for (const r of rows) {
   else if (t === 'other') {
     if (/\bdepot\b/i.test(r.name)) t = 'depot';
     else if (/bridge|viaduct/i.test(r.name)) t = 'bridge';
-    else if (/theat|store|ymca|printer|building|hall|mill/i.test(r.name)) t = 'lost_building';
+    else if (/saltpet|saltpeter|cave/i.test(r.name)) t = 'other';
+    else if (/\btheat|store|ymca|printer|building|hall|mill/i.test(r.name)) t = 'lost_building';
   }
   stats.types[r.type + ' -> ' + t] = (stats.types[r.type + ' -> ' + t] || 0) + 1;
   r.type = t;

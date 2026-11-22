@@ -34,7 +34,7 @@ const res = { added: [], merged: [], skipped: [], typeMapped: {} };
 if (!DRY) await db.query('BEGIN');
 for (const t of rows) {
   if (t.lat == null || t.lat === '' || !Number.isFinite(+t.lat) || !Number.isFinite(+t.lon)) { res.skipped.push(t.name); continue; }
-  const lat = +t.lat, lon = +t.lon, approx = /^approximate/i.test(t.coord_quality || ''), key = PREFIX + ':' + slug(t.name);
+  const lat = +t.lat, lon = +t.lon, approx = /^(approx|rough)/i.test(t.coord_quality || ''), key = PREFIX + ':' + slug(t.name);
   let type = t.type || DEFAULT_TYPE;
   if (!ENUM.has(type)) {
     const m = /bridge|trestle|viaduct/.test(type) ? 'bridge' : /depot|station/.test(type) ? 'depot' : /town|camp/.test(type) ? 'ghost_town'
@@ -62,7 +62,7 @@ for (const t of rows) {
   const acc = String(t.access || '');
   const danger = /danger|collaps|unsound|caved|unstable|do not enter|hazard/i.test(acc);
   const priv = /private|occupied|people live|permission|guarded|no trespass/i.test(acc);
-  const note = approx ? 'Approximate: ' + String(t.coord_quality).replace(/^approximate:\s*/i, '') : null;
+  const note = approx ? 'Approximate: ' + String(t.coord_quality).replace(/^(approximate:?|approx\.?|rough:?)\s*/i, '') : null;
   const county = String(t.county || '').split(/[\/(]/)[0].trim() || null;
   let siteId;
   if (hit) {
