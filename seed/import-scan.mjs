@@ -25,6 +25,7 @@ const core = n => n.toLowerCase().split(/[(:]|\s\/\s/)[0].replace(/[^a-z0-9 ]+/g
 const words = n => n.toLowerCase().replace(/\(.*?\)/g, ' ').replace(/[^a-z ]+/g, ' ').split(/\s+/).filter(w => w.length >= 4 && !GENERIC.has(w));
 const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 80);
 const arr = v => Array.isArray(v) ? v : v ? [v] : [];
+const yr = v => { const m = String(v ?? "").match(/\d{4}/); return m ? +m[0] : null; };  // "1861 (expanded 1875)" -> 1861
 await db.connect();
 const ENUM = new Set((await db.query(`SELECT unnest(enum_range(NULL::site_type))::text v`)).rows.map(r => r.v));
 const owner = (await db.query(`SELECT id FROM users WHERE role = 'admin' ORDER BY created_at LIMIT 1`)).rows[0].id;
@@ -37,7 +38,7 @@ for (const t of rows) {
   let type = t.type || DEFAULT_TYPE;
   if (!ENUM.has(type)) {
     const m = /bridge|trestle|viaduct/.test(type) ? 'bridge' : /depot|station/.test(type) ? 'depot' : /town|camp/.test(type) ? 'ghost_town'
-      : /mine|tipple|portal/.test(type) ? 'mine' : /building|house|church|school|mill|lock|dam|fort|industry|kiln|works/.test(type) ? 'lost_building' : 'other';
+      : /mine|tipple|portal/.test(type) ? 'mine' : /building|house|church|school|hospital|hotel|distillery|factory|military|theat|mill|lock|dam|fort|industry|kiln|works/.test(type) ? 'lost_building' : 'other';
     res.typeMapped[type + ' -> ' + m] = (res.typeMapped[type + ' -> ' + m] || 0) + 1; type = m;
   }
   const fam = FAMILY[type] || 'other';
@@ -60,7 +61,7 @@ for (const t of rows) {
     ...arr(t.photo_links).map(p => ({ url: p.url, title: (p.label || 'Photo link') + (p.what ? ' (' + p.what + ')' : '') }))];
   const acc = String(t.access || '');
   const danger = /danger|collaps|unsound|caved|unstable|do not enter|hazard/i.test(acc);
-  const priv = /private|occupied|people live|permission/i.test(acc);
+  const priv = /private|occupied|people live|permission|guarded|no trespass/i.test(acc);
   const note = approx ? 'Approximate: ' + String(t.coord_quality).replace(/^approximate:\s*/i, '') : null;
   const county = String(t.county || '').split(/[\/(]/)[0].trim() || null;
   let siteId;
@@ -73,7 +74,7 @@ for (const t of rows) {
       await db.query(`UPDATE sites SET description=$2, is_dangerous = is_dangerous OR $3, is_private_land = is_private_land OR $4,
           built_year=COALESCE(built_year,$5), closed_year=COALESCE(closed_year,$6), county=COALESCE(county,$7), updated_at=now() WHERE id=$1`,
         // the danger badge only carries over to a pin of the same kind (a portal's danger should not flag a whole town)
-        [hit.id, add, danger && (FAMILY[hit.t] || 'other') === fam, priv, t.built_year || null, t.closed_year || t.abandoned_year || null, county]);
+        [hit.id, add, danger && (FAMILY[hit.t] || 'other') === fam, priv, yr(t.built_year), yr(t.closed_year) ?? yr(t.abandoned_year), county]);
       if (!approx && hit.coords_approx && hit.d <= 1500)
         await db.query(`UPDATE sites SET geom=ST_SetSRID(ST_MakePoint($2,$3),4326), coords_approx=false, coords_note=NULL WHERE id=$1`, [hit.id, lon, lat]);
     }
@@ -82,7 +83,7 @@ for (const t of rows) {
     if (!DRY) siteId = (await db.query(`INSERT INTO sites (name, site_type, status, condition, geom, built_year, closed_year, county, state_province, description,
         is_private_land, is_dangerous, coords_approx, coords_note, seed_key, mod_status, submitted_by, verified, external_refs)
         VALUES ($1,$2::site_type,'ruins','remains',ST_SetSRID(ST_MakePoint($3,$4),4326),$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,'approved',$15,true,'{}') RETURNING id`,
-      [t.name, type, lon, lat, t.built_year || null, t.closed_year || t.abandoned_year || null, county, t.state || 'KY', text, priv, danger, approx, note, key, owner])).rows[0].id;
+      [t.name, type, lon, lat, yr(t.built_year), yr(t.closed_year) ?? yr(t.abandoned_year), county, t.state || 'KY', text, priv, danger, approx, note, key, owner])).rows[0].id;
   }
   if (!DRY && siteId) {
     const have = new Set((await db.query('SELECT url FROM sources WHERE site_id=$1', [siteId])).rows.map(r => r.url));
