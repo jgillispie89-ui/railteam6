@@ -82,8 +82,10 @@ for (const t of rows) {
     res.added.push(`${type} ${t.name}`);
     if (!DRY) siteId = (await db.query(`INSERT INTO sites (name, site_type, status, condition, geom, built_year, closed_year, county, state_province, description,
         is_private_land, is_dangerous, coords_approx, coords_note, seed_key, mod_status, submitted_by, verified, external_refs)
-        VALUES ($1,$2::site_type,'ruins','remains',ST_SetSRID(ST_MakePoint($3,$4),4326),$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,'approved',$15,true,'{}') RETURNING id`,
-      [t.name, type, lon, lat, yr(t.built_year), yr(t.closed_year) ?? yr(t.abandoned_year), county, t.state || 'KY', text, priv, danger, approx, note, key, owner])).rows[0].id;
+        VALUES ($1,$2::site_type,$16::site_status,$17,ST_SetSRID(ST_MakePoint($3,$4),4326),$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,'approved',$15,true,'{}') RETURNING id`,
+      [t.name, type, lon, lat, yr(t.built_year), yr(t.closed_year) ?? yr(t.abandoned_year), county, t.state || 'KY', text, priv, danger, approx, note, key, owner,
+       // optional condition from a prep script: preserved | standing_ruin | remains (default remains)
+       ({ preserved: 'preserved', standing_ruin: 'abandoned', remains: 'ruins' })[t.condition] || 'ruins', ['preserved', 'standing_ruin', 'remains'].includes(t.condition) ? t.condition : 'remains'])).rows[0].id;
   }
   if (!DRY && siteId) {
     const have = new Set((await db.query('SELECT url FROM sources WHERE site_id=$1', [siteId])).rows.map(r => r.url));
