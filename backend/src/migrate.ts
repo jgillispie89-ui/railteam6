@@ -108,7 +108,7 @@ export async function migrate() {
 // 2026-11-20: private nationwide "lost places" map
 // =============================================================================
 export async function migrateLostPlaces() {
-    for (const v of ['mine', 'coal_town', 'ghost_town', 'iron_furnace', 'lost_building', 'lost_town']) {
+    for (const v of ['mine', 'coal_town', 'ghost_town', 'iron_furnace', 'lost_building', 'lost_town', 'other', 'possible_find']) {
         await pool.query(`ALTER TYPE site_type ADD VALUE IF NOT EXISTS '${v}'`);
     }
     await pool.query(`

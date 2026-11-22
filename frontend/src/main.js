@@ -35,7 +35,10 @@ const TYPES = {
     interlocking:  { label: 'Interlocking tower',      emoji: '🚦', color: '#607d8b', group: 'Railroad' },
     wreck_site:    { label: 'Wreck site',              emoji: '💥', color: '#c62828', group: 'Railroad' },
     other:         { label: 'Other',                   emoji: '📍', color: '#757575', group: 'Other' },
+    // Unverified candidates: dashed ring, off by default, never counted as a confirmed remains site.
+    possible_find: { label: 'Possible find (unverified)', emoji: '❔', color: '#8d6e63', group: 'Unverified', dashed: true, defaultOff: true },
 };
+const DEFAULT_TYPES = Object.keys(TYPES).filter(k => !TYPES[k].defaultOff);
 const CONDITIONS = {
     preserved:     'Standing / preserved',
     standing_ruin: 'Standing ruin',
@@ -111,9 +114,43 @@ const BASEMAPS = {
     topo: { tiles: ['https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}'], maxzoom: 16,
         attribution: 'Topo: <a href="https://www.usgs.gov/programs/national-geospatial-program/national-map" target="_blank">USGS The National Map</a> (public domain)' },
 };
+// Overlays (all public, no key; URLs + terms in README "Map layers"). Drawn above the basemap, below pins.
+const KY_BOUNDS = [-89.6, 36.45, -81.9, 39.2];
+const HIST_TOPO = 'https://historical1.arcgis.com/arcgis/rest/services/USGS_Historical_Topographic_Maps/ImageServer';
+const KY_MINES = 'https://eppcgis.ky.gov/arcgis/rest/services/Mine_Mapping';
+const MINED_OUT = KY_MINES + '/Ky_Mined_Out_Areas_WGS84WM/MapServer';
+const PORTALS = KY_MINES + '/Ky_Mine_Portals_WGS84WM/MapServer';
+const TOPO_ERAS = {
+    oldest: { label: 'Oldest map for each spot', from: 1880, to: 1965 },
+    e1: { label: '1880s to 1910', from: 1880, to: 1910 },
+    e2: { label: '1911 to 1940', from: 1911, to: 1940 },
+    e3: { label: '1941 to 1965', from: 1941, to: 1965 },
+};
+const exportTiles = (base) => [`${base}/export?bbox={bbox-epsg-3857}&bboxSR=3857&imageSR=3857&size=512,512&format=png32&transparent=true&dpi=96&f=image`];
+function topoTiles(era) {
+    const e = TOPO_ERAS[era] || TOPO_ERAS.oldest;
+    const rule = { mosaicMethod: 'esriMosaicAttribute', sortField: 'Year', sortValue: String(e.from), ascending: true,
+        where: `Year >= ${e.from} AND Year <= ${e.to}` };
+    return [`${HIST_TOPO}/exportImage?bbox={bbox-epsg-3857}&bboxSR=3857&imageSR=3857&size=512,512&format=jpgpng&f=image&mosaicRule=${encodeURIComponent(JSON.stringify(rule))}`];
+}
+const OVERLAYS = {
+    histtopo: { label: 'Old USGS topo maps', note: '1880s to 1960s, whole US', tiles: () => topoTiles(store.get('lp_topo_era', 'oldest')),
+        tileSize: 512, minzoom: 6, maxzoom: 17, opacity: 0.85,
+        attribution: 'Old topos: <a href="https://www.usgs.gov/programs/national-geospatial-program/historical-topographic-maps-preserving-past" target="_blank">USGS Historical Topographic Map Collection</a> via Esri' },
+    hillshade: { label: 'Kentucky LiDAR hillshade', note: 'bare ground, trees removed', tiles: () => ['https://kygisserver.ky.gov/arcgis/rest/services/WGS84WM_Services/Ky_MultiDirectional_Hillshade_WGS84WM/MapServer/tile/{z}/{y}/{x}'],
+        tileSize: 256, minzoom: 7, maxzoom: 18, bounds: KY_BOUNDS, opacity: 0.6,
+        attribution: 'Hillshade: <a href="https://kyfromabove.ky.gov/" target="_blank">KyFromAbove</a>, Commonwealth of Kentucky' },
+    mined: { label: 'Kentucky mined-out areas', note: 'tap an area for mine name and company', tiles: () => exportTiles(MINED_OUT),
+        tileSize: 512, minzoom: 9, maxzoom: 20, bounds: KY_BOUNDS, opacity: 0.6, clickable: true,
+        attribution: 'Mine maps: <a href="https://eec.ky.gov/Natural-Resources/Mining/Mine-Permits/Pages/Mine-Mapping.aspx" target="_blank">Kentucky Energy &amp; Environment Cabinet, Mine Mapping</a>' },
+    portals: { label: 'Kentucky mine portals / entries', note: 'shows from zoom 10; tap one', tiles: () => exportTiles(PORTALS),
+        tileSize: 512, minzoom: 10, maxzoom: 20, bounds: KY_BOUNDS, opacity: 1, clickable: true,
+        attribution: 'Mine portals: Kentucky Energy &amp; Environment Cabinet, Mine Mapping' },
+};
+const ovState = () => store.get('lp_overlays', {});
 let map = null;
 let allFeatures = [];
-let enabledTypes = new Set(store.get('lp_types', Object.keys(TYPES)));
+let enabledTypes = new Set(store.get('lp_types', DEFAULT_TYPES));
 let currentId = null;
 
 function buildStyle() {
@@ -121,6 +158,14 @@ function buildStyle() {
     for (const [k, b] of Object.entries(BASEMAPS)) {
         sources['bm-' + k] = { type: 'raster', tiles: b.tiles, tileSize: 256, maxzoom: b.maxzoom, attribution: b.attribution };
         layers.push({ id: 'bm-' + k, type: 'raster', source: 'bm-' + k, layout: { visibility: 'none' } });
+    }
+    const st = ovState();
+    for (const [k, o] of Object.entries(OVERLAYS)) {
+        sources['ov-' + k] = { type: 'raster', tiles: o.tiles(), tileSize: o.tileSize, minzoom: o.minzoom, maxzoom: o.maxzoom,
+            attribution: o.attribution, ...(o.bounds ? { bounds: o.bounds } : {}) };
+        layers.push({ id: 'ov-' + k, type: 'raster', source: 'ov-' + k, minzoom: Math.max(0, o.minzoom - 0.01),
+            layout: { visibility: st[k]?.on ? 'visible' : 'none' },
+            paint: { 'raster-opacity': st[k]?.op ?? o.opacity, 'raster-fade-duration': 150 } });
     }
     return { version: 8, glyphs: 'https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf', sources, layers };
 }
@@ -137,8 +182,13 @@ function makeIcon(t) {
     c.width = c.height = s;
     const g = c.getContext('2d');
     g.beginPath(); g.arc(s / 2, s / 2, s / 2 - 4, 0, Math.PI * 2);
-    g.fillStyle = t.color; g.fill();
-    g.lineWidth = 5; g.strokeStyle = '#fff'; g.stroke();
+    if (t.dashed) {
+        g.fillStyle = 'rgba(255,255,255,0.85)'; g.fill();
+        g.setLineDash([7, 5]); g.lineWidth = 5; g.strokeStyle = t.color; g.stroke(); g.setLineDash([]);
+    } else {
+        g.fillStyle = t.color; g.fill();
+        g.lineWidth = 5; g.strokeStyle = '#fff'; g.stroke();
+    }
     g.font = '30px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';
     g.textAlign = 'center'; g.textBaseline = 'middle';
     g.fillText(t.emoji, s / 2, s / 2 + 2);
@@ -185,6 +235,10 @@ function initMap() {
         map.on('mouseenter', 'pins', () => { map.getCanvas().style.cursor = 'pointer'; });
         map.on('mouseleave', 'pins', () => { map.getCanvas().style.cursor = ''; });
         map.on('click', onMapClickForPick);
+        map.on('click', onMineClick);
+        renderOverlayList();
+        // Keep the credits line folded on phones so it does not cover the map (tap the (i) to open it).
+        document.querySelector('.maplibregl-ctrl-attrib')?.classList.remove('maplibregl-compact-show');
         await loadPins();
         const m = location.hash.match(/pin=([0-9a-f-]{36})/);
         if (m) openPin(m[1], true);
@@ -221,7 +275,7 @@ function renderFilterList() {
         store.set('lp_types', [...enabledTypes]); applyFilter();
     };
 }
-$('filter-all').onclick = () => { enabledTypes = new Set(Object.keys(TYPES)); store.set('lp_types', [...enabledTypes]); renderFilterList(); applyFilter(); };
+$('filter-all').onclick = () => { enabledTypes = new Set(DEFAULT_TYPES); store.set('lp_types', [...enabledTypes]); renderFilterList(); applyFilter(); };
 $('filter-none').onclick = () => { enabledTypes = new Set(); store.set('lp_types', []); renderFilterList(); applyFilter(); };
 
 let linesLoaded = false;
@@ -236,6 +290,79 @@ $('toggle-lines').onchange = (e) => toggleLines(e.target.checked);
 $('toggle-labels').checked = store.get('lp_labels', true);
 $('toggle-labels').onchange = (e) => { store.set('lp_labels', e.target.checked); map.setLayoutProperty('pin-labels', 'visibility', e.target.checked ? 'visible' : 'none'); };
 for (const r of document.querySelectorAll('input[name=basemap]')) r.onchange = () => setBasemap(r.value);
+
+// Overlay controls: on/off, opacity, era (old topos). Remembered per device.
+function saveOv(k, patch) { const s = ovState(); s[k] = { ...(s[k] || {}), ...patch }; store.set('lp_overlays', s); }
+function renderOverlayList() {
+    const st = ovState(), era = store.get('lp_topo_era', 'oldest');
+    $('overlay-list').innerHTML = Object.entries(OVERLAYS).map(([k, o]) => `
+        <div class="ov">
+            <label class="check"><input type="checkbox" data-ov="${k}" ${st[k]?.on ? 'checked' : ''}> ${esc(o.label)}</label>
+            <div class="ov-note">${esc(o.note)}</div>
+            <div class="ov-controls ${st[k]?.on ? '' : 'hidden'}" data-ovc="${k}">
+                <input type="range" min="10" max="100" step="5" value="${Math.round((st[k]?.op ?? o.opacity) * 100)}" data-op="${k}" aria-label="${esc(o.label)} see-through">
+                ${k === 'histtopo' ? `<select data-era>${Object.entries(TOPO_ERAS).map(([ek, e]) => `<option value="${ek}" ${ek === era ? 'selected' : ''}>${esc(e.label)}</option>`).join('')}</select>` : ''}
+            </div>
+        </div>`).join('');
+    for (const cb of $('overlay-list').querySelectorAll('[data-ov]')) cb.onchange = () => {
+        const k = cb.dataset.ov; saveOv(k, { on: cb.checked });
+        map.setLayoutProperty('ov-' + k, 'visibility', cb.checked ? 'visible' : 'none');
+        $('overlay-list').querySelector(`[data-ovc="${k}"]`).classList.toggle('hidden', !cb.checked);
+        const z = map.getZoom();
+        if (cb.checked && z < OVERLAYS[k].minzoom) toast(`${OVERLAYS[k].label} shows when you zoom in closer.`);
+    };
+    for (const sl of $('overlay-list').querySelectorAll('[data-op]')) sl.oninput = () => {
+        const k = sl.dataset.op, v = +sl.value / 100; saveOv(k, { op: v }); map.setPaintProperty('ov-' + k, 'raster-opacity', v);
+    };
+    const sel = $('overlay-list').querySelector('[data-era]');
+    if (sel) sel.onchange = () => { store.set('lp_topo_era', sel.value); map.getSource('ov-histtopo').setTiles(topoTiles(sel.value)); };
+}
+
+// Tap on a mine area / portal (when those layers are on and no pin was hit)
+// ArcGIS "identify": the server applies a pixel tolerance, so taps on thin strips and small dots still hit.
+async function arcIdentify(url, layers, e, tolerance) {
+    const b = map.getBounds(), c = map.getCanvas();
+    const r = await fetch(url + '/identify?' + new URLSearchParams({ f: 'json', geometry: `${e.lngLat.lng},${e.lngLat.lat}`, geometryType: 'esriGeometryPoint',
+        sr: '4326', layers, tolerance: String(tolerance), returnGeometry: 'false',
+        mapExtent: [b.getWest(), b.getSouth(), b.getEast(), b.getNorth()].join(','), imageDisplay: `${c.clientWidth},${c.clientHeight},96` }));
+    const j = await r.json(); if (j.error) throw new Error(j.error.message); return (j.results || []).map(x => x.attributes);
+}
+const attr = (a, ...keys) => { for (const k of keys) if (a[k] != null) return a[k]; return ''; };
+const clean = (v) => (v == null || /^\s*$|^NULL$/i.test(String(v)) ? '' : String(v).trim());
+let minePopup = null;
+async function onMineClick(e) {
+    if (picking) return;
+    const st = ovState(), z = map.getZoom();
+    const wantAreas = st.mined?.on && z >= OVERLAYS.mined.minzoom, wantPortals = st.portals?.on && z >= OVERLAYS.portals.minzoom;
+    if (!wantAreas && !wantPortals) return;
+    if (map.queryRenderedFeatures(e.point, { layers: ['pins'] }).length) return;
+    try {
+        const [portals, areas] = await Promise.all([
+            wantPortals ? arcIdentify(PORTALS, 'all:0', e, 10) : [],
+            wantAreas ? arcIdentify(MINED_OUT, 'all:0,1', e, 3) : [],
+        ]);
+        if (!portals.length && !areas.length) return;
+        const seen = new Set(), rows = [];
+        for (const p of portals.slice(0, 3)) {
+            const sfn = clean(attr(p, 'SFN', 'State File Number')), la = +attr(p, 'LATITUDE', 'Latitude'), lo = +attr(p, 'LONGITUDE', 'Longitude');
+            rows.push(`<div class="mp"><b>Mine entry: ${esc(clean(attr(p, 'ENTRY_TYPE', 'Entry Type')) || 'type not recorded')}</b>
+            ${sfn ? `<div>State file number ${esc(sfn)} · <a href="https://minemaps.ky.gov/Maps/minereport?sfn=${encodeURIComponent(sfn)}" target="_blank" rel="noopener">mine record</a></div>` : ''}
+            ${la ? `<div class="muted">${la.toFixed(5)}, ${lo.toFixed(5)}</div>` : ''}</div>`);
+        }
+        for (const a of areas) {
+            const key = a.SFN + '|' + a.MINE_NAME; if (seen.has(key)) continue; seen.add(key);
+            const name = clean(a.MINE_NAME), type = clean(a.MINE_TYPE1);
+            const title = name ? (/^\d+$/.test(name) ? 'Mine No. ' + name : name) : (clean(a.COMPANY) ? 'Mine' : 'Mined-out area (no details in the state file)');
+            rows.push(`<div class="mp"><b>${esc(title)}</b>${type ? ` <span class="muted">(${esc(type.toLowerCase())})</span>` : ''}
+                ${clean(a.COMPANY) ? `<div>${esc(a.COMPANY)}</div>` : ''}
+                ${[clean(a.SEAM_NAME) && 'Seam: ' + clean(a.SEAM_NAME), clean(a.STATUS), clean(a.NRST_TOWN) && 'near ' + clean(a.NRST_TOWN)].filter(Boolean).map(esc).join(' · ')}
+                ${clean(a.SFN) ? `<div><a href="https://minemaps.ky.gov/Maps/minereport?sfn=${encodeURIComponent(clean(a.SFN))}" target="_blank" rel="noopener">State mine record and scanned maps</a></div>` : ''}</div>`);
+            if (rows.length >= 5) break;
+        }
+        minePopup?.remove();
+        minePopup = new maplibregl.Popup({ maxWidth: '300px' }).setLngLat(e.lngLat).setHTML(`<div class="mine-pop">${rows.join('')}</div>`).addTo(map);
+    } catch (err) { toast('Mine map lookup failed: ' + err.message); }
+}
 
 // Panels
 function togglePop(id) {
@@ -368,8 +495,9 @@ function renderPin(s) {
         <span class="type-badge" style="background:${t.color}"><span class="e">${t.emoji}</span>${esc(t.label)}</span>
         <h2>${esc(s.name)}</h2>
         <p class="place">${esc(place || 'Location not named yet')}</p>
+        ${t.dashed ? '<p class="unverified">Unverified candidate: nobody has confirmed anything remains here yet.</p>' : ''}
         <div class="chips">
-            ${cond ? `<span class="chip">${esc(cond)}</span>` : ''}
+            ${cond && !t.dashed ? `<span class="chip">${esc(cond)}</span>` : ''}
             ${s.is_private_land ? '<span class="chip priv">🚫 Private land</span>' : ''}
             ${s.is_dangerous ? '<span class="chip warn">⚠️ Dangerous</span>' : ''}
             ${s.coords_approx ? '<span class="chip priv">📍 Approximate spot</span>' : ''}

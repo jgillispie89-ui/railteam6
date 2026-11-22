@@ -79,3 +79,21 @@ cd backend && npm install && npm run dev    # http://localhost:3001
 # Frontend
 cd frontend && npm install && npm run dev   # http://localhost:5173
 ```
+
+## Map layers (added 2026-11-21)
+
+All overlays are switchable in the Layers panel (on/off, see-through slider, remembered per device in localStorage).
+Every service below was tested live on 2026-11-21: tiles load in the browser (CORS allows www.railteam6.com) and no key is needed.
+
+| Layer | Service URL | Terms / license |
+|---|---|---|
+| Old USGS topo maps, 1880s-1960s, era picker (oldest / 1880-1910 / 1911-1940 / 1941-1965) | `https://historical1.arcgis.com/arcgis/rest/services/USGS_Historical_Topographic_Maps/ImageServer` (exportImage with a `mosaicRule` on the `Year` field) | Maps are USGS Historical Topographic Map Collection scans (US government, public domain). The Esri image service is Living Atlas "subscriber" content under the Esri Master License Agreement; Esri's item page says use needs an ArcGIS account (a free ArcGIS developer account is enough). It answers without a token today. If Esri ever locks it, the fallback is per-quad GeoTIFFs from USGS topoView / The National Map (public domain) for the Kentucky quads we care about. |
+| Kentucky LiDAR hillshade (bare earth, KyFromAbove 5 ft multi-directional) | `https://kygisserver.ky.gov/arcgis/rest/services/WGS84WM_Services/Ky_MultiDirectional_Hillshade_WGS84WM/MapServer/tile/{z}/{y}/{x}` (cached tiles to z19) | Commonwealth of Kentucky, KyFromAbove program; public state data, credit "KyFromAbove". |
+| Kentucky mined-out areas (underground + surface; tap for mine name, company, seam, status, state file number) | `https://eppcgis.ky.gov/arcgis/rest/services/Mine_Mapping/Ky_Mined_Out_Areas_WGS84WM/MapServer` (export for drawing, identify for taps; layers 0 Active, 1 Inactive) | Kentucky Energy & Environment Cabinet, Mine Mapping Information System; public state data. Mine record link: `https://minemaps.ky.gov/Maps/minereport?sfn=<SFN>` (the old AvailableMaps.aspx links in the data are dead). |
+| Kentucky mine portals / entries (from zoom 10) | `https://eppcgis.ky.gov/arcgis/rest/services/Mine_Mapping/Ky_Mine_Portals_WGS84WM/MapServer` | Same as above. |
+
+Not used, but available on the same servers: `kyraster.ky.gov/arcgis/rest/services/ElevationServices/*` (raw DEMs, 2 ft Phase 2/3 hillshades), `Ky_Permitted_Mine_Boundaries_WGS84WM`, KY aerials 2004-2022 (`kygisserver.ky.gov/.../Ky_Imagery_<year>_*`).
+
+### Possible finds
+Pin type `possible_find` = unverified candidates (dashed ring icon, hidden by default, page says "Unverified candidate"). Never counted as confirmed remains.
+Import: `node seed/import-candidates.mjs <ky-possible-finds.json>` (skips anything within 200 m of a confirmed pin of the same kind, and same-kind duplicates within 25 m).
