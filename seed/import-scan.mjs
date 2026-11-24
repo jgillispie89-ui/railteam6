@@ -49,11 +49,14 @@ for (const t of rows) {
   const fromThisFile = r => (r.seed_key || '').startsWith(PREFIX + ':') && r.seed_key !== key;
   const myWords = words(t.name), myCore = core(t.name);
   const sameCore = r => { const c = core(r.name); return myCore.length >= 4 && c.length >= 4 && (c === myCore || c.startsWith(myCore + ' ') || myCore.startsWith(c + ' ')); };
-  const forceNew = NEW.some(s => t.name.toLowerCase().includes(s));
-  const hit = forceNew ? near.find(r => r.seed_key === key) : near.find(r => r.seed_key === key)
+  const forceNew = t.force_new === true || NEW.some(s => t.name.toLowerCase().includes(s));  // force_new: set by a prep script
+  // merge_into: a prep script names the existing pin this row belongs to (any distance)
+  const named = t.merge_into ? (await db.query(`SELECT id, name, site_type::text t, seed_key, coords_approx, description,
+      ST_Distance(geom::geography, ST_SetSRID(ST_MakePoint($1,$2),4326)::geography) d FROM sites WHERE deleted_at IS NULL AND name = $3 LIMIT 1`, [lon, lat, t.merge_into])).rows[0] : null;
+  const hit = named || (forceNew ? near.find(r => r.seed_key === key) : (near.find(r => r.seed_key === key)
     || near.find(r => !fromThisFile(r) && r.d <= 300 && (FAMILY[r.t] || 'other') === fam)
     || near.find(r => !fromThisFile(r) && r.d <= 300 && words(r.name).some(w => myWords.includes(w)))
-    || near.find(r => !fromThisFile(r) && (FAMILY[r.t] || 'other') === fam && sameCore(r));
+    || near.find(r => !fromThisFile(r) && (FAMILY[r.t] || 'other') === fam && sameCore(r))));
   const remains = arr(t.remains);
   const text = [t.company && `Company: ${t.company}.`, t.line && `Line: ${t.line}.`, t.history,
     remains.length && 'What is left:\n' + remains.map(x => '- ' + x).join('\n'), t.access && 'Access: ' + t.access].filter(Boolean).join('\n\n');

@@ -4,7 +4,7 @@
 //  - status intact -> standing (abandoned / standing_ruin); ruins -> remains; restored/in use -> preserved +
 //    "Status: standing (restored / in use)"; unknown -> standing + "Condition unknown (check before visiting)"
 // Usage: node prep-bulk.mjs <ky-bulk.json> <out.json> [ky-bulk-placed.json]
-//   then: node import-scan.mjs <out.json> kybulk --new "princess theatre"   (it would merge into the Blue Streak Printers pin 42 m away)
+//   then: node import-scan.mjs <out.json> kybulk   (rows in FORCE_NEW never merge)
 import fs from 'fs';
 const [IN, OUT, PLACED] = process.argv.slice(2);
 let rows = JSON.parse(fs.readFileSync(IN, 'utf8')); if (!Array.isArray(rows)) rows = Object.values(rows).find(Array.isArray);
@@ -15,14 +15,28 @@ const FIX = {
   'Big Woods, Red River & Lombard Railroad': { name: 'Nada Tunnel (Big Woods, Red River & Lombard Railroad)', type: 'tunnel' },
   'Gracey Herndon Road': { name: 'Abandoned rail grade at Gracey Herndon Road', type: 'other' },
 };
+// town-center points stack on other pins in the same town; these rows are different places from the pin they land on
+const FORCE_NEW = /^(The Princess Theatre|Willard Dry Fork Bridge|Camp Nelson Bridge|Mullins Limestone Mine|Morehead & North Fork Railroad|Olive Hill High School|Olive Hill Fire Brick|Flemingsburg & Northern Railroad|Mt\. Sterling Baptist Church|Mt\. Sterling High School)/;
+// rows whose town-center point lands too far from the pin they already are (found by a name check on 23 Nov)
+const MERGE_INTO = {
+  'Raccoon Furnace': 'Raccoon Furnace',
+  'Stearns Coal & Lumber Company': 'Stearns (Stearns Coal & Lumber Co.): company offices and district',
+  'T.W. Samuels Distillery': 'T.W. Samuels Distillery Historic District, Deatsville',
+  'Old Taylor Distillery': 'Old Taylor Distillery (Castle & Key)',
+  'Frenchburg Presbyterian College': 'Frenchburg School Campus (Frenchburg Presbyterian College)',
+};
 const out = [], stats = { placeholder: 0, placed: 0, status: {} };
 for (const src of rows) {
   const r = structuredClone(src);
   const p = placed.get(r.name);
+  if (FORCE_NEW.test(r.name)) r.force_new = true;
+  if (MERGE_INTO[r.name]) r.merge_into = MERGE_INTO[r.name];
   if (FIX[r.name]) Object.assign(r, FIX[r.name]);
-  if (p && p.lat != null) { Object.assign(r, { lat: p.lat, lon: p.lon, coord_quality: p.coord_quality }); stats.placed++; }
+  // placed rows flagged gone (demolished etc.) never become pins (remains-only rule)
+  if (p && p.gone) { stats.gone = (stats.gone || 0) + 1; continue; }
+  if (p && p.lat != null) { Object.assign(r, { lat: p.lat, lon: p.lon, coord_quality: p.coord_quality, county: r.county || p.county }); stats.placed++; }
   if (/^placeholder/i.test(r.coord_quality || '') || r.lat == null) { stats.placeholder++; continue; }
-  const st = String(r.status || 'unknown');
+  const st = String(r.status || (p && p.status) || 'unknown').toLowerCase();
   stats.status[st] = (stats.status[st] || 0) + 1;
   const rem = (Array.isArray(r.remains) ? r.remains : r.remains ? [r.remains] : []).filter(x => String(x).trim());
   const lines = [];
